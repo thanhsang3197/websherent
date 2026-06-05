@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>SHERENT - Thuê Váy Tiệc, Áo Dài Cao Cấp TP.HCM | Đẹp & Sang Trọng</title>
+    <meta name="description" content="SHERENT chuyên cho thuê trang phục, váy tiệc, áo dài cao cấp tại TP.HCM. Cập nhật xu hướng mới nhất, form chuẩn, giá cả hợp lý. Đặt lịch thử đồ ngay qua Zalo!">
+    <meta name="keywords" content="thuê trang phục, thuê váy tiệc TP.HCM, thuê áo dài TP.HCM, thuê đầm dự tiệc, SHERENT">
+    <meta name="author" content="SHERENT">
+    
+    <!-- Open Graph for Social Media -->
+    <meta property="og:title" content="SHERENT - Thuê Váy Tiệc, Áo Dài Cao Cấp TP.HCM">
+    <meta property="og:description" content="Khám phá bộ sưu tập váy tiệc và áo dài lộng lẫy nhất tại SHERENT TP.HCM. Đặt lịch thử ngay hôm nay!">
+    <meta property="og:type" content="website">
+    
+    <!-- Tailwind CSS (Tối ưu Core Web Vitals) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Schema Markup for Local Business (SEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "SHERENT - Cho Thuê Trang Phục",
+      "image": "https://via.placeholder.com/800x600?text=SHERENT+Logo",
+      "description": "Dịch vụ cho thuê váy tiệc, áo dài thiết kế cao cấp tại TP.HCM.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Trung tâm TP.HCM",
+        "addressLocality": "Hồ Chí Minh",
+        "addressRegion": "Hồ Chí Minh",
+        "postalCode": "700000",
+        "addressCountry": "VN"
+      },
+      "priceRange": "$$",
+      "telephone": "+84123456789"
+    }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a1a1a',
+                        gold: '#C5A059',
+                        light: '#F8F8F8'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Tối ưu hiệu ứng hover và loading */
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #C5A059; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="font-sans bg-white text-gray-800 antialiased">
+
+    <!-- Header (Sticky) -->
+    <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="font-serif text-3xl font-bold tracking-widest text-primary">SHERENT<span class="text-gold">.</span></a>
+                </div>
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-600 hover:text-gold font-medium transition">Trang Chủ</a>
+                    <a href="#collection" class="text-gray-600 hover:text-gold font-medium transition">Bộ Sưu Tập</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-gold font-medium transition">Bảng Giá</a>
+                    <a href="#contact" class="text-gray-600 hover:text-gold font-medium transition">Liên Hệ</a>
+                </nav>
+                <!-- CTA Button -->
+                <div class="hidden md:flex">
+                    <a href="#collection" class="bg-primary text-white px-6 py-2.5 rounded-full font-medium hover:bg-gray-800 transition">Thử Đồ Ngay</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-light">
+        <div class="absolute inset-0 z-0">
+            <!-- Thay bằng hình ảnh banner thực tế của bạn -->
+            <img src="https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Banner váy tiệc SHERENT" class="w-full h-full object-cover opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-t from-light to-transparent"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
+                Tỏa Sáng Mọi Khoảnh Khắc <br class="hidden md:block">
+                <span class="text-gold font-italic">Cùng Trang Phục Thiết Kế</span>
+            </h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+                SHERENT - Dịch vụ cho thuê váy tiệc, áo dài cao cấp tại TP.HCM. Cập nhật xu hướng liên tục, form dáng chuẩn chỉnh, tôn vinh vẻ đẹp của bạn.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#collection" class="bg-primary text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-800 transition shadow-lg">Xem Bộ Sưu Tập</a>
+                <a href="#contact" class="bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition shadow-sm">Tư Vấn Zalo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Collection Section -->
+    <section id="collection" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Bộ Sưu Tập Nổi Bật</h2>
+                <div class="w-16 h-1 bg-gold mx-auto mb-4"></div>
+                <p class="text-gray-500 max-w-2xl mx-auto">Khám phá những mẫu váy tiệc và áo dài được yêu thích nhất trong mùa này.</p>
+            </div>
+
+            <!-- Nơi hiển thị trạng thái Loading -->
+            <div id="loading-state" class="text-center py-12">
+                <div class="loader mb-4"></div>
+                <p class="text-gray-500 mt-4">Đang tải bộ sưu tập từ kho hàng...</p>
+            </div>
+
+            <!-- Lưới Sản Phẩm -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 hidden">
+                <!-- Dữ liệu render từ JS sẽ nằm ở đây -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Ưu điểm / Chính sách Section -->
+    <section id="pricing" class="py-20 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                <div>
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold mb-3">Mẫu Mã Đa Dạng</h3>
+                    <p class="text-gray-400">Cập nhật hàng tuần các mẫu váy, áo dài hot trend nhất hiện nay.</p>
+                </div>
+                <div>
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold mb-3">Giá Trọn Gói Tốt</h3>
+                    <p class="text-gray-400">Chỉ từ 200k/ngày, miễn phí phụ kiện đi kèm theo từng trang phục.</p>
+                </div>
+                <div>
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.514"></path></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold mb-3">Form Dáng Chuẩn</h3>
+                    <p class="text-gray-400">Hỗ trợ bóp/nới eo (có giới hạn) để đồ vừa vặn nhất với dáng người.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-50 pt-16 pb-8 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div>
+                    <a href="#" class="font-serif text-3xl font-bold tracking-widest text-primary block mb-6">SHERENT<span class="text-gold">.</span></a>
+                    <p class="text-gray-500 mb-6">Thương hiệu cho thuê trang phục cao cấp hàng đầu tại TP.HCM. Cùng bạn tỏa sáng trong mọi sự kiện.</p>
+                </div>
+                <div>
+                    <h4 class="font-serif text-lg font-bold text-primary mb-6">Liên Hệ</h4>
+                    <ul class="space-y-3 text-gray-500">
+                        <li class="flex items-start">
+                            <span class="mr-3 mt-1">📍</span> Quận 1, TP. Hồ Chí Minh
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-3 mt-1">📞</span> 0909.xxx.xxx (Zalo)
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-3 mt-1">⏰</span> Mở cửa: 9:00 - 21:00 mỗi ngày
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-serif text-lg font-bold text-primary mb-6">Chính Sách</h4>
+                    <ul class="space-y-3 text-gray-500">
+                        <li><a href="#" class="hover:text-gold transition">Chính sách thuê đồ</a></li>
+                        <li><a href="#" class="hover:text-gold transition">Quy định cọc & đền bù</a></li>
+                        <li><a href="#" class="hover:text-gold transition">Hướng dẫn lấy/trả đồ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center text-gray-400 border-t border-gray-200 pt-8 text-sm">
+                &copy; 2026 SHERENT. All rights reserved. Designed for SEO & Performance.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logic Xử lý dữ liệu (Fetch từ Google Sheets) -->
+    <script>
+        // CẤU HÌNH API Ở ĐÂY
+        // Đã cập nhật link API mới nhất của bạn! 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxMlkWMafD5CdE6IEhLaiafyvV4emYO_HCw46RH4U54DTHp8TNwH96KSdUvIlaw_AzBlg/exec'; 
+        
+        // Cấu hình số điện thoại Zalo của cửa hàng
+        const ZALO_NUMBER = '0909xxxxxx'; // HÃY THAY SỐ ĐIỆN THOẠI CỦA BẠN VÀO ĐÂY
+
+        // Hàm format tiền tệ VNĐ
+        const formatMoney = (amount) => {
+            // Kiểm tra xem giá trị có phải là số không trước khi format
+            const num = Number(amount);
+            if (isNaN(num)) return amount; // Nếu không phải số, giữ nguyên chữ (ví dụ: "Liên hệ")
+            
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+        };
+
+        // Hàm lấy và render dữ liệu
+        async function fetchProducts() {
+            const grid = document.getElementById('product-grid');
+            const loader = document.getElementById('loading-state');
+            
+            try {
+                // Kiểm tra nếu chưa thay API URL thật, dùng dữ liệu giả để test giao diện
+                if (API_URL === 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE') {
+                    console.log("Đang dùng Mock Data vì chưa cấu hình API_URL");
+                    renderProducts(getMockData());
+                    loader.classList.add('hidden');
+                    grid.classList.remove('hidden');
+                    return;
+                }
+
+                console.log("Đang gọi API:", API_URL);
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                console.log("Dữ liệu nhận được:", data);
+
+                if (data.status === 'success' && data.data && data.data.length > 0) {
+                    renderProducts(data.data);
+                } else {
+                    grid.innerHTML = `<p class="col-span-full text-center text-gray-500">Hiện tại chưa có sản phẩm nào. (Phản hồi: ${data.message || 'Không có dữ liệu'})</p>`;
+                }
+            } catch (error) {
+                console.error("Lỗi khi fetch dữ liệu:", error);
+                grid.innerHTML = '<p class="col-span-full text-center text-red-500">Không thể kết nối đến kho hàng. Vui lòng kiểm tra lại đường truyền hoặc link API.</p>';
+            } finally {
+                loader.classList.add('hidden');
+                grid.classList.remove('hidden');
+            }
+        }
+
+        // Hàm render HTML cho thẻ sản phẩm
+        function renderProducts(products) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = ''; // Xóa nội dung cũ
+
+            products.forEach(item => {
+                // Đọc đúng tên cột cấu hình trên Sheets "Sản Phẩm" của bạn
+                const id = item['Mã SP'] || '';
+                const name = item['Tên Sản Phẩm'] || 'Sản phẩm chưa có tên';
+                const image = item['Ảnh sản phẩm'] || 'https://via.placeholder.com/400x500?text=No+Image';
+                
+                // Xử lý giá tiền
+                const priceValue = item['Giá Thuê'];
+                const price = priceValue ? formatMoney(priceValue) : 'Liên hệ';
+                
+                const depositValue = item['Giá Cọc'];
+                const deposit = depositValue ? formatMoney(depositValue) : 'Không cần cọc';
+                
+                const brand = item['Brand Sản Phẩm'] || '';
+                const size = item['Size'] || '';
+                const status = item['Trạng Thái'] || 'Còn hàng';
+                
+                // Set màu badge tùy trạng thái
+                let badgeClass = status.toLowerCase().includes('hết') || status.toLowerCase().includes('đã thuê') ? 'bg-red-500' : 'bg-green-500';
+                
+                // Link Zalo với nội dung điền sẵn
+                const zaloMessage = encodeURIComponent(`Chào SHERENT, mình muốn tư vấn thuê mẫu: ${name} (Mã: ${id})`);
+                const zaloLink = `https://zalo.me/${ZALO_NUMBER}?text=${zaloMessage}`;
+
+                const cardHTML = `
+                    <div class="bg-white rounded-xl overflow-hidden border border-gray-100 card-hover group flex flex-col h-full relative">
+                        <!-- Badge Trạng thái & Size -->
+                        <div class="absolute top-4 left-4 z-10 flex flex-col gap-2 items-start">
+                            <span class="${badgeClass} text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${status}</span>
+                            ${size ? `<span class="bg-white/90 text-primary text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-gray-200">Size: ${size}</span>` : ''}
+                        </div>
+                        
+                        <!-- Hình ảnh -->
+                        <div class="relative w-full pb-[125%] overflow-hidden bg-gray-100">
+                            <!-- Sử dụng thuộc tính loading="lazy" để tăng tốc tải trang -->
+                            <img src="${image}" alt="${name}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        
+                        <!-- Thông tin -->
+                        <div class="p-5 flex flex-col flex-grow">
+                            ${brand ? `<p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">${brand}</p>` : ''}
+                            <h3 class="font-serif text-lg font-bold text-primary mb-2 line-clamp-2" title="${name}">${name}</h3>
+                            <div class="mt-auto">
+                                <p class="text-gold font-bold text-xl mb-1">${price}<span class="text-gray-400 text-sm font-normal">/ngày</span></p>
+                                <p class="text-sm text-gray-500 mb-4 flex items-center"><svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Cọc: ${deposit}</p>
+                                <a href="${zaloLink}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-50 text-primary border border-gray-200 hover:bg-primary hover:text-white py-2.5 rounded-lg font-medium transition duration-300">
+                                    Thử Đồ / Tư Vấn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        // Mock data để demo UI khi chưa có Google Sheets
+        function getMockData() {
+            return [
+                { "Mã SP": "V01", "Tên Sản Phẩm": "Váy Dạ Hội Đuôi Cá Đính Đá", "Brand Sản Phẩm": "Design Studio", "Giá Thuê": 450000, "Giá Cọc": 1000000, "Size": "S, M", "Ảnh sản phẩm": "https://images.unsplash.com/photo-1568251188392-ae32f898cb3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", "Trạng Thái": "Còn hàng" },
+                { "Mã SP": "AD01", "Tên Sản Phẩm": "Áo Dài Tơ Tằm Họa Tiết Hoa Sen", "Brand Sản Phẩm": "Local Brand", "Giá Thuê": 350000, "Giá Cọc": 800000, "Size": "M", "Ảnh sản phẩm": "https://images.unsplash.com/photo-1623098555988-cb94ff3c8a94?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", "Trạng Thái": "Đang cho thuê" }
+            ];
+        }
+
+        // Kích hoạt fetch khi tải trang xong
+        document.addEventListener('DOMContentLoaded', fetchProducts);
+    </script>
+</body>
+</html>
