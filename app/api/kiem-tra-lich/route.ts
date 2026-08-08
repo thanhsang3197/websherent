@@ -14,6 +14,6 @@ export async function GET(request: Request) {
     );
   }
 
-  const result = isProductAvailable(id, from, to);
+  const result = await isProductAvailable(id, from, to);
   return NextResponse.json(result);
 }

@@ -8,6 +8,7 @@ import 'server-only';
 
 import type { Product, ProductCategory } from '../types/product';
 import { fetchProductsFromSheet, isSheetsConfigured } from './sheets';
+import { fetchProductsFromInternalApi, isInternalApiConfigured } from './internal-api';
 import { sortProductsForDisplay, groupProducts } from './mapping';
 import { mockProducts } from './mock-data';
 
@@ -18,18 +19,27 @@ function prepare(products: Product[]): Product[] {
 
 /**
  * Lấy toàn bộ sản phẩm (đã sort: có ảnh lên đầu, rồi theo tên).
- * Ưu tiên Google Sheets nếu đã cấu hình; lỗi/không cấu hình -> fallback mock-data.
+ * Ưu tiên WebApp Nội Bộ -> Google Sheets -> Fallback mock-data.
  */
-export async function getProducts(): Promise<Product[]> {
-  if (isSheetsConfigured()) {
-    try {
-      const fromSheet = await fetchProductsFromSheet();
-      if (fromSheet.length > 0) return prepare(fromSheet);
-      console.warn('[products] Google Sheet rỗng — dùng mock-data.');
-    } catch (err) {
-      console.error('[products] Lỗi đọc Google Sheets — dùng mock-data:', err);
-    }
+export function getProducts(): Promise<Product[]> | Product[] {
+  if (isInternalApiConfigured()) {
+    return fetchProductsFromInternalApi()
+      .then((fromApi) => (fromApi.length > 0 ? prepare(fromApi) : prepare(mockProducts)))
+      .catch((err) => {
+        console.error('[products] Lỗi đọc WebApp Nội Bộ — dùng mock-data:', err);
+        return prepare(mockProducts);
+      });
   }
+
+  if (isSheetsConfigured()) {
+    return fetchProductsFromSheet()
+      .then((fromSheet) => (fromSheet.length > 0 ? prepare(fromSheet) : prepare(mockProducts)))
+      .catch((err) => {
+        console.error('[products] Lỗi đọc Google Sheets — dùng mock-data:', err);
+        return prepare(mockProducts);
+      });
+  }
+
   return prepare(mockProducts);
 }
 

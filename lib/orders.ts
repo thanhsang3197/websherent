@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { fetchOrdersFromInternalApi, isInternalApiConfigured } from './internal-api';
 
 export interface OrderRecord {
   orderId: string;
@@ -21,7 +22,16 @@ function parseDateVn(dateStr: string): string | null {
   return `${year}-${month}-${day}`;
 }
 
-export function getOrders(): OrderRecord[] {
+export async function getOrders(): Promise<OrderRecord[]> {
+  if (isInternalApiConfigured()) {
+    try {
+      const fromApi = await fetchOrdersFromInternalApi();
+      if (fromApi.length > 0) return fromApi;
+    } catch (err) {
+      console.error('[orders] Lỗi đọc đơn hàng từ WebApp nội bộ:', err);
+    }
+  }
+
   if (cachedOrders) return cachedOrders;
 
   try {
@@ -37,7 +47,6 @@ export function getOrders(): OrderRecord[] {
       const line = lines[i].trim();
       if (!line) continue;
 
-      // Handle simple CSV splitting
       const cols = line.split(',');
       if (cols.length < 9) continue;
 
@@ -75,8 +84,12 @@ export function getOrders(): OrderRecord[] {
  * Kiểm tra xem sản phẩm (productId) có bị trùng lịch trong khoảng [fromDate, toDate] hay không.
  * fromDate, toDate có dạng YYYY-MM-DD.
  */
-export function isProductAvailable(productId: string, fromDate: string, toDate: string): { available: boolean; conflictOrder?: OrderRecord } {
-  const orders = getOrders();
+export async function isProductAvailable(
+  productId: string,
+  fromDate: string,
+  toDate: string,
+): Promise<{ available: boolean; conflictOrder?: OrderRecord }> {
+  const orders = await getOrders();
   const targetId = productId.toUpperCase();
 
   const reqStart = new Date(fromDate).getTime();
