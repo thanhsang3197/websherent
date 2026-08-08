@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Palette "Kem & Đất nung" (terracotta). Định nghĩa dạng RGB triplet để Tailwind
+  dùng được opacity modifier (bg-accent/10, text-ink/70...). Xem tailwind.config.ts.
+*/
+:root {
+  --bg: 246 241 234; /* #F6F1EA kem */
+  --surface: 252 250 246; /* #FCFAF6 nền thẻ */
+  --accent: 176 106 79; /* #B06A4F đất nung */
+  --accent-dark: 149 87 63; /* #95573F đất nung đậm (hover) */
+  --ink: 42 38 34; /* #2A2622 chữ chính */
+  --muted: 111 103 94; /* #6F675E chữ phụ */
+  --hairline: 228 218 206; /* #E4DACE đường kẻ mảnh */
+  --tint: 232 213 199; /* #E8D5C7 nền nhấn nhạt */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--ink));
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif), Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    /* Chia đều các dòng của tiêu đề thay vì để dòng cuối trơ trọi. */
+    text-wrap: balance;
+  }
+
+  /*
+    Tránh "chữ mồ côi": dòng cuối đoạn văn chỉ còn 1-2 chữ — rất hay gặp trên
+    màn hình điện thoại hẹp. Trình duyệt cũ không hỗ trợ thì tự bỏ qua, không lỗi.
+  */
+  p,
+  li,
+  dd,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: rgb(var(--accent) / 0.2);
+  }
+
+  /* Focus rõ ràng cho bàn phím. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* Signature: khung ảnh vòm (arch) gợi gương phòng thử đồ. */
+  .arch {
+    border-radius: 45% 45% 6px 6px / 30% 30% 4px 4px;
+  }
+
+  /* --- LIQUID GLASS (GLASSMORPHISM) UTILITIES --- */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 30px 0 rgba(176, 106, 79, 0.08);
+  }
+
+  .glass-panel {
+    background: rgba(252, 250, 246, 0.65);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 16px 40px 0 rgba(42, 38, 34, 0.08);
+  }
+
+  .glass-header {
+    background: rgba(252, 250, 246, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .glass-input {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(228, 218, 206, 0.8);
+    transition: all 0.25s ease;
+  }
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgb(var(--accent));
+    box-shadow: 0 0 0 3px rgba(176, 106, 79, 0.15);
+  }
+
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  /* Đường kẻ mảnh trang trí màu đất nung. */
+  .rule-accent {
+    width: 3rem;
+    height: 2px;
+    background-color: rgb(var(--accent));
+  }
+
+  /* Slideshow hero: trượt phải -> trái. */
+  .hero-slide-in {
+    animation: hero-slide-in 700ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .hero-slide-out {
+    animation: hero-slide-out 700ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .container-content {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  /* Nút dùng chung kiểu Liquid Glass. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.6rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-dark)) 100%);
+    color: rgb(var(--surface));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 20px -4px rgba(176, 106, 79, 0.4);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px -4px rgba(176, 106, 79, 0.5);
+  }
+
+  .btn-outline {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(176, 106, 79, 0.4);
+    color: rgb(var(--accent-dark));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgb(var(--accent));
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes hero-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes hero-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Tôn trọng người dùng bật giảm chuyển động. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,15 @@
+# Không upload các file này lên Vercel
+
+node_modules
+.next
+.env
+.env*.local
+
+# Dữ liệu CSV gốc chứa cột nội bộ (giá nhập / doanh thu / tỉ lệ hoàn vốn) —
+# chỉ dùng để chạy generate:mock ở máy local. Site trên Vercel đọc trực tiếp
+# Google Sheets (hoặc fallback lib/mock-data.ts đã lọc sạch cột nội bộ), nên
+# KHÔNG cần và KHÔNG nên đưa file này lên server.
+data
+
+# Tài liệu hướng dẫn nội bộ — không cần chạy trên web.
+docs

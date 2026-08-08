@@ -1,0 +1,64 @@
+/**
+ * Hàm format thuần (không phụ thuộc Next) — dùng chung cho cả app runtime
+ * lẫn script sinh mock (scripts/generate-mock.ts qua tsx).
+ */
+
+/**
+ * Parse chuỗi tiền kiểu Việt Nam "100.000 đ" / "1.620.000 đ" -> số 100000 / 1620000.
+ * Dấu "." là phân cách hàng nghìn. Trả 0 nếu rỗng/không hợp lệ.
+ */
+export function parseVnd(raw: string | null | undefined): number {
+  if (!raw) return 0;
+  // Giữ lại chữ số, bỏ mọi ký tự khác (dấu chấm nghìn, " đ", khoảng trắng...).
+  const digits = raw.replace(/[^\d]/g, '');
+  if (!digits) return 0;
+  const n = Number.parseInt(digits, 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/**
+ * Format số VND -> "100.000₫" (dấu chấm phân cách nghìn, ký hiệu ₫).
+ */
+export function formatVnd(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) return 'Liên hệ';
+  return `${value.toLocaleString('vi-VN')}₫`;
+}
+
+/**
+ * Chuẩn hoá URL ảnh về CDN raw.githubusercontent.com (tải nhanh, không redirect).
+ * Nhận dạng cả:
+ *   https://github.com/<user>/<repo>/blob/main/<file>.jpg?raw=true
+ *   https://raw.githubusercontent.com/<user>/<repo>/main/<file>.jpg
+ * Trả null nếu rỗng/không phải URL hợp lệ.
+ */
+export function normalizeImageUrl(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const url = raw.trim();
+  if (!url) return null;
+
+  // github.com/<user>/<repo>/blob/<branch>/<path>?raw=true -> raw.githubusercontent.com
+  const blobMatch = url.match(
+    /^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^?]+)/i,
+  );
+  if (blobMatch) {
+    const [, user, repo, rest] = blobMatch;
+    return `https://raw.githubusercontent.com/${user}/${repo}/${rest}`;
+  }
+
+  // Đã là raw hoặc URL https khác -> giữ nguyên.
+  if (/^https?:\/\//i.test(url)) return url;
+
+  return null;
+}
+
+/**
+ * Tách nhiều link ảnh trong 1 ô (cột "Ảnh phụ") thành mảng URL đã chuẩn hoá.
+ * Ngăn cách bằng xuống dòng, dấu phẩy, chấm phẩy hoặc gạch đứng.
+ */
+export function parseImageList(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  return raw
+    .split(/[\n\r,;|]+/)
+    .map((part) => normalizeImageUrl(part))
+    .filter((u): u is string => Boolean(u));
+}
