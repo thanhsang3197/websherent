@@ -103,7 +103,6 @@ export const siteConfig = {
     { label: 'Trang chủ', href: '/' },
     { label: 'Sản phẩm', href: '/#san-pham' },
     { label: 'Giới thiệu', href: '/gioi-thieu' },
-    { label: 'Bài viết', href: '/bai-viet' },
     { label: 'Hỏi đáp', href: '/cau-hoi-thuong-gap' },
   ],
 } as const;
