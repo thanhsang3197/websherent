@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { siteConfig } from '@/lib/site-config';
+import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 
 const INTERVAL_MS = 5000; // đổi ảnh mỗi 5 giây
 const ANIM_MS = 700; // thời lượng hiệu ứng trượt
@@ -61,6 +62,8 @@ export function HeroCarousel({
             alt=""
             aria-hidden
             fill
+            placeholder="blur"
+            blurDataURL={GLASS_BLUR_DATA_URL}
             sizes={SIZES}
             className="object-cover"
           />
@@ -75,6 +78,8 @@ export function HeroCarousel({
           alt={images[current].alt}
           fill
           priority={current === 0}
+          placeholder="blur"
+          blurDataURL={GLASS_BLUR_DATA_URL}
           sizes={SIZES}
           className="object-cover"
         />

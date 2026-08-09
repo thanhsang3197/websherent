@@ -52,6 +52,13 @@ export function normalizeImageUrl(raw: string | null | undefined): string | null
 }
 
 /**
+ * Placeholder SVG mờ mịn kiểu Liquid Glass (warm cream/terracotta backdrop)
+ * dùng cho blurDataURL trong next/image.
+ */
+export const GLASS_BLUR_DATA_URL =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA0MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIGZpbGw9IiNGQ0ZBRjYiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjMwIiByPSIyNSIgZmlsbD0iI0IxNkE0RiIgZmlsbC1vcGFjaXR5PSIwLjEyIiBmaWx0ZXI9InVybCgjYmx1cikiLz48ZGVmcz48ZmlsdGVyIGlkPSJibHVyIj48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2Ii8+PC9maWx0ZXI+PC9kZWZzPjwvc3ZnPg==';
+
+/**
  * Tách nhiều link ảnh trong 1 ô (cột "Ảnh phụ") thành mảng URL đã chuẩn hoá.
  * Ngăn cách bằng xuống dòng, dấu phẩy, chấm phẩy hoặc gạch đứng.
  */

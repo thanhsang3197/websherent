@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd } from '@/lib/format';
+import { formatVnd, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
 import { FavoriteButton } from '@/components/FavoriteButton';
 
@@ -33,6 +33,8 @@ export function ProductCard({
               alt={product.name}
               fill
               priority={priority}
+              placeholder="blur"
+              blurDataURL={GLASS_BLUR_DATA_URL}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
             />

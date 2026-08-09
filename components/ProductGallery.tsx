@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { siteConfig } from '@/lib/site-config';
+import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { Lightbox } from '@/components/Lightbox';
 
 /**
@@ -42,6 +43,8 @@ export function ProductGallery({
                 alt={alt}
                 fill
                 priority
+                placeholder="blur"
+                blurDataURL={GLASS_BLUR_DATA_URL}
                 sizes="(max-width: 1024px) 90vw, 384px"
                 className="object-cover"
               />
@@ -75,7 +78,15 @@ export function ProductGallery({
                     : 'ring-hairline hover:ring-accent/50'
                 }`}
               >
-                <Image src={src} alt="" fill sizes="48px" className="object-cover" />
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  placeholder="blur"
+                  blurDataURL={GLASS_BLUR_DATA_URL}
+                  sizes="48px"
+                  className="object-cover"
+                />
               </button>
             </li>
           ))}
