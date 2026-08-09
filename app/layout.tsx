@@ -41,6 +41,10 @@ export const metadata: Metadata = {
     'Sherent',
   ],
   authors: [{ name: siteConfig.name }],
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+  },
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
