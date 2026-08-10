@@ -1,6 +1,8 @@
 import 'server-only';
 import type { Product } from '@/types/product';
 import type { OrderRecord } from '@/lib/orders';
+import { normalizeImageUrl } from '@/lib/format';
+import { buildProductSlug } from '@/lib/slug';
 
 /**
  * ADAPTER KẾT NỐI VỚI WEBAPP NỘI BỘ (REST API).
@@ -34,21 +36,59 @@ export async function fetchProductsFromInternalApi(): Promise<Product[]> {
   }
 
   const data = await res.json();
-  const rawProducts = Array.isArray(data) ? data : data.products || data.data || [];
+  const rawProducts = Array.isArray(data)
+    ? data
+    : data.san_pham || data.products || data.data || [];
 
-  // Chuẩn hoá dữ liệu về kiểu Product nếu cần
-  return rawProducts.map((item: Record<string, unknown>) => ({
-    id: String(item.id || item.code || ''),
-    slug: String(item.slug || item.id || ''),
-    name: String(item.name || item.title || ''),
-    brand: item.brand ? String(item.brand) : null,
-    sizes: Array.isArray(item.sizes) ? item.sizes.map(String) : [],
-    category: (item.category as Product['category']) || 'dam-vay',
-    rentPrice: Number(item.rentPrice || item.rent_price || 0),
-    depositPrice: Number(item.depositPrice || item.deposit_price || 0),
-    image: String(item.image || item.thumbnail || ''),
-    images: Array.isArray(item.images) ? item.images.map(String) : item.image ? [String(item.image)] : [],
-  }));
+  // Chuẩn hoá dữ liệu về kiểu Product (Hỗ trợ cả trường tiếng Việt và tiếng Anh)
+  return rawProducts.map((item: Record<string, unknown>) => {
+    const id = String(item.ma || item.id || item.code || '').trim();
+    const name = String(item.ten || item.name || item.title || '').trim();
+    const rawCategory = String(item.loai || item.category || '').toUpperCase();
+
+    let category: Product['category'] = 'dam-vay';
+    if (rawCategory.includes('AO_DAI') || rawCategory.includes('AO-DAI')) {
+      category = 'ao-dai';
+    } else if (rawCategory.includes('PHAP_PHUC') || rawCategory.includes('PHAP-PHUC')) {
+      category = 'phap-phuc';
+    }
+
+    let sizes: string[] = [];
+    const rawSize = item.co ?? item.sizes ?? item.size;
+    if (Array.isArray(rawSize)) {
+      sizes = rawSize.map(String);
+    } else if (typeof rawSize === 'string' && rawSize.trim()) {
+      sizes = rawSize.split(/[,;/]+/).map((s) => s.trim()).filter(Boolean);
+    }
+
+    const mainImage = normalizeImageUrl(String(item.anh || item.image || item.thumbnail || '')) || '';
+
+    let images: string[] = [];
+    const rawAnhPhu = item.anh_phu ?? item.images;
+    if (Array.isArray(rawAnhPhu)) {
+      images = rawAnhPhu.map(String).map((u) => normalizeImageUrl(u) || u).filter(Boolean);
+    }
+    if (mainImage && !images.includes(mainImage)) {
+      images.unshift(mainImage);
+    }
+
+    const slug = item.slug
+      ? String(item.slug)
+      : buildProductSlug(name, id);
+
+    return {
+      id,
+      slug,
+      name,
+      brand: item.thuong_hieu ? String(item.thuong_hieu) : item.brand ? String(item.brand) : null,
+      sizes,
+      category,
+      rentPrice: Number(item.gia_thue ?? item.rentPrice ?? item.rent_price ?? 0),
+      depositPrice: Number(item.tien_coc ?? item.depositPrice ?? item.deposit_price ?? 0),
+      image: mainImage,
+      images: images.length > 0 ? images : mainImage ? [mainImage] : [],
+    };
+  });
 }
 
 /**
