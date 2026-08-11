@@ -24,6 +24,15 @@ import { buildProductSlug } from '@/lib/slug';
  * đọc bảng đơn hàng, nên không có đường nào lấy được nữa.
  */
 
+/**
+ * Nhãn cache dùng chung cho MỌI lượt gọi catalogue.
+ *
+ * `app/api/lam-moi` gọi `revalidateTag(TAG_SAN_PHAM)` để xoá sạch cache ngay
+ * khi app nội bộ báo có sản phẩm đổi. Dùng MỘT nhãn chung nên không phải liệt
+ * kê từng trang — mà số trang lại đổi theo số món trong tiệm.
+ */
+export const TAG_SAN_PHAM = 'san-pham';
+
 /** Số món mỗi lượt gọi. API chặn trần ở 100. */
 const MOI_TRANG = 100;
 
@@ -117,7 +126,10 @@ export async function fetchProductsFromInternalApi(): Promise<Product[]> {
 
     const res = await fetch(`${base}?${q}`, {
       headers: { Accept: 'application/json' },
-      next: { revalidate },
+      // `revalidate` là lưới an toàn cho trường hợp app không báo được (deploy
+      // hỏng, sai khoá, mạng chập chờn). Đường chính là `tags` — app nội bộ
+      // gọi /api/lam-moi và cache bay ngay, không phải chờ hết hạn.
+      next: { revalidate, tags: [TAG_SAN_PHAM] },
     });
 
     if (!res.ok) {
