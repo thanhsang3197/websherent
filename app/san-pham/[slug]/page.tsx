@@ -13,7 +13,6 @@ import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { ContactButtons } from '@/components/ContactButtons';
 import { ProductGallery } from '@/components/ProductGallery';
-import { AvailabilityCheck } from '@/components/AvailabilityCheck';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { RecentlyViewedTracker } from '@/components/RecentlyViewedTracker';
@@ -157,9 +156,14 @@ export default async function ProductPage({
             contextLabel={`${product.name} (mã ${product.id})`}
           />
 
-          <div className="mt-8">
-            <AvailabilityCheck product={product} />
-          </div>
+          {/* Trước đây chỗ này là ô "kiểm tra lịch trống".
+              Đã bỏ theo yêu cầu chủ shop (11/08/2026): website không hiện lịch
+              bận của từng món. Khách hỏi thì nhắn Zalo, nhân viên tra trong app
+              rồi trả lời — nút Zalo nằm ngay phía trên. */}
+          <p className="mt-8 rounded-lg border border-hairline bg-tint px-4 py-3 text-sm text-muted">
+            Muốn biết mẫu này còn trống ngày bạn cần? Nhắn Zalo cho tiệm, bọn mình
+            kiểm tra và báo lại ngay.
+          </p>
         </div>
       </div>
 
