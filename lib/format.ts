@@ -35,23 +35,20 @@ export function formatVndD(value: number): string {
 /**
  * CÂU GIÁ CHUẨN của một mẫu đang pass:
  *
- *   "Pass 200.000đ thuê 300.000đ/3 ngày."
+ *   "Pass 200.000đ - Thuê 300.000đ/3 ngày."
  *
  * Chủ shop chốt 13/08/2026 cách ghi này và muốn MỌI chỗ ghi giống hệt nhau,
  * nên câu chữ nằm ở đây chứ không rải trong component: thẻ ở trang thanh lý và
  * khung trên trang chi tiết sản phẩm cùng gọi một hàm.
  *
  * Hai trường hợp thiếu số vẫn phải ra câu đọc được:
- *  - chưa chốt giá bán  -> "Pass giá liên hệ, thuê 300.000đ/3 ngày."
+ *  - chưa chốt giá bán  -> "Pass giá liên hệ - Thuê 300.000đ/3 ngày."
  *  - không có giá thuê  -> "Pass 200.000đ."
  */
 export function saleLine(salePrice: number, rentPrice: number): string {
   const pass = salePrice > 0 ? `Pass ${formatVndD(salePrice)}` : 'Pass giá liên hệ';
   if (!(rentPrice > 0)) return `${pass}.`;
-  const thue = `thuê ${formatVndD(rentPrice)}/3 ngày`;
-  // Có giá thì hai vế nối thẳng ("Pass 200.000đ thuê 300.000đ/3 ngày."); chưa
-  // có giá thì phải thêm dấu phẩy, không thì đọc dính vào nhau.
-  return salePrice > 0 ? `${pass} ${thue}.` : `${pass}, ${thue}.`;
+  return `${pass} - Thuê ${formatVndD(rentPrice)}/3 ngày.`;
 }
 
 /** Dòng tình trạng mẫu, luôn cùng một khuôn: "Tình trạng : 99%". */
