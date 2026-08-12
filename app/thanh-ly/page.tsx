@@ -91,10 +91,11 @@ export default async function ThanhLyPage() {
             ))}
           </ul>
 
+          {/* Câu chữ do chủ shop viết (13/08/2026) — giữ nguyên, đừng "làm hay
+              hơn". Giờ mở cửa và địa chỉ đã có sẵn ở Footer nên bỏ ra khỏi đây. */}
           <p className="mt-12 rounded-lg border border-hairline bg-tint px-4 py-3 text-sm text-muted">
-            Giá trên là giá bán đứt, chưa gồm phí ship. Mẫu đã pass sẽ được gỡ
-            khỏi trang này. Muốn xem trực tiếp, tiệm mở cửa{' '}
-            {siteConfig.openingHours.text} tại {siteConfig.address.full}.
+            Giá trên là giá bán, chưa bao gồm phí ship. Có thể xem trực tiếp và
+            nhận váy tại tiệm.
           </p>
         </>
       )}
