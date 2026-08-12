@@ -33,6 +33,15 @@ const nextConfig = {
         hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
       },
+      // Ảnh do WebApp nội bộ (Sherent-app) upload lên Supabase Storage.
+      // Thiếu mục này thì next/image ném lỗi "Invalid src prop" và CẢ TRANG trả
+      // 500 — chỉ cần một mẫu dùng link Supabase là trang chủ sập, chứ không
+      // phải chỉ thiếu mỗi tấm ảnh đó.
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
   },
 };

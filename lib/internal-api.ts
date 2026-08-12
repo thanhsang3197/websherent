@@ -1,5 +1,5 @@
 import 'server-only';
-import type { Product } from '@/types/product';
+import type { Product, ProductSale } from '@/types/product';
 import { normalizeImageUrl } from '@/lib/format';
 import { buildProductSlug } from '@/lib/slug';
 
@@ -54,6 +54,16 @@ interface SanPhamApi {
   tien_coc: number;
   anh: string | null;
   anh_phu: string[];
+
+  // --- Thanh lý (pass mẫu) --- 3 trường dưới đây LÀ TUỲ CHỌN.
+  // API cũ chưa có chúng; khi đó `sale` = null và trang /thanh-ly trống, chứ
+  // website KHÔNG hỏng. Spec để bên app trả về: docs/ket-noi-webapp.md §5.
+  /** Tiệm đang rao bán đứt mẫu này không. */
+  dang_pass?: boolean | null;
+  /** Giá bán đứt (VND). 0/null = chưa chốt giá -> web hiện "Liên hệ". */
+  gia_pass?: number | null;
+  /** Ghi chú tình trạng mẫu, vd "còn mới 95%". */
+  ghi_chu_pass?: string | null;
 }
 
 interface TraVeApi {
@@ -69,6 +79,29 @@ function mapCategory(loai: string): Product['category'] {
   if (v.includes('AO_DAI') || v.includes('AO-DAI')) return 'ao-dai';
   if (v.includes('PHAP_PHUC') || v.includes('PHAP-PHUC')) return 'phap-phuc';
   return 'dam-vay';
+}
+
+/**
+ * Đọc thông tin thanh lý từ một dòng API. null = mẫu này chỉ cho thuê.
+ *
+ * Chấp nhận CẢ HAI cách khai bên app, để không phụ thuộc thứ tự triển khai:
+ *  - Có cột `dang_pass`  -> lấy đúng cột đó (nhân viên tick/bỏ tick).
+ *  - Chưa có cột đó      -> coi như "cứ điền giá pass > 0 là đang pass".
+ *
+ * Ngược lại, `dang_pass: false` LUÔN thắng: bỏ tick là mẫu biến khỏi trang
+ * thanh lý ngay, kể cả khi ô giá cũ vẫn còn số — nhân viên hay quên xoá giá.
+ */
+function mapSale(item: SanPhamApi): ProductSale | null {
+  const price = Number(item.gia_pass ?? 0);
+  const safePrice = Number.isFinite(price) && price > 0 ? price : 0;
+
+  const dangPass =
+    item.dang_pass === true ||
+    (item.dang_pass == null && safePrice > 0);
+  if (!dangPass) return null;
+
+  const note = (item.ghi_chu_pass ?? '').trim();
+  return { price: safePrice, note: note || null };
 }
 
 function mapSanPham(item: SanPhamApi): Product {
@@ -99,6 +132,7 @@ function mapSanPham(item: SanPhamApi): Product {
     depositPrice: Number(item.tien_coc ?? 0),
     image: mainImage,
     images: images.length > 0 ? images : mainImage ? [mainImage] : [],
+    sale: mapSale(item),
   };
 }
 

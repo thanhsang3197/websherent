@@ -8,6 +8,20 @@
 
 export type ProductCategory = 'ao-dai' | 'dam-vay' | 'phap-phuc';
 
+/**
+ * Thông tin THANH LÝ (pass mẫu) của một sản phẩm.
+ *
+ * Một mẫu đang pass VẪN nằm trong danh sách cho thuê — tiệm vừa cho thuê vừa
+ * rao bán, chỉ khi bán xong nhân viên mới gỡ hẳn mẫu bên app nội bộ. Nên đây là
+ * thông tin CỘNG THÊM, không phải trạng thái thay thế.
+ */
+export interface ProductSale {
+  /** Giá bán đứt (VND). 0 = chưa chốt giá -> hiển thị "Liên hệ". */
+  price: number;
+  /** Ghi chú tình trạng mẫu, vd "còn mới 95%", "có vết nhỏ ở gấu". null nếu không ghi. */
+  note: string | null;
+}
+
 export interface Product {
   /** Mã SP, khoá chính. Vd "T001", "AD025". */
   id: string;
@@ -38,6 +52,13 @@ export interface Product {
    * đã gộp & khử trùng. [] nếu chưa có ảnh nào.
    */
   images: string[];
+  /**
+   * Có giá trị khi tiệm đang PASS (bán đứt) mẫu này; null/không có = chỉ cho thuê.
+   *
+   * Optional (`?`) vì `lib/mock-data.ts` là file tự sinh từ CSV cũ nên không có
+   * trường này — thêm dấu `?` để mock vẫn hợp lệ mà không phải sinh lại.
+   */
+  sale?: ProductSale | null;
   /*
    * Không có trường `status`: cột "Trạng Thái" trong Sheet chỉ dùng để LỌC ở
    * lib/mapping.ts (mẫu "Đã thanh lý" bị bỏ hẳn), không hiển thị cho khách —

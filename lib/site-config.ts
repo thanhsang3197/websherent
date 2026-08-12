@@ -102,6 +102,7 @@ export const siteConfig = {
   nav: [
     { label: 'Trang chủ', href: '/' },
     { label: 'Sản phẩm', href: '/#san-pham' },
+    { label: 'Thanh lý', href: '/thanh-ly' },
     { label: 'Giới thiệu', href: '/gioi-thieu' },
     { label: 'Hỏi đáp', href: '/cau-hoi-thuong-gap' },
   ],

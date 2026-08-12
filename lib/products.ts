@@ -43,6 +43,31 @@ export function getProducts(): Promise<Product[]> | Product[] {
   return prepare(mockProducts);
 }
 
+/**
+ * Danh sách mẫu tiệm đang PASS (bán đứt) — nguồn của trang `/thanh-ly`.
+ *
+ * Lọc ra từ chính catalogue cho thuê, KHÔNG phải một danh sách riêng: mẫu đang
+ * pass vẫn cho thuê bình thường cho tới khi bán xong. Sắp xếp giá bán cao ->
+ * thấp, mẫu chưa chốt giá (0 = "Liên hệ") xuống cuối.
+ *
+ * Trả [] khi API chưa có 3 trường `dang_pass/gia_pass/ghi_chu_pass`, hoặc khi
+ * đang chạy bằng mock-data (fallback lúc API lỗi) — trang sẽ hiện trạng thái
+ * trống thay vì bịa ra mẫu thanh lý không có thật.
+ */
+export async function getSaleProducts(): Promise<Product[]> {
+  const products = await getProducts();
+  return products
+    .filter((p) => p.sale)
+    .sort((a, b) => {
+      const pa = a.sale?.price ?? 0;
+      const pb = b.sale?.price ?? 0;
+      // Giá 0 ("Liên hệ") xuống cuối thay vì lên đầu như so sánh số thường.
+      if (pa === 0 !== (pb === 0)) return pa === 0 ? 1 : -1;
+      if (pb !== pa) return pb - pa;
+      return a.name.localeCompare(b.name, 'vi');
+    });
+}
+
 /** Tìm 1 sản phẩm theo slug. null nếu không có. */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const products = await getProducts();

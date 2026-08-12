@@ -77,7 +77,55 @@ giữ, và trang dựng lại bằng dữ liệu cũ. Đo thật lúc đó: tả
 
 ---
 
-## 4. Website KHÔNG hiện lịch trống
+## 4. Trang thanh lý (pass mẫu) — cần bên app trả thêm 3 trường
+
+Trang `/thanh-ly` liệt kê những mẫu tiệm đang **pass (bán đứt)**. Mẫu đang pass
+**vẫn nằm trong danh sách cho thuê** — vừa cho thuê vừa rao bán, bán xong nhân
+viên mới gỡ mẫu như bình thường. Website không có nơi nhập giá bán: giá do app
+nội bộ trả về.
+
+### Việc phải làm bên repo `Sherent-app`
+
+Thêm 3 cột vào bảng sản phẩm và trả kèm trong `GET /api/cong-khai/san-pham`:
+
+| Trường JSON | Kiểu | Ý nghĩa |
+|---|---|---|
+| `dang_pass` | boolean | Tick = đang rao bán mẫu này |
+| `gia_pass` | number | Giá bán đứt (VND). `0`/`null` = chưa chốt giá → web hiện "Liên hệ" |
+| `ghi_chu_pass` | string \| null | Tình trạng mẫu, vd `"còn mới 95%"`, `"có vết nhỏ ở gấu"` |
+
+Ví dụ một dòng:
+
+```json
+{
+  "ma": "T168",
+  "ten": "Nathalia Dress",
+  "gia_thue": 390000,
+  "dang_pass": true,
+  "gia_pass": 800000,
+  "ghi_chu_pass": "Còn mới 95%, mặc 3 lần"
+}
+```
+
+⚠️ **Đừng lọc mẫu đang pass ra khỏi API.** Website cần chúng ở CẢ hai chỗ; nó
+tự lọc ra danh sách thanh lý bằng `dang_pass`.
+
+### Cách website đọc (`lib/internal-api.ts` → `mapSale`)
+
+- `dang_pass: false` → luôn ẩn khỏi trang thanh lý, **kể cả khi ô giá còn số**
+  (nhân viên hay quên xoá giá cũ). Bỏ tick là mẫu biến mất khỏi trang ngay.
+- Chưa kịp thêm cột `dang_pass` → web tạm hiểu "điền `gia_pass` > 0 là đang
+  pass", nên có thể triển khai mỗi cột giá trước cũng chạy.
+- API chưa có cả 3 trường → trang `/thanh-ly` hiện trạng thái trống kèm nút
+  Zalo, **không lỗi**. Đây chính là những gì đang thấy tính tới hôm nay.
+
+Bán xong: bỏ tick `dang_pass` (mẫu về lại chế độ chỉ cho thuê), hoặc gỡ hẳn sản
+phẩm nếu không cho thuê nữa. App gọi `/api/lam-moi` như mọi thay đổi khác nên
+website cập nhật trong vài giây.
+
+---
+
+## 5. Website KHÔNG hiện lịch trống
 
 Chủ shop chốt 11/08/2026: không cho website biết món nào đang bận. API bên app
 đã gỡ hẳn khả năng đó — hàm trong database còn không đọc bảng đơn hàng nữa.

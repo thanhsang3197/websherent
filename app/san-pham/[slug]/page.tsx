@@ -150,6 +150,30 @@ export default async function ProductPage({
             * Phí cọc được hoàn lại khi bạn trả đồ đúng hẹn và&nbsp;nguyên&nbsp;vẹn.
           </p>
 
+          {/* Mẫu đang pass: VẪN cho thuê như thường, chỉ báo thêm là bán được. */}
+          {product.sale && (
+            <div className="mt-6 rounded-lg border border-accent/30 bg-accent/5 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-dark">
+                Mẫu này đang pass
+              </p>
+              <p className="mt-1.5 font-serif text-2xl text-accent-dark">
+                {formatVnd(product.sale.price)}
+                <span className="ml-2 align-middle text-sm font-normal text-muted">
+                  mua đứt
+                </span>
+              </p>
+              {product.sale.note && (
+                <p className="mt-1 text-sm italic text-muted">{product.sale.note}</p>
+              )}
+              <Link
+                href="/thanh-ly"
+                className="mt-2 inline-block text-sm font-medium text-accent-dark underline underline-offset-4 hover:text-accent"
+              >
+                Xem tất cả mẫu thanh lý
+              </Link>
+            </div>
+          )}
+
           <ContactButtons
             className="mt-6"
             zaloLabel="Nhắn Zalo giữ mẫu này"
