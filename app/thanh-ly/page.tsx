@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSaleProducts } from '@/lib/products';
-import { formatVnd } from '@/lib/format';
+import { formatVndD } from '@/lib/format';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { SaleCard } from '@/components/SaleCard';
 
@@ -74,7 +74,7 @@ export default async function ThanhLyPage() {
           <p className="mt-8 text-sm text-muted">
             {products.length} mẫu đang pass
             {products.some((p) => (p.sale?.price ?? 0) > 0) &&
-              ` · từ ${formatVnd(
+              ` · từ ${formatVndD(
                 Math.min(
                   ...products
                     .map((p) => p.sale?.price ?? 0)

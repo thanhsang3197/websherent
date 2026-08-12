@@ -7,7 +7,7 @@ import {
   getRelatedProducts,
 } from '@/lib/products';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd } from '@/lib/format';
+import { formatVnd, saleLine, saleNoteLine } from '@/lib/format';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
@@ -156,14 +156,14 @@ export default async function ProductPage({
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-dark">
                 Mẫu này đang pass
               </p>
-              <p className="mt-1.5 font-serif text-2xl text-accent-dark">
-                {formatVnd(product.sale.price)}
-                <span className="ml-2 align-middle text-sm font-normal text-muted">
-                  mua đứt
-                </span>
+              {/* Cùng câu chữ, cùng cỡ chữ với thẻ ở trang /thanh-ly. */}
+              <p className="mt-1.5 text-sm font-medium text-accent-dark">
+                {saleLine(product.sale.price, product.rentPrice)}
               </p>
               {product.sale.note && (
-                <p className="mt-1 text-sm italic text-muted">{product.sale.note}</p>
+                <p className="mt-1 text-sm text-muted">
+                  {saleNoteLine(product.sale.note)}
+                </p>
               )}
               <Link
                 href="/thanh-ly"

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd, GLASS_BLUR_DATA_URL } from '@/lib/format';
+import { saleLine, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
 
 /**
@@ -35,7 +35,9 @@ export function SaleCard({
     `Hi ${siteConfig.name}, mình muốn MUA mẫu thanh lý: ` +
     `${product.name} (mã ${product.id})` +
     `${product.sizes.length ? ` - size ${product.sizes.join('/')}` : ''}` +
-    `${sale.price > 0 ? ` - giá ${formatVnd(sale.price)}` : ''}`;
+    // Cùng câu chữ với thẻ sản phẩm, để tin nhắn khách gửi khớp đúng thứ họ
+    // đang nhìn thấy trên màn hình.
+    ` - ${saleLine(sale.price, product.rentPrice)}`;
 
   const handleZaloClick = () => {
     if (typeof navigator === 'undefined' || !navigator.clipboard) return;
@@ -93,20 +95,17 @@ export function SaleCard({
               .join(' · ') || ' '}
           </p>
 
-          <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
-            <span className="font-serif text-xl text-accent-dark">
-              {formatVnd(sale.price)}
-            </span>
-            {product.rentPrice > 0 && (
-              <span className="text-xs text-muted">
-                phí thuê <s>{formatVnd(product.rentPrice)}</s>
-              </span>
-            )}
+          {/* Giá và tình trạng dùng CHUNG một cỡ chữ và một font (font nền của
+              trang, không phải font serif của tiêu đề) — chủ shop chốt
+              13/08/2026: hai dòng phải trông như một đoạn viết tay, không phải
+              hai mảng thiết kế khác nhau. */}
+          <p className="mt-2 text-sm font-medium text-accent-dark">
+            {saleLine(sale.price, product.rentPrice)}
           </p>
 
           {sale.note && (
-            <p className="mt-1.5 line-clamp-2 text-xs italic text-muted">
-              {sale.note}
+            <p className="mt-1 line-clamp-2 text-sm text-muted">
+              {saleNoteLine(sale.note)}
             </p>
           )}
         </div>
