@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Be_Vietnam_Pro } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { localBusinessJsonLd } from '@/lib/schema';
@@ -107,6 +108,7 @@ export default function RootLayout({
         <main id="noi-dung">{children}</main>
         <Footer />
         <StickyContactBar />
+        <Analytics />
       </body>
     </html>
   );
