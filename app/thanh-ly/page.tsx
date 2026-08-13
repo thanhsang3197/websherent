@@ -55,7 +55,8 @@ export default async function ThanhLyPage() {
           Những mẫu tiệm đang nhượng lại cho khách với giá bán đứt. Mẫu vẫn cho
           thuê bình thường trong lúc chờ pass, nên ai chốt trước lấy trước, chỉ
           nhận chuyển khoản trước rồi ghé shop nhận đồ hoặc shop ship — nhắn Zalo
-          để bọn mình gửi thêm ảnh thật và giữ mẫu cho bạn.
+          ({siteConfig.phone3.display}) để bọn mình gửi thêm ảnh thật và giữ mẫu
+          cho bạn.
         </p>
       </header>
 
