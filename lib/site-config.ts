@@ -11,6 +11,7 @@ export const SITE_URL = (
 
 const PHONE_RAW = '0982476969';
 const PHONE_2_RAW = '0369180625';
+const PHONE_3_RAW = '0777025776';
 
 export const siteConfig = {
   name: 'Sherent',
@@ -45,6 +46,12 @@ export const siteConfig = {
     hours: '15:00 – 20:30',
   },
   zaloUrl2: `https://zalo.me/${PHONE_2_RAW}`,
+  /** Số điện thoại/Zalo thứ ba — chỉ dùng cho nút Zalo ở trang Thanh lý. */
+  phone3: {
+    display: '0777 025 776',
+    tel: `+84${PHONE_3_RAW.slice(1)}`,
+  },
+  zaloUrl3: `https://zalo.me/${PHONE_3_RAW}`,
   facebookUrl: 'https://www.facebook.com/profile.php?id=61550268010962',
   instagramUrl: 'https://www.instagram.com/sherent.thuevaythietke/',
   tiktokUrl: 'https://www.tiktok.com/@sherent.chothuevay',

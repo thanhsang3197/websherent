@@ -114,7 +114,7 @@ export function SaleCard({
       <div className="mt-3 flex-1" />
 
       <a
-        href={siteConfig.zaloUrl}
+        href={siteConfig.zaloUrl3}
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleZaloClick}

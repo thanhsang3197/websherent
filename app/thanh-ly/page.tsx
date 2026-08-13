@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSaleProducts } from '@/lib/products';
-import { formatVndD } from '@/lib/format';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { SaleCard } from '@/components/SaleCard';
+import type { Product } from '@/types/product';
 
 // ISR giống các trang khác. Khi shop sửa giá pass bên app nội bộ, app gọi
 // /api/lam-moi -> revalidateTag('san-pham') -> trang này dựng lại ngay, không
@@ -27,8 +27,20 @@ export const metadata: Metadata = {
   },
 };
 
+/** Đếm số mẫu có giá pass rơi vào khoảng (min, max], bỏ mẫu chưa chốt giá (0). */
+function countPassRange(products: Product[], min: number, max: number) {
+  return products.filter((p) => {
+    const price = p.sale?.price ?? 0;
+    return price > min && price <= max;
+  }).length;
+}
+
 export default async function ThanhLyPage() {
   const products = await getSaleProducts();
+  const under100k = countPassRange(products, 0, 100_000);
+  const under200k = countPassRange(products, 100_000, 200_000);
+  const under500k = countPassRange(products, 200_000, 500_000);
+  const under1000k = countPassRange(products, 500_000, 1_000_000);
 
   return (
     <div className="container-content py-12 sm:py-14">
@@ -41,8 +53,9 @@ export default async function ThanhLyPage() {
         </h1>
         <p className="mt-3 text-muted">
           Những mẫu tiệm đang nhượng lại cho khách với giá bán đứt. Mẫu vẫn cho
-          thuê bình thường trong lúc chờ pass, nên ai chốt trước lấy trước — nhắn
-          Zalo để bọn mình gửi thêm ảnh thật và giữ mẫu cho bạn.
+          thuê bình thường trong lúc chờ pass, nên ai chốt trước lấy trước, chỉ
+          nhận chuyển khoản trước rồi ghé shop nhận đồ hoặc shop ship — nhắn Zalo
+          để bọn mình gửi thêm ảnh thật và giữ mẫu cho bạn.
         </p>
       </header>
 
@@ -57,12 +70,12 @@ export default async function ThanhLyPage() {
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <a
-              href={siteConfig.zaloUrl}
+              href={siteConfig.zaloUrl3}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary"
             >
-              Nhắn Zalo {siteConfig.phone.display}
+              Nhắn Zalo {siteConfig.phone3.display}
             </a>
             <Link href="/#san-pham" className="btn btn-outline">
               Xem mẫu cho thuê
@@ -71,16 +84,32 @@ export default async function ThanhLyPage() {
         </div>
       ) : (
         <>
-          <p className="mt-8 text-sm text-muted">
-            {products.length} mẫu đang pass
-            {products.some((p) => (p.sale?.price ?? 0) > 0) &&
-              ` · từ ${formatVndD(
-                Math.min(
-                  ...products
-                    .map((p) => p.sale?.price ?? 0)
-                    .filter((price) => price > 0),
-                ),
-              )}`}
+          <p className="mt-8 text-center text-lg font-semibold text-ink sm:text-left sm:text-xl">
+            Tặng 1 mẫu giá 50k đối với đơn từ 200k
+            <br />
+            Tặng 1 mẫu giá 100k đối với đơn từ 500k
+          </p>
+          <p className="mt-3 inline-block rounded-md border border-accent-dark/30 bg-tint px-3 py-1.5 text-sm font-normal text-ink">
+            <span className="text-base font-bold text-accent-dark">
+              {products.length}
+            </span>{' '}
+            mẫu đang pass, trong đó{' '}
+            <span className="text-base font-bold text-accent-dark">
+              {under100k}
+            </span>{' '}
+            mẫu &lt;100k,{' '}
+            <span className="text-base font-bold text-accent-dark">
+              {under200k}
+            </span>{' '}
+            mẫu &lt;200k,{' '}
+            <span className="text-base font-bold text-accent-dark">
+              {under500k}
+            </span>{' '}
+            mẫu &lt;500k,{' '}
+            <span className="text-base font-bold text-accent-dark">
+              {under1000k}
+            </span>{' '}
+            mẫu &lt;1000k
           </p>
 
           <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
