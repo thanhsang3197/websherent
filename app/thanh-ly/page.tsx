@@ -86,7 +86,7 @@ export default async function ThanhLyPage() {
       ) : (
         <>
           <p className="mt-8 text-center text-lg font-semibold text-ink sm:text-left sm:text-xl">
-            Tặng 1 mẫu giá 50k đối với đơn từ 200k
+            Tặng 1 mẫu giá 50k đối với đơn từ 300k
             <br />
             Tặng 1 mẫu giá 100k đối với đơn từ 500k
           </p>
