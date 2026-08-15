@@ -4,7 +4,6 @@ import { getProducts, countByCategory } from '@/lib/products';
 import { siteConfig, promoBanner, heroConfig } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
-import { ContactButtons } from '@/components/ContactButtons';
 import { Brand } from '@/components/Brand';
 import { PromoBanner } from '@/components/PromoBanner';
 import { RecentlyViewedSection } from '@/components/RecentlyViewedSection';
@@ -74,41 +73,11 @@ export default async function HomePage() {
       */}
       {promoBanner.enabled && <PromoBanner />}
 
-      {/* Quy trình thuê */}
-      <section className="my-12">
-        <div className="container-content rounded-3xl glass-panel p-8 sm:p-12 shadow-glass">
-          <h2 className="text-center font-serif text-3xl font-semibold text-accent-dark">
-            Thuê đồ tại <Brand /> rất đơn giản
-          </h2>
-          <ol className="mt-10 grid gap-8 sm:grid-cols-3">
-            {[
-              {
-                t: 'Chọn mẫu ưng ý',
-                d: 'Xem bộ sưu tập, lọc theo loại, size, thương hiệu và mức giá để tìm mẫu hợp bạn.',
-              },
-              {
-                t: 'Nhắn Zalo giữ mẫu',
-                d: 'Gửi tên mẫu qua Zalo để chốt ngày mặc và được tư vấn size nhanh chóng.',
-              },
-              {
-                t: 'Nhận đồ & hoàn cọc',
-                d: 'Nhận đồ theo hẹn, mặc thật xinh, trả đúng ngày và được hoàn lại tiền cọc.',
-              },
-            ].map((step, i) => (
-              <li key={step.t} className="rounded-2xl glass-card p-6 text-center shadow-sm transition-all hover:scale-[1.02]">
-                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent-dark font-serif text-xl text-surface shadow-md">
-                  {i + 1}
-                </span>
-                <h3 className="mt-4 font-serif text-xl font-medium text-accent-dark">{step.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{step.d}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-10 flex justify-center">
-            <ContactButtons />
-          </div>
-        </div>
-      </section>
+      {/*
+        Mục "Quy trình thuê" (3 bước + nút liên hệ) đã bỏ hẳn 16/08/2026 theo
+        yêu cầu chủ shop: khách vào trang chủ là thấy ngay bộ sưu tập. Nội dung
+        quy trình vẫn còn ở /cau-hoi-thuong-gap và /gioi-thieu.
+      */}
 
       {/* Bộ sưu tập + bộ lọc */}
       <section id="san-pham" className="container-content scroll-mt-24 py-16">
