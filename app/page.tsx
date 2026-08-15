@@ -67,37 +67,12 @@ export default async function HomePage() {
       <RecentlyViewedSection products={products} />
 
       {/*
-        Vị trí này: có banner khuyến mãi (bật ở lib/site-config.ts) -> hiện banner.
-        Chưa có -> hiện đoạn giới thiệu "Về SHERENT" (văn xuôi tự nhiên, tốt cho GEO).
+        Banner khuyến mãi (bật ở lib/site-config.ts) vẫn nằm trên đầu — đây là
+        tin thời vụ, để dưới cùng thì khách không kịp thấy.
+        Còn đoạn giới thiệu "Về SHERENT" đã chuyển xuống CUỐI trang (chủ shop
+        chốt 16/08/2026: khách vào trang phải thấy sản phẩm càng nhanh càng tốt).
       */}
-      {promoBanner.enabled ? (
-        <PromoBanner />
-      ) : (
-      <section className="container-content py-16">
-        <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
-            Về {siteConfig.name}
-          </p>
-          <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
-            Tiệm cho thuê đầm, váy &amp; áo dài tại {siteConfig.address.district}
-          </h2>
-          <p className="mt-4 leading-relaxed text-muted">
-            <Brand /> tuyển chọn các mẫu đầm, váy dự tiệc và áo dài thiết
-            kế đa dạng size, phù hợp đi tiệc, chụp ảnh, dự sự kiện, cưới hỏi và
-            Tết. Hiện có <strong className="text-ink">{counts['dam-vay']}</strong>{' '}
-            mẫu đầm &amp; váy và <strong className="text-ink">{counts['ao-dai']}</strong>{' '}
-            mẫu áo dài để bạn thoải mái lựa chọn. Xem mẫu ngay trên trang này rồi
-            nhắn Zalo để giữ mẫu — không cần dùng Instagram&nbsp;hay&nbsp;Facebook.
-          </p>
-          <Link
-            href="/gioi-thieu"
-            className="mt-5 inline-block text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
-          >
-            Tìm hiểu thêm về tiệm →
-          </Link>
-        </div>
-      </section>
-      )}
+      {promoBanner.enabled && <PromoBanner />}
 
       {/* Quy trình thuê */}
       <section className="my-12">
@@ -152,6 +127,33 @@ export default async function HomePage() {
         </header>
 
         <ProductExplorer products={products} />
+      </section>
+
+      {/* Giới thiệu tiệm — đặt cuối trang, sau khi khách xem xong bộ sưu tập.
+          Nội dung này phục vụ SEO/GEO là chính nên không cần nằm trên đầu. */}
+      <section className="container-content pb-16">
+        <div className="max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
+            Về {siteConfig.name}
+          </p>
+          <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
+            Tiệm cho thuê đầm, váy &amp; áo dài tại {siteConfig.address.district}
+          </h2>
+          <p className="mt-4 leading-relaxed text-muted">
+            <Brand /> tuyển chọn các mẫu đầm, váy dự tiệc và áo dài thiết
+            kế đa dạng size, phù hợp đi tiệc, chụp ảnh, dự sự kiện, cưới hỏi và
+            Tết. Hiện có <strong className="text-ink">{counts['dam-vay']}</strong>{' '}
+            mẫu đầm &amp; váy và <strong className="text-ink">{counts['ao-dai']}</strong>{' '}
+            mẫu áo dài để bạn thoải mái lựa chọn. Xem mẫu ngay trên trang này rồi
+            nhắn Zalo để giữ mẫu — không cần dùng Instagram&nbsp;hay&nbsp;Facebook.
+          </p>
+          <Link
+            href="/gioi-thieu"
+            className="mt-5 inline-block text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
+          >
+            Tìm hiểu thêm về tiệm →
+          </Link>
+        </div>
       </section>
     </>
   );

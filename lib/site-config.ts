@@ -138,8 +138,12 @@ export const heroConfig = {
  * 🖼️ BANNER QUẢNG CÁO (trang chủ).
  *
  * CÁCH DÙNG:
- *  - `enabled: false`  -> trang chủ hiện đoạn giới thiệu "Về SHERENT" như bình thường.
- *  - `enabled: true`   -> banner THAY THẾ đoạn "Về SHERENT" ở đúng vị trí đó.
+ *  - `enabled: false`  -> không hiện gì.
+ *  - `enabled: true`   -> banner hiện ở ĐẦU trang chủ (ngay dưới khung ảnh hero).
+ *
+ * Từ 16/08/2026 banner KHÔNG còn thay thế đoạn "Về SHERENT" nữa: đoạn giới
+ * thiệu đã dời xuống cuối trang để khách thấy sản phẩm sớm hơn, còn banner giữ
+ * nguyên trên đầu vì là tin khuyến mãi thời vụ.
  *
  * Điền `image` và/hoặc `title`+`description` đều được (có ảnh không chữ, có chữ không ảnh,
  * hoặc cả hai). Ảnh upload lên repo GitHub `sherent-hinhanh` giống ảnh sản phẩm.
