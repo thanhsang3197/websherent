@@ -49,7 +49,7 @@ export function Hero({
           </div>
 
           {/* Stat panel Liquid Glass */}
-          <dl className="mt-10 grid grid-cols-2 gap-4 rounded-3xl glass-card p-5 sm:grid-cols-5">
+          <dl className="mt-10 grid grid-cols-2 gap-4 rounded-3xl glass-card p-5 sm:grid-cols-4">
             <div className="text-center sm:text-left">
               <dt className="sr-only">Tổng số mẫu</dt>
               <dd className="font-serif text-2xl font-semibold text-accent-dark">
@@ -71,13 +71,6 @@ export function Hero({
               <dt className="sr-only">Số mẫu pháp phục</dt>
               <dd className="font-serif text-2xl font-semibold text-accent-dark">{counts?.['phap-phuc'] ?? 0}+</dd>
               <p className="text-xs text-muted">mẫu pháp phục</p>
-            </div>
-            {/* Gấm còn ít mẫu nên trên điện thoại (2 cột) cho ô này nằm trọn
-                hàng cuối, tránh để trống nửa hàng trông như lỗi hiển thị. */}
-            <div className="col-span-2 border-l border-white/60 pl-4 text-center sm:col-span-1 sm:text-left">
-              <dt className="sr-only">Số mẫu gấm</dt>
-              <dd className="font-serif text-2xl font-semibold text-accent-dark">{counts?.gam ?? 0}+</dd>
-              <p className="text-xs text-muted">mẫu gấm</p>
             </div>
           </dl>
         </div>
