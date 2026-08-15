@@ -87,9 +87,9 @@ function mapCategory(
   if (v.includes('GAM')) return 'gam';
 
   // App nội bộ CHƯA có loại "Gấm" trong cột `loai`, nên mẫu gấm hiện về đây
-  // dưới dạng đầm/váy. Nhận thêm theo mã SP "G..." hoặc chữ "gấm" trong tên —
-  // đúng quy ước đang dùng bên Google Sheets. Chỉ nhặt ra trường hợp gấm, các
-  // phân loại khác giữ nguyên để không xáo trộn dữ liệu sẵn có.
+  // dưới dạng đầm/váy. Nhận thêm theo MÃ SP "G..." — đúng quy ước AD/PP đang
+  // dùng bên Google Sheets. Chỉ nhặt ra trường hợp gấm, các phân loại khác giữ
+  // nguyên để không xáo trộn dữ liệu sẵn có.
   if (deriveCategory(id, name, image) === 'gam') return 'gam';
   return 'dam-vay';
 }
