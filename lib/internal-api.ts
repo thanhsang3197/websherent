@@ -2,6 +2,7 @@ import 'server-only';
 import type { Product, ProductSale } from '@/types/product';
 import { normalizeImageUrl } from '@/lib/format';
 import { buildProductSlug } from '@/lib/slug';
+import { deriveCategory } from '@/lib/brands';
 
 /**
  * ADAPTER KẾT NỐI VỚI WEBAPP NỘI BỘ (REST API).
@@ -74,10 +75,22 @@ interface TraVeApi {
   san_pham: SanPhamApi[];
 }
 
-function mapCategory(loai: string): Product['category'] {
+function mapCategory(
+  loai: string,
+  id: string,
+  name: string,
+  image: string | null,
+): Product['category'] {
   const v = (loai || '').toUpperCase();
   if (v.includes('AO_DAI') || v.includes('AO-DAI')) return 'ao-dai';
   if (v.includes('PHAP_PHUC') || v.includes('PHAP-PHUC')) return 'phap-phuc';
+  if (v.includes('GAM')) return 'gam';
+
+  // App nội bộ CHƯA có loại "Gấm" trong cột `loai`, nên mẫu gấm hiện về đây
+  // dưới dạng đầm/váy. Nhận thêm theo mã SP "G..." hoặc chữ "gấm" trong tên —
+  // đúng quy ước đang dùng bên Google Sheets. Chỉ nhặt ra trường hợp gấm, các
+  // phân loại khác giữ nguyên để không xáo trộn dữ liệu sẵn có.
+  if (deriveCategory(id, name, image) === 'gam') return 'gam';
   return 'dam-vay';
 }
 
@@ -127,7 +140,7 @@ function mapSanPham(item: SanPhamApi): Product {
     name,
     brand: item.thuong_hieu ?? null,
     sizes,
-    category: mapCategory(item.loai),
+    category: mapCategory(item.loai, id, name, mainImage || null),
     rentPrice: Number(item.gia_thue ?? 0),
     depositPrice: Number(item.tien_coc ?? 0),
     image: mainImage,

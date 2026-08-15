@@ -65,10 +65,13 @@ export function normalizeSize(raw: string | null | undefined): string | null {
 }
 
 /**
- * Suy ra phân loại: đầm/váy (tiệc), áo dài, hay pháp phục.
+ * Suy ra phân loại: đầm/váy (tiệc), áo dài, pháp phục hay gấm.
  * Ưu tiên mã SP theo quy ước của tiệm (đáng tin nhất): "AD" = áo dài,
- * "PP" = pháp phục. Không khớp mã -> dò tín hiệu "áo dài"/"ao_dai_" trong
- * tên/ảnh. Không khớp gì -> mặc định đầm/váy (tiệc).
+ * "PP" = pháp phục, "G" = gấm. Không khớp mã -> dò tín hiệu "áo dài"/"gấm"
+ * trong tên/ảnh. Không khớp gì -> mặc định đầm/váy (tiệc).
+ *
+ * Lưu ý thứ tự: mã SP luôn thắng tên. Nên mẫu "AD12 Hồng gấm" vẫn là áo dài
+ * (mã AD), chỉ mẫu KHÔNG có mã AD/PP mà tên có chữ "gấm" mới rơi vào gấm.
  */
 export function deriveCategory(
   id: string,
@@ -78,10 +81,12 @@ export function deriveCategory(
   const code = id.trim();
   if (/^ad/i.test(code)) return 'ao-dai';
   if (/^pp/i.test(code)) return 'phap-phuc';
+  if (/^g/i.test(code)) return 'gam';
 
   const haystack = slugify(`${name} ${image ?? ''}`);
   if (haystack.includes('ao-dai') || haystack.includes('aodai')) {
     return 'ao-dai';
   }
+  if (haystack.includes('gam')) return 'gam';
   return 'dam-vay';
 }

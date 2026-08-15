@@ -93,7 +93,12 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     const q = sp.get('q');
     if (q) next.q = q;
     const cat = sp.get('loai');
-    if (cat === 'ao-dai' || cat === 'dam-vay' || cat === 'phap-phuc') {
+    if (
+      cat === 'ao-dai' ||
+      cat === 'dam-vay' ||
+      cat === 'phap-phuc' ||
+      cat === 'gam'
+    ) {
       next.category = cat as CategoryFilter;
     }
     const brand = sp.get('brand');

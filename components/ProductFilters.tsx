@@ -17,6 +17,7 @@ const CATEGORIES: { id: CategoryFilter; label: string }[] = [
   { id: 'dam-vay', label: 'Đầm & Váy' },
   { id: 'ao-dai', label: 'Áo dài' },
   { id: 'phap-phuc', label: 'Pháp phục' },
+  { id: 'gam', label: 'Gấm' },
 ];
 
 const SORT_OPTIONS: { id: SortOption; label: string }[] = [
@@ -80,7 +81,7 @@ export function ProductFilters({
 
       {/* Loại */}
       <div
-        className="mt-4 flex gap-1.5 rounded-full glass-pill p-1.5 overflow-x-auto"
+        className="mt-4 flex flex-wrap gap-1.5 rounded-2xl glass-pill p-1.5 sm:rounded-full"
         role="group"
         aria-label="Lọc theo loại"
       >
@@ -92,7 +93,7 @@ export function ProductFilters({
               type="button"
               aria-pressed={active}
               onClick={() => onChange({ category: c.id })}
-              className={`flex-1 min-w-[80px] rounded-full px-3 py-2 text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+              className={`min-w-[72px] flex-1 rounded-full px-3 py-2 text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                 active
                   ? 'bg-gradient-to-r from-accent to-accent-dark text-surface shadow-md scale-[1.02]'
                   : 'text-ink/80 hover:text-accent-dark hover:bg-white/40'

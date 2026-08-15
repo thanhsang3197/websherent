@@ -34,6 +34,7 @@ export async function GET() {
     `- Cho thuê đầm, váy dự tiệc: ${counts['dam-vay']} mẫu`,
     `- Cho thuê áo dài thiết kế: ${counts['ao-dai']} mẫu`,
     `- Cho thuê pháp phục: ${counts['phap-phuc']} mẫu`,
+    `- Cho thuê đồ gấm: ${counts.gam} mẫu`,
     `- Khu vực phục vụ: ${siteConfig.areaServed.join(', ')} — hỗ trợ giao hàng toàn quốc.`,
     '- Khách có thể xem mẫu online hoặc ghé cửa hàng thử đồ trực tiếp.',
     '',
