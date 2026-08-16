@@ -14,6 +14,13 @@ import { Brand } from '@/components/Brand';
  * logo hãng — chủ shop chốt BỎ, nên không đưa vào (cũng tránh dùng logo thương
  * hiệu bên thứ ba mà tiệm không có quyền).
  */
+/**
+ * Style DÙNG CHUNG cho mọi tiêu đề trong footer ("Về SHERENT", "Theo dõi tiệm",
+ * "Hỗ trợ khách hàng", "Liên kết"). Gom vào một chỗ để các tiêu đề không bị
+ * lệch font/cỡ chữ mỗi lần thêm mục mới.
+ */
+const footerHeadingClass = 'font-serif text-lg font-semibold text-accent-dark';
+
 export function Footer() {
   const year = new Date().getFullYear();
 
@@ -22,15 +29,15 @@ export function Footer() {
       <div className="container-content grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-3">
         {/* Cột 1 — Về tiệm + liên hệ */}
         <div>
-          <h2 className="font-serif text-lg font-semibold text-accent-dark">
+          <h2 className={footerHeadingClass}>
             Về <Brand />
           </h2>
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
+          <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink">
             <Brand /> là tiệm cho thuê váy, đầm dự tiệc thiết kế, áo dài &amp;
             pháp phục tại {siteConfig.address.district}, {siteConfig.address.city}.
           </p>
 
-          <ul className="mt-5 space-y-3 text-sm text-muted">
+          <ul className="mt-5 space-y-3 text-sm text-ink">
             <li className="flex gap-2.5">
               <PinIcon />
               <a
@@ -99,10 +106,8 @@ export function Footer() {
           {/* Mạng xã hội. Tiệm có HAI Instagram (váy thiết kế / áo dài) nên
               phải kèm nhãn chữ — để trơ 2 icon Instagram giống hệt nhau thì
               khách không biết đâu là đâu. */}
-          <h3 className="mt-6 text-xs font-semibold uppercase tracking-widest text-accent-dark">
-            Theo dõi tiệm
-          </h3>
-          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted">
+          <h3 className={`mt-6 ${footerHeadingClass}`}>Theo dõi tiệm</h3>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-ink">
             <li>
               <a
                 href={siteConfig.instagramUrl}
@@ -156,10 +161,10 @@ export function Footer() {
 
         {/* Cột 2 — Hỗ trợ khách hàng */}
         <div>
-          <h2 className="font-serif text-lg font-semibold text-accent-dark">
+          <h2 className={footerHeadingClass}>
             Hỗ trợ khách hàng
           </h2>
-          <ul className="mt-4 space-y-3 text-sm text-muted">
+          <ul className="mt-4 space-y-3 text-sm text-ink">
             <li className="flex gap-2.5">
               <ClockIcon />
               <span>Giờ mở cửa: {siteConfig.openingHours.text}</span>
@@ -175,7 +180,7 @@ export function Footer() {
 
         {/* Cột 3 — Liên kết */}
         <div>
-          <h2 className="font-serif text-lg font-semibold text-accent-dark">
+          <h2 className={footerHeadingClass}>
             Liên kết
           </h2>
           <nav aria-label="Chân trang">
@@ -184,7 +189,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-muted transition-colors hover:text-accent"
+                    className="text-ink transition-colors hover:text-accent"
                   >
                     {item.label}
                   </Link>
@@ -196,7 +201,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/60 bg-surface/50">
-        <div className="container-content py-5 text-xs text-muted">
+        <div className="container-content py-5 text-xs text-ink">
           © {year} <Brand />. Cho thuê đầm, váy &amp; áo dài —{' '}
           {siteConfig.address.district}, {siteConfig.address.city}.
         </div>
