@@ -1,12 +1,20 @@
 import Link from 'next/link';
 import type { Product } from '@/types/product';
-import { getProducts, getHeroProducts, countByCategory } from '@/lib/products';
+import {
+  getProducts,
+  getHeroProducts,
+  getNewArrivals,
+  countByCategory,
+} from '@/lib/products';
 import { siteConfig, promoBanner, heroConfig } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
 import { Brand } from '@/components/Brand';
 import { PromoBanner } from '@/components/PromoBanner';
-import { RecentlyViewedSection } from '@/components/RecentlyViewedSection';
+import {
+  NewArrivalsSection,
+  SO_MAU_MOI_VE,
+} from '@/components/NewArrivalsSection';
 
 type HeroSlide = { url: string; alt: string };
 
@@ -69,9 +77,10 @@ function buildHeroSlides(
 export default async function HomePage() {
   // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
   // khách chờ thêm một vòng mạng vô ích.
-  const [products, trungBay] = await Promise.all([
+  const [products, trungBay, moiVe] = await Promise.all([
     getProducts(),
     getHeroProducts(heroConfig.maxSlides),
+    getNewArrivals(SO_MAU_MOI_VE),
   ]);
   const counts = countByCategory(products);
 
@@ -81,8 +90,8 @@ export default async function HomePage() {
     <>
       <Hero images={heroSlides} productCount={products.length} counts={counts} />
 
-      {/* Chỉ hiện nếu trình duyệt khách có lịch sử xem — rỗng ở lần ghé đầu tiên. */}
-      <RecentlyViewedSection products={products} />
+      {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
+      <NewArrivalsSection products={moiVe} />
 
       {/*
         Banner khuyến mãi (bật ở lib/site-config.ts) vẫn nằm trên đầu — đây là

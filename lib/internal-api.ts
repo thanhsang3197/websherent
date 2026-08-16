@@ -74,6 +74,12 @@ interface SanPhamApi {
    * API đã trả đúng thứ tự shop sắp rồi, cứ giữ nguyên thứ tự mảng.
    */
   trung_bay_thu_tu?: number | null;
+
+  /**
+   * Vị trí trong khối "Sản phẩm mới về"; null = không nằm trong khối.
+   * Cùng quy tắc với `trung_bay_thu_tu`: chỉ để biết, không dùng làm chỉ số.
+   */
+  moi_ve_thu_tu?: number | null;
 }
 
 interface TraVeApi {
@@ -206,21 +212,23 @@ export async function fetchProductsFromInternalApi(): Promise<Product[]> {
 }
 
 /**
- * Lấy danh sách mẫu shop chọn TRƯNG BÀY ở khung hero (app: màn hình Trưng bày).
+ * Lấy một danh sách do shop CHỌN THỦ CÔNG bên app (màn hình Trưng bày):
+ * khung hero (`trung_bay`) và khối "Sản phẩm mới về" (`moi_ve`).
  *
- * Khác `fetchProductsFromInternalApi` ở ba điểm, đều theo api-cong-khai.md §2.1:
+ * Khác `fetchProductsFromInternalApi` ở ba điểm, theo api-cong-khai.md §2.1/§2.2:
  *
- *  1. KHÔNG phân trang — danh sách hero chỉ vài mẫu, gọi một lượt là đủ.
+ *  1. KHÔNG phân trang — mấy danh sách này chỉ vài mẫu, gọi một lượt là đủ.
  *  2. KHÔNG sắp xếp lại, KHÔNG gộp size. API đã trả đúng thứ tự shop đặt; chạy
  *     qua `prepare()` như catalogue là phá đúng cái thứ tự shop vừa sắp.
  *  3. Danh sách RỖNG là chuyện bình thường (shop bỏ hết mẫu), không phải lỗi —
- *     nơi gọi phải có phương án dự phòng, nếu không khách mở web thấy khoảng
- *     trắng ngay đầu trang.
+ *     nơi gọi phải có phương án dự phòng.
  *
- * Mẫu trưng bày chắc chắn có ảnh: app không cho chọn mẫu thiếu ảnh, cũng không
- * cho xoá ảnh của mẫu đang trưng bày.
+ * Mẫu trong hai danh sách này chắc chắn có ảnh: app không cho chọn mẫu thiếu
+ * ảnh, cũng không cho xoá ảnh của mẫu đang được chọn.
  */
-export async function fetchHeroProductsFromInternalApi(
+async function fetchDanhSachShopChon(
+  thamSo: 'trung_bay' | 'moi_ve',
+  truongThuTu: 'trung_bay_thu_tu' | 'moi_ve_thu_tu',
   soMau: number,
 ): Promise<Product[]> {
   const apiUrl = process.env.INTERNAL_API_URL;
@@ -230,41 +238,55 @@ export async function fetchHeroProductsFromInternalApi(
   const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '300');
 
   const q = new URLSearchParams({
-    trung_bay: '1',
-    // API chặn trần 100; kẹp lại phòng khi maxSlides bị điền số vô lý.
+    [thamSo]: '1',
+    // API chặn trần 100; kẹp lại phòng khi số mẫu bị điền giá trị vô lý.
     moi_trang: String(Math.min(Math.max(Math.trunc(soMau) || 1, 1), 100)),
   });
 
   const res = await fetch(`${base}?${q}`, {
     headers: { Accept: 'application/json' },
-    // Cùng nhãn với catalogue: app nội bộ đổi mẫu trưng bày là gọi
-    // /api/lam-moi, cache hero bay theo luôn chứ không phải chờ hết hạn.
+    // Cùng nhãn với catalogue: app nội bộ đổi mẫu là gọi /api/lam-moi, cache
+    // của mấy khối này bay theo luôn chứ không phải chờ hết hạn.
     next: { revalidate, tags: [TAG_SAN_PHAM] },
   });
 
   if (!res.ok) {
-    throw new Error(`Internal API trả về mã lỗi ${res.status} (trưng bày)`);
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (${thamSo})`);
   }
 
   const data = (await res.json()) as TraVeApi;
   const rows = Array.isArray(data.san_pham) ? data.san_pham : [];
 
-  // CHỐT CHẶN QUAN TRỌNG — chỉ nhận dòng có `trung_bay_thu_tu` là SỐ.
+  // CHỐT CHẶN QUAN TRỌNG — chỉ nhận dòng có trường thứ tự là SỐ.
   //
   // api-cong-khai.md §4: trừ `loai`, tham số lạ bị BỎ QUA và API vẫn trả 200
-  // kèm danh sách bình thường. Nên khi app chưa triển khai `trung_bay` (đúng
-  // tình trạng lúc viết đoạn này, 16/08/2026), lời gọi trên trả về 8 món đầu
-  // catalogue — nhận nguyên si thì hero lặng lẽ biến thành 8 mẫu áo dài đầu
-  // bảng chữ cái, trông vẫn "chạy" nên không ai biết là đang sai.
+  // kèm danh sách bình thường. Nên khi app chưa triển khai tham số (đúng tình
+  // trạng của `moi_ve` lúc viết đoạn này, 16/08/2026), lời gọi trên trả về mấy
+  // món ĐẦU CATALOGUE — nhận nguyên si thì khối "mới về" lặng lẽ thành 4 mẫu áo
+  // dài đầu bảng chữ cái, trông vẫn "chạy" nên không ai biết là đang sai.
   //
-  // Lọc theo `trung_bay_thu_tu` phân biệt được hai trường hợp: shop thật sự
-  // chọn mẫu thì trường này là số, còn API bỏ qua tham số thì nó null/không có
-  // -> danh sách rỗng -> trang chủ tự quay về cách chọn ảnh cũ.
+  // Lọc theo trường thứ tự phân biệt được hai trường hợp: shop thật sự chọn mẫu
+  // thì trường này là số, còn API bỏ qua tham số thì nó null/không có -> danh
+  // sách rỗng -> nơi gọi dùng phương án dự phòng.
   //
   // Khi app ship tính năng, đoạn này tự chạy đúng, không phải sửa gì.
-  const daChon = rows.filter((r) => typeof r.trung_bay_thu_tu === 'number');
+  const daChon = rows.filter((r) => typeof r[truongThuTu] === 'number');
 
-  // KHÔNG sắp lại theo `trung_bay_thu_tu`: API đã trả đúng thứ tự shop đặt, và
-  // số này có lỗ trống nên dùng làm khoá sắp xếp là sai (§2.1).
+  // KHÔNG sắp lại theo trường thứ tự: API đã trả đúng thứ tự shop đặt, và số
+  // này có lỗ trống nên dùng làm khoá sắp xếp là sai (§2.1).
   return daChon.map(mapSanPham);
+}
+
+/** Mẫu shop chọn TRƯNG BÀY ở khung hero (api-cong-khai.md §2.1). */
+export function fetchHeroProductsFromInternalApi(
+  soMau: number,
+): Promise<Product[]> {
+  return fetchDanhSachShopChon('trung_bay', 'trung_bay_thu_tu', soMau);
+}
+
+/** Mẫu shop chọn cho khối "Sản phẩm mới về" (api-cong-khai.md §2.2). */
+export function fetchNewArrivalsFromInternalApi(
+  soMau: number,
+): Promise<Product[]> {
+  return fetchDanhSachShopChon('moi_ve', 'moi_ve_thu_tu', soMau);
 }

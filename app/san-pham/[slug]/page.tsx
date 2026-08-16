@@ -15,7 +15,6 @@ import { ContactButtons } from '@/components/ContactButtons';
 import { ProductGallery } from '@/components/ProductGallery';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FavoriteButton } from '@/components/FavoriteButton';
-import { RecentlyViewedTracker } from '@/components/RecentlyViewedTracker';
 
 // ISR: build sẵn mọi trang, làm mới định kỳ khi dùng Google Sheets.
 export const revalidate = 300;
@@ -82,7 +81,6 @@ export default async function ProductPage({
     <article className="container-content py-10">
       <JsonLd data={productJsonLd(product, productUrl)} id="ld-product" />
       <JsonLd data={breadcrumb} id="ld-breadcrumb-product" />
-      <RecentlyViewedTracker slug={product.slug} />
 
       {/* Breadcrumb hiển thị */}
       <nav aria-label="Breadcrumb" className="text-sm text-muted">

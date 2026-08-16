@@ -11,6 +11,7 @@ import { fetchProductsFromSheet, isSheetsConfigured } from './sheets';
 import {
   fetchProductsFromInternalApi,
   fetchHeroProductsFromInternalApi,
+  fetchNewArrivalsFromInternalApi,
   isInternalApiConfigured,
 } from './internal-api';
 import { sortProductsForDisplay, groupProducts } from './mapping';
@@ -68,6 +69,24 @@ export async function getHeroProducts(soMau: number): Promise<Product[]> {
       '[products] Lỗi đọc danh sách trưng bày — hero quay về cách chọn tự động:',
       err,
     );
+    return [];
+  }
+}
+
+/**
+ * Mẫu shop chọn cho khối "Sản phẩm mới về" (api-cong-khai.md §2.2).
+ *
+ * Cùng nguyên tắc với `getHeroProducts`: trả `[]` thay vì ném lỗi, để một khối
+ * phụ hỏng không kéo sập cả trang chủ. Rỗng thì nơi gọi ẨN CẢ KHỐI (kể cả tiêu
+ * đề) — để tiêu đề đứng trên khoảng trắng thì trông như trang bị lỗi.
+ */
+export async function getNewArrivals(soMau: number): Promise<Product[]> {
+  if (!isInternalApiConfigured()) return [];
+
+  try {
+    return await fetchNewArrivalsFromInternalApi(soMau);
+  } catch (err) {
+    console.error('[products] Lỗi đọc danh sách "mới về" — ẩn khối:', err);
     return [];
   }
 }
