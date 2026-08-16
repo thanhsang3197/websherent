@@ -82,6 +82,16 @@ export function Footer() {
                   {siteConfig.phone2.display}
                 </a>{' '}
                 ({siteConfig.phone2.hours})
+                {' · '}
+                <a
+                  href={siteConfig.zaloUrl3}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-accent"
+                >
+                  {siteConfig.phone3.display}
+                </a>{' '}
+                (Thanh lý)
               </span>
             </li>
           </ul>
