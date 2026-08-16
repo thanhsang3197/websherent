@@ -8,7 +8,11 @@ import 'server-only';
 
 import type { Product, ProductCategory } from '../types/product';
 import { fetchProductsFromSheet, isSheetsConfigured } from './sheets';
-import { fetchProductsFromInternalApi, isInternalApiConfigured } from './internal-api';
+import {
+  fetchProductsFromInternalApi,
+  fetchHeroProductsFromInternalApi,
+  isInternalApiConfigured,
+} from './internal-api';
 import { sortProductsForDisplay, groupProducts } from './mapping';
 import { mockProducts } from './mock-data';
 
@@ -41,6 +45,31 @@ export function getProducts(): Promise<Product[]> | Product[] {
   }
 
   return prepare(mockProducts);
+}
+
+/**
+ * Mẫu shop chọn TRƯNG BÀY ở khung hero, đúng thứ tự shop sắp bên app.
+ *
+ * Trả `[]` — KHÔNG ném lỗi — trong mọi trường hợp không lấy được: chưa nối app
+ * nội bộ, API lỗi, hay shop chưa chọn mẫu nào. Hero là thứ đầu tiên khách nhìn
+ * thấy, nên nơi gọi luôn có phương án tự chọn ảnh thay thế; để lỗi vọt lên là
+ * hỏng cả trang chủ chỉ vì một khung ảnh.
+ *
+ * KHÔNG chạy qua `prepare()` (gộp size + sắp xếp) như catalogue — làm vậy là
+ * phá đúng cái thứ tự shop vừa sắp trong app.
+ */
+export async function getHeroProducts(soMau: number): Promise<Product[]> {
+  if (!isInternalApiConfigured()) return [];
+
+  try {
+    return await fetchHeroProductsFromInternalApi(soMau);
+  } catch (err) {
+    console.error(
+      '[products] Lỗi đọc danh sách trưng bày — hero quay về cách chọn tự động:',
+      err,
+    );
+    return [];
+  }
 }
 
 /**

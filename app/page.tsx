@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Product } from '@/types/product';
-import { getProducts, countByCategory } from '@/lib/products';
+import { getProducts, getHeroProducts, countByCategory } from '@/lib/products';
 import { siteConfig, promoBanner, heroConfig } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
@@ -11,15 +11,25 @@ import { RecentlyViewedSection } from '@/components/RecentlyViewedSection';
 type HeroSlide = { url: string; alt: string };
 
 /**
- * Chọn ảnh cho slideshow hero:
- *  1. Có mã SP ghim trong heroConfig.productIds -> dùng đúng các mẫu đó, đúng thứ tự.
- *  2. Rỗng (hoặc không mã nào hợp lệ) -> tự động lấy mẫu của heroConfig.fallbackBrand.
- *  3. Vẫn không có -> lấy mẫu bất kỳ có ảnh, để hero không bao giờ trống.
+ * Chọn ảnh cho slideshow hero, theo thứ tự ưu tiên:
+ *  1. Mã SP ghim cứng trong heroConfig.productIds -> dùng đúng các mẫu đó.
+ *     Đây là lối thoát hiểm khi cần ghim gấp mà không mở app; để rỗng là bỏ qua.
+ *  2. Mẫu shop chọn ở màn hình "Trưng bày" bên app nội bộ -> ĐƯỜNG CHÍNH.
+ *     Shop tự đổi được, không cần sửa code. Giữ nguyên thứ tự API trả về.
+ *  3. Tự động lấy mẫu của heroConfig.fallbackBrand.
+ *  4. Vẫn không có -> mẫu bất kỳ có ảnh, để hero không bao giờ trống.
  *
- * Lưu ý: mã SP ở đây là mã của mẫu SAU KHI gộp size. Mẫu nhiều size được gộp về
- * mã của size nhỏ nhất (vd Amy Dress S+M -> chỉ còn mã T001), nên dùng mã đó.
+ * Ba bước cuối là lưới an toàn cho tình huống api-cong-khai.md §2.1 cảnh báo:
+ * shop bỏ hết mẫu trưng bày thì danh sách rỗng, và nếu trang chủ không lường
+ * trước thì khách mở web ra thấy một khoảng trắng ngay đầu trang.
+ *
+ * Lưu ý: mã SP ở bước 1 là mã của mẫu SAU KHI gộp size. Mẫu nhiều size được gộp
+ * về mã của size nhỏ nhất (vd Amy Dress S+M -> chỉ còn mã T001), nên dùng mã đó.
  */
-function buildHeroSlides(products: Product[]): HeroSlide[] {
+function buildHeroSlides(
+  products: Product[],
+  trungBay: Product[],
+): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const seen = new Set<string>();
 
@@ -40,23 +50,32 @@ function buildHeroSlides(products: Product[]): HeroSlide[] {
   }
   if (slides.length > 0) return slides;
 
-  // 2. Tự động theo brand.
+  // 2. Mẫu shop chọn bên app. KHÔNG sắp lại — API đã trả đúng thứ tự shop đặt.
+  for (const p of trungBay) add(p);
+  if (slides.length > 0) return slides;
+
+  // 3. Tự động theo brand.
   for (const p of products) {
     if (p.brand === heroConfig.fallbackBrand) add(p);
   }
   if (slides.length > 0) return slides;
 
-  // 3. Cùng lắm: mẫu bất kỳ có ảnh.
+  // 4. Cùng lắm: mẫu bất kỳ có ảnh.
   const any = products.find((p) => p.image);
   if (any) add(any);
   return slides;
 }
 
 export default async function HomePage() {
-  const products = await getProducts();
+  // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
+  // khách chờ thêm một vòng mạng vô ích.
+  const [products, trungBay] = await Promise.all([
+    getProducts(),
+    getHeroProducts(heroConfig.maxSlides),
+  ]);
   const counts = countByCategory(products);
 
-  const heroSlides = buildHeroSlides(products);
+  const heroSlides = buildHeroSlides(products, trungBay);
 
   return (
     <>

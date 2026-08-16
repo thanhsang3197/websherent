@@ -65,6 +65,15 @@ interface SanPhamApi {
   gia_pass?: number | null;
   /** Ghi chú tình trạng mẫu, vd "còn mới 95%". */
   ghi_chu_pass?: string | null;
+
+  /**
+   * Vị trí mẫu trên khung hero; null = không trưng bày.
+   *
+   * CHỈ ĐỌC ĐỂ BIẾT, KHÔNG DÙNG LÀM CHỈ SỐ MẢNG: đây không phải dãy 1,2,3 liên
+   * tục — shop bỏ một mẫu ở giữa là để lại lỗ trống (api-cong-khai.md §2.1).
+   * API đã trả đúng thứ tự shop sắp rồi, cứ giữ nguyên thứ tự mảng.
+   */
+  trung_bay_thu_tu?: number | null;
 }
 
 interface TraVeApi {
@@ -194,4 +203,68 @@ export async function fetchProductsFromInternalApi(): Promise<Product[]> {
   }
 
   return tatCa;
+}
+
+/**
+ * Lấy danh sách mẫu shop chọn TRƯNG BÀY ở khung hero (app: màn hình Trưng bày).
+ *
+ * Khác `fetchProductsFromInternalApi` ở ba điểm, đều theo api-cong-khai.md §2.1:
+ *
+ *  1. KHÔNG phân trang — danh sách hero chỉ vài mẫu, gọi một lượt là đủ.
+ *  2. KHÔNG sắp xếp lại, KHÔNG gộp size. API đã trả đúng thứ tự shop đặt; chạy
+ *     qua `prepare()` như catalogue là phá đúng cái thứ tự shop vừa sắp.
+ *  3. Danh sách RỖNG là chuyện bình thường (shop bỏ hết mẫu), không phải lỗi —
+ *     nơi gọi phải có phương án dự phòng, nếu không khách mở web thấy khoảng
+ *     trắng ngay đầu trang.
+ *
+ * Mẫu trưng bày chắc chắn có ảnh: app không cho chọn mẫu thiếu ảnh, cũng không
+ * cho xoá ảnh của mẫu đang trưng bày.
+ */
+export async function fetchHeroProductsFromInternalApi(
+  soMau: number,
+): Promise<Product[]> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+
+  const base = `${apiUrl.replace(/\/$/, '')}/san-pham`;
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '300');
+
+  const q = new URLSearchParams({
+    trung_bay: '1',
+    // API chặn trần 100; kẹp lại phòng khi maxSlides bị điền số vô lý.
+    moi_trang: String(Math.min(Math.max(Math.trunc(soMau) || 1, 1), 100)),
+  });
+
+  const res = await fetch(`${base}?${q}`, {
+    headers: { Accept: 'application/json' },
+    // Cùng nhãn với catalogue: app nội bộ đổi mẫu trưng bày là gọi
+    // /api/lam-moi, cache hero bay theo luôn chứ không phải chờ hết hạn.
+    next: { revalidate, tags: [TAG_SAN_PHAM] },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (trưng bày)`);
+  }
+
+  const data = (await res.json()) as TraVeApi;
+  const rows = Array.isArray(data.san_pham) ? data.san_pham : [];
+
+  // CHỐT CHẶN QUAN TRỌNG — chỉ nhận dòng có `trung_bay_thu_tu` là SỐ.
+  //
+  // api-cong-khai.md §4: trừ `loai`, tham số lạ bị BỎ QUA và API vẫn trả 200
+  // kèm danh sách bình thường. Nên khi app chưa triển khai `trung_bay` (đúng
+  // tình trạng lúc viết đoạn này, 16/08/2026), lời gọi trên trả về 8 món đầu
+  // catalogue — nhận nguyên si thì hero lặng lẽ biến thành 8 mẫu áo dài đầu
+  // bảng chữ cái, trông vẫn "chạy" nên không ai biết là đang sai.
+  //
+  // Lọc theo `trung_bay_thu_tu` phân biệt được hai trường hợp: shop thật sự
+  // chọn mẫu thì trường này là số, còn API bỏ qua tham số thì nó null/không có
+  // -> danh sách rỗng -> trang chủ tự quay về cách chọn ảnh cũ.
+  //
+  // Khi app ship tính năng, đoạn này tự chạy đúng, không phải sửa gì.
+  const daChon = rows.filter((r) => typeof r.trung_bay_thu_tu === 'number');
+
+  // KHÔNG sắp lại theo `trung_bay_thu_tu`: API đã trả đúng thứ tự shop đặt, và
+  // số này có lỗ trống nên dùng làm khoá sắp xếp là sai (§2.1).
+  return daChon.map(mapSanPham);
 }

@@ -121,17 +121,24 @@ export const siteConfig = {
 /**
  * 🖼️ ẢNH KHUNG HERO (slideshow ở đầu trang chủ).
  *
- * CÁCH DÙNG: điền MÃ SP vào `productIds` theo ĐÚNG THỨ TỰ muốn hiện.
- *   vd: productIds: ['T161', 'T027', 'T037']
- * Mẫu phải có ảnh trong Sheet thì mới hiện được.
+ * ĐỔI ẢNH HERO Ở ĐÂU? → Mở app nội bộ, vào màn hình **Trưng bày**, chọn mẫu và
+ * kéo sắp thứ tự. Web tự cập nhật, KHÔNG cần sửa file này, không cần deploy lại.
+ * Shop bấm lưu là app gọi /api/lam-moi để xoá cache nên đổi thấy gần như ngay.
  *
- * Để mảng RỖNG [] -> web tự động lấy mẫu của `fallbackBrand` có ảnh (giá cao trước),
- * đúng như đang chạy hiện tại. Nhờ vậy hero không bao giờ bị trống.
+ * File này chỉ còn là lưới an toàn, web chọn ảnh theo thứ tự:
+ *   1. `productIds` dưới đây — ghim cứng bằng code, THẮNG cả màn hình Trưng bày.
+ *      Chỉ dùng khi cần ghim gấp mà không mở app được. Để rỗng [] là bỏ qua.
+ *   2. Mẫu shop chọn ở màn hình Trưng bày (đường chính).
+ *   3. Mẫu của `fallbackBrand` có ảnh.
+ *   4. Mẫu bất kỳ có ảnh — để hero không bao giờ trống.
+ *
+ * ⚠️ Điền `productIds` rồi QUÊN XOÁ là lỗi khó thấy nhất ở đây: shop đổi mẫu bên
+ * app mãi không thấy web đổi, vì code vẫn đang ghim đè lên.
  */
 export const heroConfig = {
-  /** TODO(hero): điền mã SP muốn ghim, vd ['T161','T027']. Rỗng = tự động. */
+  /** Ghim cứng, đè lên màn hình Trưng bày. Rỗng = để shop tự chọn bên app. */
   productIds: [] as string[],
-  /** Brand dùng khi productIds rỗng. */
+  /** Brand dùng khi cả productIds lẫn danh sách Trưng bày đều rỗng. */
   fallbackBrand: 'Sò Vintage',
   /** Số ảnh tối đa chạy trong slideshow. */
   maxSlides: 8,
