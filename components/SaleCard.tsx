@@ -118,10 +118,14 @@ export function SaleCard({
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleZaloClick}
-        className="btn btn-primary w-full !py-2 text-xs sm:text-sm"
+        className="btn btn-primary w-full !py-2 text-base sm:text-lg"
         aria-label={`Nhắn Zalo mua ${product.name} (mã ${product.id})`}
       >
-        {copied ? '✓ Đã copy tin nhắn — mở Zalo' : 'Nhắn Zalo mua mẫu này'}
+        {/* Chữ phải ngắn để vừa bề ngang ô trên điện thoại (2 cột, ô chỉ rộng
+            ~108px cho chữ). CẢ HAI trạng thái đều phải vừa — trạng thái sau khi
+            bấm mà dài là nút vỡ đúng lúc khách vừa chạm vào. Tên mẫu + mã SP
+            vẫn nằm trong aria-label cho trình đọc màn hình. */}
+        {copied ? '✓ Đã copy' : 'Nhắn Zalo'}
       </a>
     </div>
   );
