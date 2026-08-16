@@ -53,7 +53,10 @@ export const siteConfig = {
   },
   zaloUrl3: `https://zalo.me/${PHONE_3_RAW}`,
   facebookUrl: 'https://www.facebook.com/profile.php?id=61550268010962',
+  /** Instagram chính — mảng váy/đầm thiết kế. */
   instagramUrl: 'https://www.instagram.com/sherent.thuevaythietke/',
+  /** Instagram thứ hai — tiệm tách riêng mảng áo dài. */
+  instagramUrl2: 'https://www.instagram.com/sherent.thueaodai/',
   tiktokUrl: 'https://www.tiktok.com/@sherent.chothuevay',
 
   /** Địa chỉ tiệm. */

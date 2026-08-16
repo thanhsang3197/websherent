@@ -95,6 +95,63 @@ export function Footer() {
               </span>
             </li>
           </ul>
+
+          {/* Mạng xã hội. Tiệm có HAI Instagram (váy thiết kế / áo dài) nên
+              phải kèm nhãn chữ — để trơ 2 icon Instagram giống hệt nhau thì
+              khách không biết đâu là đâu. */}
+          <h3 className="mt-6 text-xs font-semibold uppercase tracking-widest text-accent-dark">
+            Theo dõi tiệm
+          </h3>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted">
+            <li>
+              <a
+                href={siteConfig.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Sherent — váy, đầm thiết kế"
+                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+              >
+                <InstagramIcon />
+                Váy thiết kế
+              </a>
+            </li>
+            <li>
+              <a
+                href={siteConfig.instagramUrl2}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Sherent — áo dài"
+                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+              >
+                <InstagramIcon />
+                Áo dài
+              </a>
+            </li>
+            <li>
+              <a
+                href={siteConfig.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook Sherent"
+                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+              >
+                <FacebookIcon />
+                Facebook
+              </a>
+            </li>
+            <li>
+              <a
+                href={siteConfig.tiktokUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok Sherent"
+                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+              >
+                <TiktokIcon />
+                TikTok
+              </a>
+            </li>
+          </ul>
         </div>
 
         {/* Cột 2 — Hỗ trợ khách hàng */}
@@ -230,6 +287,62 @@ function ClockIcon() {
     >
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+/* Icon mạng xã hội: dùng ngay trong link trỏ về chính trang của nền tảng đó.
+   Instagram vẽ nét cho hợp bộ icon phía trên; Facebook/TikTok chỉ có dạng khối
+   đặc nên để fill, cỡ 15px nên nhìn vẫn đồng bộ. */
+const socialIconClass = 'shrink-0 text-accent';
+
+function InstagramIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={socialIconClass}
+      aria-hidden="true"
+    >
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={socialIconClass}
+      aria-hidden="true"
+    >
+      <path d="M15.12 5.32H17V2.14A26.11 26.11 0 0 0 14.26 2C11.54 2 9.68 3.66 9.68 6.7v2.62H6.61v3.56h3.07V22h3.68v-9.12h3.06l.46-3.56h-3.52V7.05c0-1.05.28-1.73 1.76-1.73Z" />
+    </svg>
+  );
+}
+
+function TiktokIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={socialIconClass}
+      aria-hidden="true"
+    >
+      <path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5 2.59 2.59 0 1 1 .78-5.06V9.69a5.74 5.74 0 0 0-.78-.05 5.74 5.74 0 1 0 5.74 5.74V9.4a7.35 7.35 0 0 0 4.29 1.37V7.68a4.28 4.28 0 0 1-3.29-1.86Z" />
     </svg>
   );
 }
