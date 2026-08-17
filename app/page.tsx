@@ -6,15 +6,17 @@ import {
   getNewArrivals,
   countByCategory,
 } from '@/lib/products';
-import { siteConfig, promoBanner, heroConfig } from '@/lib/site-config';
+import {
+  siteConfig,
+  promoBanner,
+  heroConfig,
+  SO_MAU_MOI_VE,
+} from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
 import { Brand } from '@/components/Brand';
 import { PromoBanner } from '@/components/PromoBanner';
-import {
-  NewArrivalsSection,
-  SO_MAU_MOI_VE,
-} from '@/components/NewArrivalsSection';
+import { NewArrivalsSection } from '@/components/NewArrivalsSection';
 
 type HeroSlide = { url: string; alt: string };
 

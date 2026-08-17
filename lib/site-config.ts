@@ -145,6 +145,21 @@ export const heroConfig = {
 };
 
 /**
+ * Số mẫu của khối "Sản phẩm mới về" (api-cong-khai.md §2.2). Chủ shop nâng
+ * 4 -> 8 ngày 18/08/2026.
+ *
+ * ĐẶT Ở ĐÂY (file server-safe), KHÔNG đặt trong NewArrivalsSection.tsx dù nó
+ * là nơi hằng số này "thuộc về" tự nhiên nhất: NewArrivalsSection là 'use
+ * client' (cần state pause/resume của băng chuyền), và Next.js App Router
+ * thay các export thường (không phải component) của module 'use client'
+ * bằng một client-reference RỖNG khi import từ server component — hằng số
+ * sẽ ngầm biến thành `{}` chứ không báo lỗi. `app/page.tsx` (server) từng
+ * gọi `getNewArrivals(SO_MAU_MOI_VE)` với giá trị đó, `Math.trunc({}) || 1`
+ * lặng lẽ ra `1`, nên trang luôn chỉ xin đúng 1 mẫu dù shop đã chọn 8.
+ */
+export const SO_MAU_MOI_VE = 8;
+
+/**
  * 🖼️ BANNER QUẢNG CÁO (trang chủ).
  *
  * CÁCH DÙNG:

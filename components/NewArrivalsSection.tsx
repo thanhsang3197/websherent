@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import type { Product } from '@/types/product';
 import { ProductCard } from '@/components/ProductCard';
-
-/** Số ô của khối. Chủ shop nâng 4 -> 8 (api-cong-khai.md §2.2, 18/08/2026). */
-export const SO_MAU_MOI_VE = 8;
+import { SO_MAU_MOI_VE } from '@/lib/site-config';
 
 /** Bao lâu (giây) một mẫu "chiếm chỗ" khi băng chuyền trôi — §2.2 chốt ~3s/mẫu. */
 const GIAY_MOI_MAU = 3;
