@@ -130,12 +130,17 @@ function cleanSizeFromName(name: string): string {
 }
 
 /**
- * Khoá gộp "cùng một mẫu":
- * - Có ảnh  -> theo URL ảnh (cùng tấm hình = cùng chiếc đầm, đáng tin nhất).
- * - Không ảnh -> theo tên (đã bỏ size) + brand.
+ * Khoá gộp "cùng một mẫu": theo tên (đã bỏ size) + brand.
+ *
+ * TỪNG dùng URL ảnh làm khoá khi có ảnh, với giả định "cùng tấm hình = cùng
+ * chiếc đầm". Sai trong thực tế: app nội bộ cho chụp ảnh riêng theo TỪNG MÃ SP
+ * (mỗi size một mã, một thư mục ảnh trên Supabase Storage), nên 2 size của
+ * cùng 1 mẫu luôn có 2 URL ảnh khác nhau -> gộp theo ảnh gần như không bao giờ
+ * khớp, ví dụ "Elory Dress" size S (T013) và L (T015) bị tách thành 2 sản
+ * phẩm. Gộp theo tên+brand đáng tin hơn cho catalogue này (đã đối chiếu dữ
+ * liệu thật: không nhóm nào vượt quá 3 size/mẫu).
  */
 function groupingKey(p: Product): string {
-  if (p.image) return `img::${p.image}`;
   return `name::${slugify(cleanSizeFromName(p.name))}::${slugify(p.brand ?? '')}`;
 }
 
