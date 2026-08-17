@@ -55,18 +55,19 @@ const config: Config = {
           '33%': { transform: 'translate(-30px, 40px) scale(1.1)' },
           '66%': { transform: 'translate(25px, -30px) scale(0.95)' },
         },
-        'marquee-right': {
-          // Track chứa danh sách LẶP HAI LẦN; đi từ -50% -> 0% là lướt hết
+        'marquee-left': {
+          // Track chứa danh sách LẶP HAI LẦN; đi từ 0% -> -50% là lướt hết
           // đúng một bản rồi lặp liền mạch (không giật) — xem NewArrivalsSection.
-          '0%': { transform: 'translateX(-50%)' },
-          '100%': { transform: 'translateX(0%)' },
+          // Chiều phải -> trái (translateX giảm dần).
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
       animation: {
         'fade-up': 'fade-up 0.6s ease both',
         'fluid-blob': 'fluid-blob 18s infinite ease-in-out',
         'fluid-blob-slow': 'fluid-blob-reverse 24s infinite ease-in-out',
-        'marquee-right': 'marquee-right 24s linear infinite',
+        'marquee-left': 'marquee-left 24s linear infinite',
       },
     },
   },

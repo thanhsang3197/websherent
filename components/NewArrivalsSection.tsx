@@ -25,9 +25,9 @@ const TOI_THIEU_DE_CHAY_BANG_CHUYEN = 3;
  * đầu thì trống trơn; khối này hiện GIỐNG HỆT NHAU với mọi khách vì đây là thứ
  * shop muốn đẩy, không phải lịch sử duyệt.
  *
- * 18/08/2026 chủ shop chốt thêm: chạy dạng băng chuyền tự trôi trái -> phải,
- * lặp vô hạn, dừng khi hover/chạm, và tôn trọng prefers-reduced-motion (khi đó
- * hiện danh sách tĩnh cuộn tay, giống ProductCarousel).
+ * 18/08/2026 chủ shop chốt thêm: chạy dạng băng chuyền tự trôi, lặp vô hạn,
+ * dừng khi hover/chạm, và tôn trọng prefers-reduced-motion (khi đó hiện danh
+ * sách tĩnh cuộn tay, giống ProductCarousel). Chiều trôi: phải -> trái.
  *
  * Ba điều bắt buộc theo §2.2, đều đã làm ở đây:
  *  1. Chỉ render 8 mẫu đầu — shop lỡ chọn nhiều hơn là vỡ bố cục. App có cảnh
@@ -44,8 +44,8 @@ export function NewArrivalsSection({ products }: { products: Product[] }) {
 
   const chayBangChuyen = items.length >= TOI_THIEU_DE_CHAY_BANG_CHUYEN;
 
-  // Track lặp lại danh sách 2 lần để animation -50% -> 0% liền mạch, không
-  // giật (xem keyframes 'marquee-right' trong tailwind.config.ts). Bản lặp
+  // Track lặp lại danh sách 2 lần để animation 0% -> -50% liền mạch, không
+  // giật (xem keyframes 'marquee-left' trong tailwind.config.ts). Bản lặp
   // thứ hai bị ẩn hẳn khi prefers-reduced-motion để không hiện danh sách đôi.
   // Không lặp khi chưa đủ mẫu để chạy băng chuyền (xem TOI_THIEU_DE_CHAY_BANG_CHUYEN).
   const track = chayBangChuyen ? [...items, ...items] : items;
@@ -71,7 +71,7 @@ export function NewArrivalsSection({ products }: { products: Product[] }) {
         <ul
           className={
             chayBangChuyen
-              ? 'flex w-max gap-4 motion-safe:animate-marquee-right'
+              ? 'flex w-max gap-4 motion-safe:animate-marquee-left'
               : 'flex flex-wrap gap-4'
           }
           style={
