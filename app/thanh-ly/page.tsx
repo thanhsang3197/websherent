@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSaleProducts } from '@/lib/products';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
-import { SaleCard } from '@/components/SaleCard';
+import { SaleGrid } from '@/components/SaleGrid';
 import type { Product } from '@/types/product';
 
 // ISR giống các trang khác. Khi shop sửa giá pass bên app nội bộ, app gọi
@@ -113,13 +113,7 @@ export default async function ThanhLyPage() {
             mẫu &lt;1000k
           </p>
 
-          <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-            {products.map((product, i) => (
-              <li key={product.id} className="flex">
-                <SaleCard product={product} priority={i < 4} />
-              </li>
-            ))}
-          </ul>
+          <SaleGrid products={products} />
 
           {/* Câu chữ do chủ shop viết (13/08/2026) — giữ nguyên, đừng "làm hay
               hơn". Giờ mở cửa và địa chỉ đã có sẵn ở Footer nên bỏ ra khỏi đây. */}

@@ -4,9 +4,13 @@ import { useState } from 'react';
 import type { Product } from '@/types/product';
 import { ProductCard } from '@/components/ProductCard';
 import { QuickViewModal } from '@/components/QuickViewModal';
+import { useLoadMore } from '@/hooks/useLoadMore';
+
+const PAGE_SIZE = 40;
 
 /**
  * Lưới sản phẩm responsive: 2 cột mobile -> 3 -> 4 trên màn lớn.
+ * Chỉ render PAGE_SIZE mẫu mỗi lần, có nút "Xem thêm" để tải thêm.
  */
 export function ProductGrid({
   products,
@@ -17,6 +21,7 @@ export function ProductGrid({
   priorityCount?: number;
 }) {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const { visibleItems, hasMore, loadMore } = useLoadMore(products, PAGE_SIZE);
 
   if (products.length === 0) {
     return (
@@ -29,7 +34,7 @@ export function ProductGrid({
   return (
     <>
       <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-        {products.map((product, i) => (
+        {visibleItems.map((product, i) => (
           <li key={product.id}>
             <ProductCard
               product={product}
@@ -39,6 +44,18 @@ export function ProductGrid({
           </li>
         ))}
       </ul>
+
+      {hasMore ? (
+        <div className="mt-10 flex justify-center">
+          <button type="button" onClick={loadMore} className="btn btn-outline">
+            Xem thêm sản phẩm
+          </button>
+        </div>
+      ) : (
+        <p className="mt-10 animate-fade-up text-center text-sm text-muted">
+          Bạn đã xem hết {products.length} mẫu
+        </p>
+      )}
 
       <QuickViewModal
         product={quickViewProduct}
