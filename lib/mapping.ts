@@ -86,8 +86,9 @@ export function mapRows(rows: string[][], hasHeader = false): Product[] {
 /**
  * Sắp xếp để hiển thị:
  *  1) Sản phẩm CÓ ẢNH lên đầu, rồi mới tới sản phẩm chưa có ảnh.
- *  2) Trong mỗi nhóm: giá thuê GIẢM DẦN (cao -> thấp).
- *  3) Cùng giá thì theo tên (tiếng Việt) cho ổn định.
+ *  2) Trong mỗi nhóm: GIỮ NGUYÊN thứ tự đã nhận (API nội bộ tự trả "mới nhất
+ *     trước" theo docs/api-cong-khai.md §2 — không tự sắp lại đè lên, `Array.sort`
+ *     ổn định nên chỉ tách nhóm có-ảnh/không-ảnh mà không xáo trộn bên trong).
  *
  * Vì bộ lọc category/brand/size/giá đều lọc trên danh sách đã sắp xếp này
  * (Array.filter giữ nguyên thứ tự), nên mọi tab (Tất cả / Đầm & Váy / Áo dài)
@@ -97,9 +98,7 @@ export function sortProductsForDisplay(products: Product[]): Product[] {
   return [...products].sort((a, b) => {
     const aHasImg = a.image ? 0 : 1;
     const bHasImg = b.image ? 0 : 1;
-    if (aHasImg !== bHasImg) return aHasImg - bHasImg;
-    if (b.rentPrice !== a.rentPrice) return b.rentPrice - a.rentPrice;
-    return a.name.localeCompare(b.name, 'vi');
+    return aHasImg - bHasImg;
   });
 }
 
