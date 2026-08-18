@@ -101,12 +101,12 @@ export const siteConfig = {
   priceRange: '80.000₫ – 300.000₫',
 
   /**
-   * Ảnh Open Graph / mạng xã hội mặc định.
-   * Hiện dùng 1 ảnh mẫu đẹp có sẵn (JSON-LD & khi chia sẻ link sẽ hiện ảnh này).
-   * // TODO(ảnh OG): nếu muốn, thay bằng ảnh thương hiệu 1200×630 rồi đặt trong /public.
+   * Ảnh Open Graph / mạng xã hội mặc định — logo thương hiệu (chốt 19/08/2026),
+   * thay cho ảnh mẫu sản phẩm cũ. File nằm ở /public/og-image.jpg; đường dẫn
+   * tương đối được Next tự ghép thành URL tuyệt đối qua `metadataBase`
+   * (app/layout.tsx) khi build thẻ meta.
    */
-  ogImage:
-    'https://raw.githubusercontent.com/thanhsang3197/sherent-hinhanh/main/vay_thiet_ke_serena.jpg',
+  ogImage: '/og-image.jpg',
 
   /** Điều hướng chính. */
   nav: [
