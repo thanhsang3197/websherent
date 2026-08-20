@@ -86,12 +86,12 @@ export default async function ThanhLyPage() {
       ) : (
         <>
           <div className="mt-8 flex justify-center sm:justify-start">
-            <p className="animate-promo-badge-glow flex items-center gap-3 rounded-xl border px-5 py-3 text-center text-lg font-semibold sm:text-left sm:text-xl">
-              <span aria-hidden className="animate-promo-icon-bounce inline-block text-2xl sm:text-3xl">
+            <p className="animate-promo-badge-glow flex items-center gap-2 rounded-xl border px-3 py-3 text-center text-xs font-semibold sm:gap-3 sm:px-5 sm:text-left sm:text-lg lg:text-xl">
+              <span aria-hidden className="animate-promo-icon-bounce inline-block shrink-0 text-lg sm:text-2xl lg:text-3xl">
                 🎁
               </span>
               <span>
-                <span className="animate-promo-glow">
+                <span className="animate-promo-glow whitespace-nowrap">
                   Tặng 1 mẫu giá 50k đối với đơn từ 300k
                   <br />
                   Tặng 1 mẫu giá 100k đối với đơn từ 500k
