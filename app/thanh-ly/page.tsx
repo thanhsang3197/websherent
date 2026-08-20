@@ -49,7 +49,7 @@ export default async function ThanhLyPage() {
           Pass lại
         </p>
         <h1 className="mt-2 font-serif text-3xl text-accent-dark sm:text-4xl">
-          Mẫu thanh lý
+          Sản Phẩm Thanh Lý
         </h1>
         <p className="mt-3 text-muted">
           Những mẫu tiệm đang nhượng lại cho khách với giá bán đứt. Mẫu vẫn cho
@@ -85,11 +85,23 @@ export default async function ThanhLyPage() {
         </div>
       ) : (
         <>
-          <p className="mt-8 text-center text-lg font-semibold text-ink sm:text-left sm:text-xl">
-            Tặng 1 mẫu giá 50k đối với đơn từ 300k
-            <br />
-            Tặng 1 mẫu giá 100k đối với đơn từ 500k
-          </p>
+          <div className="mt-8 flex justify-center sm:justify-start">
+            <p className="animate-promo-badge-glow flex items-center gap-3 rounded-xl border px-5 py-3 text-center text-lg font-semibold sm:text-left sm:text-xl">
+              <span aria-hidden className="animate-promo-icon-bounce inline-block text-2xl sm:text-3xl">
+                🎁
+              </span>
+              <span>
+                <span className="animate-promo-glow">
+                  Tặng 1 mẫu giá 50k đối với đơn từ 300k
+                  <br />
+                  Tặng 1 mẫu giá 100k đối với đơn từ 500k
+                </span>
+                <span className="mt-1 block text-center text-xs font-normal text-muted sm:text-sm">
+                  (CTKM áp dụng cho tới khi hết sản phẩm)
+                </span>
+              </span>
+            </p>
+          </div>
           <p className="mt-3 inline-block rounded-md border border-accent-dark/30 bg-tint px-3 py-1.5 text-sm font-normal text-ink">
             <span className="text-base font-bold text-accent-dark">
               {products.length}

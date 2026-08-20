@@ -62,12 +62,45 @@ const config: Config = {
           '0%': { transform: 'translateX(0%)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        'promo-glow': {
+          '0%, 100%': {
+            color: 'rgb(196 40 40)',
+            textShadow: '0 0 0 rgba(196, 40, 40, 0)',
+          },
+          '50%': {
+            color: 'rgb(163 26 26)',
+            textShadow: '0 0 14px rgba(196, 40, 40, 0.45)',
+          },
+        },
+        'promo-badge-glow': {
+          '0%, 100%': {
+            transform: 'scale(1)',
+            boxShadow: '0 0 0 0 rgba(196, 40, 40, 0.5)',
+            backgroundColor: 'rgba(196, 40, 40, 0.07)',
+            borderColor: 'rgba(196, 40, 40, 0.35)',
+          },
+          '50%': {
+            transform: 'scale(1.02)',
+            boxShadow: '0 0 28px 6px rgba(196, 40, 40, 0.35)',
+            backgroundColor: 'rgba(196, 40, 40, 0.14)',
+            borderColor: 'rgba(196, 40, 40, 0.7)',
+          },
+        },
+        'promo-icon-bounce': {
+          '0%, 100%': { transform: 'scale(1) rotate(0deg)' },
+          '25%': { transform: 'scale(1.2) rotate(-8deg)' },
+          '50%': { transform: 'scale(1.05) rotate(6deg)' },
+          '75%': { transform: 'scale(1.2) rotate(-4deg)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.6s ease both',
         'fluid-blob': 'fluid-blob 18s infinite ease-in-out',
         'fluid-blob-slow': 'fluid-blob-reverse 24s infinite ease-in-out',
         'marquee-left': 'marquee-left 24s linear infinite',
+        'promo-glow': 'promo-glow 1.6s ease-in-out infinite',
+        'promo-badge-glow': 'promo-badge-glow 1.6s ease-in-out infinite',
+        'promo-icon-bounce': 'promo-icon-bounce 1.6s ease-in-out infinite',
       },
     },
   },
