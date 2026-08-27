@@ -4,23 +4,48 @@ const nextConfig = {
   images: {
     // ─── Ghìm số "image transformation" của Vercel ─────────────────────────
     // Hobby chỉ cho 5.000 lượt gia công ảnh mỗi chu kỳ. Công thức tiêu thụ:
-    //     số ảnh × số cỡ trong srcset × số định dạng (WebP + JPEG)
+    //     số ảnh × số cỡ trong srcset        (mỗi cỡ đúng 1 file WebP)
     // Danh sách mặc định của Next (8 deviceSizes + 8 imageSizes) gộp lại thành
-    // 10 cỡ cho mỗi ô sản phẩm. Với 301 ảnh trong catalog:
-    //     301 × 10 × 2 ≈ 6.020 lượt  ->  VƯỢT TRẦN (đã xảy ra 08/2026, ảnh
-    //     trả 402 OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED và hiện trắng).
-    // Rút còn 4 cỡ: 301 × 4 × 2 ≈ 2.400 lượt, nằm gọn trong hạn mức.
+    // 10 cỡ cho mỗi ô sản phẩm. Với ~284 ảnh trong catalog:
+    //     284 × 10 ≈ 2.840 lượt cho MỘT vòng nén.
+    // Con số đó vẫn dưới trần, nhưng cache ảnh hồi đó chỉ sống 7 ngày nên mỗi
+    // cỡ bị nén lại ~4 lần trong 1 chu kỳ 30 ngày -> VƯỢT TRẦN (xảy ra 08/2026,
+    // ảnh trả 402 OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED và hiện trắng).
+    // Cách chữa gồm 2 vế: cắt số cỡ (ngay dưới) + kéo dài cache (mục kế tiếp).
+    //
+    // Rút còn 3 cỡ: 284 × 3 ≈ 850 lượt mỗi vòng.
+    //   384  -> ô lưới sản phẩm trên desktop màn thường (25vw)
+    //   640  -> ô lưới trên điện thoại Retina; ảnh gallery trên desktop
+    //   1080 -> ô lưới trên desktop Retina; ảnh gallery trên điện thoại Retina
+    //
+    // ĐÃ GỠ 96 và 1920 (28/08/2026) cùng lúc với việc gỡ dải thumbnail và
+    // lightbox trong ProductGallery — hai vị trí duy nhất còn cần tới chúng:
+    //   96   -> thumbnail 48px (đã thay bằng dãy chấm + kéo ngang)
+    //   1920 -> lightbox phóng to (đã gỡ hẳn)
+    // Khảo sát 08/2026 cho thấy đây là hai cỡ tốn nhất mà ít người xem nhất:
+    // 98% ảnh ở cỡ 96 và 78% ảnh ở cỡ 1920 đã cạn quota, trong khi 640 chỉ 3%.
+    // Gỡ chúng KHÔNG đổi cỡ nào đang được tải thật, chỉ cắt bớt candidate thừa
+    // trong srcset -> cache 384/640/1080 hiện có vẫn nguyên vẹn.
+    //
+    // Lưu ý nếu bật lại PromoBanner (lib/site-config.ts): banner rộng 1152px
+    // giờ trần là 1080 thay vì 1920. Cần nét hơn thì thêm 1920 vào lại.
     //
     // KHÔNG mất chất lượng: ảnh gốc rộng nhất trong kho chỉ 1392px, mà Next
-    // không bao giờ phóng to ảnh — nên 2048/3840 chưa từng tạo ra thứ gì lớn
-    // hơn ảnh gốc, chỉ tốn quota.
-    //   96   -> thumbnail 48px trong ProductGallery (màn Retina)
-    //   384  -> ô lưới trên điện thoại (50vw)
-    //   640  -> ô lưới trên desktop (25vw, Retina) + ảnh chi tiết
-    //   1080 -> ảnh chi tiết sản phẩm
-    //   1920 -> Lightbox (100vw) và PromoBanner; thực tế trả về đúng cỡ gốc
-    deviceSizes: [640, 1080, 1920],
-    imageSizes: [96, 384],
+    // không bao giờ phóng to ảnh — nên 1920 chưa từng tạo ra thứ gì lớn hơn
+    // ảnh gốc, chỉ tốn quota.
+    deviceSizes: [640, 1080],
+    imageSizes: [384],
+
+    // ─── Định dạng đầu ra ──────────────────────────────────────────────────
+    // Đúng 1 định dạng: WebP. Đây cũng là mặc định của Next 14, khai ra để
+    // bản Next sau có đổi mặc định (vd thêm AVIF) cũng không tự nhân đôi số
+    // lượt gia công.
+    //
+    // Next vẫn còn một nhánh trả về ĐỊNH DẠNG GỐC (JPEG) cho trình duyệt
+    // không gửi `Accept: image/webp` — nhánh này không tắt được bằng config.
+    // Kiểm tra 08/2026: suốt cả chu kỳ không có lấy một request nào rơi vào
+    // nhánh đó, nên coi như mỗi cỡ = 1 lượt.
+    formats: ['image/webp'],
 
     // ─── Cache ảnh đã gia công ─────────────────────────────────────────────
     // Nguồn ảnh gắn Cache-Control rất ngắn (GitHub raw: 5 phút, Supabase: 1

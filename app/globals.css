@@ -70,6 +70,16 @@
     border-radius: 45% 45% 6px 6px / 30% 30% 4px 4px;
   }
 
+  /* Băng ảnh kéo ngang trong ProductGallery: vẫn cuộn được, chỉ giấu thanh
+     cuộn để không cắt ngang khung ảnh vòm. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* --- LIQUID GLASS (GLASSMORPHISM) UTILITIES --- */
   .glass-card {
     background: rgba(255, 255, 255, 0.55);
