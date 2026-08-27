@@ -176,7 +176,7 @@ export async function fetchProductsFromInternalApi(): Promise<Product[]> {
   if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
 
   const base = `${apiUrl.replace(/\/$/, '')}/san-pham`;
-  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '300');
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '21600');
 
   const tatCa: Product[] = [];
 
@@ -235,7 +235,7 @@ async function fetchDanhSachShopChon(
   if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
 
   const base = `${apiUrl.replace(/\/$/, '')}/san-pham`;
-  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '300');
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '21600');
 
   const q = new URLSearchParams({
     [thamSo]: '1',

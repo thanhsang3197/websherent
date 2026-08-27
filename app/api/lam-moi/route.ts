@@ -6,7 +6,7 @@ import { TAG_SAN_PHAM } from '@/lib/internal-api';
 /**
  * POST /api/lam-moi — app nội bộ gọi khi có sản phẩm thay đổi.
  *
- * Xoá cache catalogue ngay lập tức thay vì chờ hết 5 phút. Quan trọng hơn cả
+ * Xoá cache catalogue ngay lập tức thay vì chờ hết 6 giờ. Quan trọng hơn cả
  * tốc độ: với cách chờ hết hạn, NGƯỜI ĐẦU TIÊN vào sau khi shop sửa giá vẫn
  * thấy giá cũ — chính họ là người kích hoạt dựng lại trang, người thứ hai mới
  * thấy giá mới. Với landing ít khách thì một trang có thể giữ giá cũ hàng giờ.

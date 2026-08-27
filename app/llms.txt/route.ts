@@ -11,7 +11,7 @@ import { faqItems } from '@/lib/faq';
  * Đếm số mẫu lấy TRỰC TIẾP từ Google Sheets (qua getProducts()) nên số liệu
  * luôn khớp thực tế, không cần cập nhật tay.
  */
-export const revalidate = 300;
+export const revalidate = 21600;
 
 export async function GET() {
   const products = await getProducts();

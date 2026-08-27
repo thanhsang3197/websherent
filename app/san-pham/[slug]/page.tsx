@@ -16,8 +16,22 @@ import { ProductGallery } from '@/components/ProductGallery';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FavoriteButton } from '@/components/FavoriteButton';
 
-// ISR: build sẵn mọi trang, làm mới định kỳ khi dùng Google Sheets.
-export const revalidate = 300;
+// ─── Vì sao 21.600 giây (6 giờ) chứ không phải 300 ────────────────────────
+// Đây CHỈ LÀ LƯỚI AN TOÀN, không phải cách chính để website cập nhật. Đường
+// chính là `/api/lam-moi`: app nội bộ gọi sau mỗi lần sửa sản phẩm hoặc đổi
+// mẫu trưng bày, `revalidateTag` xoá cache trong vài giây. Đồng hồ này chỉ có
+// việc khi đường chính hỏng (app deploy lỗi, sai khoá, mạng chập chờn).
+//
+// Đo trên Vercel ngày 28/08/2026 khi Fluid Active CPU chạm 3h49m/4h:
+//   - 12 giờ gần nhất: 2.800 lượt dựng lại vì HẾT GIỜ, 0 lượt vì tag
+//   - tức 76% tổng số lần chạy function là do cái lưới an toàn này
+//   - mỗi trang bị chạm ~1 lần/56 phút, nên với hạn 5 phút thì LƯỢT NÀO cũng
+//     quá hạn -> lượt nào cũng dựng lại
+// Nâng lên 6 giờ cắt khoảng 80-85% số lần dựng lại mà không làm dữ liệu cũ đi.
+//
+// ĐÁNH ĐỔI: nếu đường chính hỏng mà không ai biết, dữ liệu có thể cũ tới 6 giờ
+// thay vì 5 phút.
+export const revalidate = 21600;
 
 export async function generateStaticParams() {
   const slugs = await getAllProductSlugs();

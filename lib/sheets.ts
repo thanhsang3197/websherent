@@ -23,8 +23,8 @@ export function isSheetsConfigured(): boolean {
 }
 
 function getRevalidateSeconds(): number {
-  const n = Number(process.env.SHEETS_REVALIDATE_SECONDS ?? '300');
-  return Number.isFinite(n) && n >= 0 ? n : 300;
+  const n = Number(process.env.SHEETS_REVALIDATE_SECONDS ?? '21600');
+  return Number.isFinite(n) && n >= 0 ? n : 21600;
 }
 
 /**
