@@ -16,7 +16,7 @@ import { ProductGallery } from '@/components/ProductGallery';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FavoriteButton } from '@/components/FavoriteButton';
 
-// ─── Vì sao 21.600 giây (6 giờ) chứ không phải 300 ────────────────────────
+// ─── Vì sao 604.800 giây (7 ngày) chứ không phải 6 giờ ────────────────────
 // Đây CHỈ LÀ LƯỚI AN TOÀN, không phải cách chính để website cập nhật. Đường
 // chính là `/api/lam-moi`: app nội bộ gọi sau mỗi lần sửa sản phẩm hoặc đổi
 // mẫu trưng bày, `revalidateTag` xoá cache trong vài giây. Đồng hồ này chỉ có
@@ -29,9 +29,25 @@ import { FavoriteButton } from '@/components/FavoriteButton';
 //     quá hạn -> lượt nào cũng dựng lại
 // Nâng lên 6 giờ cắt khoảng 80-85% số lần dựng lại mà không làm dữ liệu cũ đi.
 //
-// ĐÁNH ĐỔI: nếu đường chính hỏng mà không ai biết, dữ liệu có thể cũ tới 6 giờ
-// thay vì 5 phút.
-export const revalidate = 21600;
+// ─── Đo lại tối 28/08/2026, sau khi đã chạy ở mức 6 giờ ───────────────────
+// Cái lưới an toàn vẫn là thứ tốn nhất, chỉ là ít hơn trước:
+//   - 12 giờ gần nhất: 513 lượt chạy function, trải trên ~256 trang khác nhau
+//     -> mỗi trang tự dựng lại khoảng 2 lần / 12 giờ, đúng nhịp 6 giờ
+//   - 56 giây Active CPU / 12 giờ = 60% CPU của CẢ TÀI KHOẢN (app + web)
+//   - trong khi Web Analytics chỉ đếm ~130 khách/ngày: phần lớn lượt dựng lại
+//     đó là BOT quét catalogue, không phải khách thật
+//
+// Nâng 6 giờ -> 7 ngày cắt tiếp ~96% số lần dựng lại (ước còn ~5 giây CPU/12h).
+//
+// VÌ SAO KHÔNG ĐẶT HẲN `false` (không bao giờ tự hết hạn):
+// `/api/lam-moi-web` bên app nội bộ BẮT HẾT LỖI RỒI BỎ QUA — cố ý, để website
+// hỏng không chặn nhân viên lưu sản phẩm. Nghĩa là một cú báo trượt sẽ trượt
+// TRONG IM LẶNG. Với `false` thì giá sai nằm trên web cho tới lần deploy sau,
+// có thể là hàng tháng. Bảy ngày giữ được gần hết phần tiết kiệm (chênh với
+// `false` chỉ khoảng 1 phút CPU/tháng) mà vẫn bảo đảm web TỰ LÀNH.
+//
+// ĐÁNH ĐỔI: nếu đường chính hỏng mà không ai biết, dữ liệu có thể cũ tới 7 ngày.
+export const revalidate = 604800;
 
 export async function generateStaticParams() {
   const slugs = await getAllProductSlugs();

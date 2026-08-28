@@ -7,8 +7,8 @@ import type { Product } from '@/types/product';
 
 // ISR giống các trang khác. Khi shop sửa giá pass bên app nội bộ, app gọi
 // /api/lam-moi -> revalidateTag('san-pham') -> trang này dựng lại ngay, không
-// phải chờ hết 6 giờ. Xem app/san-pham/[slug]/page.tsx để biết vì sao 6 giờ.
-export const revalidate = 21600;
+// phải chờ hết 7 ngày. Xem app/san-pham/[slug]/page.tsx để biết vì sao 7 ngày.
+export const revalidate = 604800;
 
 const TITLE = 'Thanh lý — pass lại đầm, váy & áo dài';
 const DESCRIPTION =

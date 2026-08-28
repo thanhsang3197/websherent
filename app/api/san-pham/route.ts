@@ -14,7 +14,7 @@ import { getProducts, getProductBySlug } from '@/lib/products';
 // X-Vercel-Cache: MISS 3/3 lần). Muốn cache được thì phải bỏ nhánh `?slug=`
 // hoặc tách thành route động /api/san-pham/[slug].
 // Thực tế route này chỉ tốn 1,36 giây CPU / 12 giờ (17 lượt gọi) nên chưa gấp.
-export const revalidate = 21600;
+export const revalidate = 604800;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

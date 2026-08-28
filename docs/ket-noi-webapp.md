@@ -17,7 +17,7 @@ Khai trên Vercel → project **sherent-web** → Settings → Environment Varia
 |---|---|---|
 | `INTERNAL_API_URL` | `https://sherent-app.vercel.app/api/cong-khai` | ✅ |
 | `REVALIDATE_SECRET` | chuỗi ngẫu nhiên, **giống hệt** biến `LANDING_REVALIDATE_SECRET` bên repo app | ✅ |
-| `API_REVALIDATE_SECONDS` | mặc định `300` | không |
+| `API_REVALIDATE_SECONDS` | mặc định `604800` (7 ngày) — chỉ là lưới an toàn, xem app/san-pham/[slug]/page.tsx | không |
 
 Sinh khoá mới:
 
