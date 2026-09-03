@@ -2,17 +2,19 @@ import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
 import { HeroCarousel } from '@/components/HeroCarousel';
 import type { ProductCategory } from '@/types/product';
+import type { HeroSlide } from '@/types/hero';
 
 /**
  * Hero — điểm nhấn thị giác chính: khung ảnh vòm (arch) + tiêu đề serif.
- * `images` là danh sách ảnh chạy slideshow (tự đổi mỗi 5s). Rỗng -> khung monogram.
+ * `slides` là danh sách slide chạy slideshow (tự đổi mỗi 5s) — gồm cả mẫu lẫn
+ * ảnh tự do shop treo bên app. Rỗng -> khung monogram.
  */
 export function Hero({
-  images = [],
+  slides = [],
   productCount,
   counts,
 }: {
-  images?: { url: string; alt: string }[];
+  slides?: HeroSlide[];
   productCount?: number;
   /** Số mẫu theo từng loại — hiện dạng thống kê nhỏ bên dưới nút bấm. */
   counts?: Record<ProductCategory, number>;
@@ -84,7 +86,7 @@ export function Hero({
               className="arch absolute -right-4 -top-4 h-full w-full border border-white/80 bg-white/30 backdrop-blur-md shadow-glass-glow"
             />
             <div className="arch relative aspect-[3/4] w-64 overflow-hidden shadow-2xl ring-1 ring-white/60 sm:w-72 lg:w-96">
-              <HeroCarousel images={images} />
+              <HeroCarousel slides={slides} />
             </div>
           </div>
         </div>

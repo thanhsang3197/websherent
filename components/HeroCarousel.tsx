@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import type { HeroSlide } from '@/types/hero';
 import { siteConfig } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 
@@ -11,28 +13,29 @@ const ANIM_MS = 700; // thời lượng hiệu ứng trượt
 const SIZES = '(max-width: 640px) 256px, (max-width: 1024px) 288px, 384px';
 
 /**
- * Slideshow ảnh hero: tự đổi mỗi 5s, hiệu ứng trượt phải→trái.
+ * Slideshow hero: tự đổi mỗi 5s, hiệu ứng trượt phải→trái.
  * Tôn trọng prefers-reduced-motion: không tự chạy nếu người dùng bật giảm chuyển động.
- * Rỗng -> khung monogram; 1 ảnh -> ảnh tĩnh.
+ * Rỗng -> khung monogram; 1 slide -> ảnh tĩnh.
+ *
+ * Slide có thể là MẪU hoặc ẢNH TỰ DO shop treo (banner, ảnh studio). Ảnh tự do
+ * mang thêm `caption` (chữ đè lên ảnh) và `href` (bấm vào đi đâu) —
+ * api-cong-khai.md §2.3. Cả hai đều không bắt buộc: `caption` null thì KHÔNG vẽ
+ * khối chữ rỗng, `href` null thì slide đơn thuần là ảnh, không bấm được.
  */
-export function HeroCarousel({
-  images,
-}: {
-  images: { url: string; alt: string }[];
-}) {
+export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [current, setCurrent] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
   const lastRef = useRef(0);
 
   // Tự động chuyển ảnh (bỏ qua nếu <=1 ảnh hoặc người dùng giảm chuyển động).
   useEffect(() => {
-    if (images.length <= 1) return;
+    if (slides.length <= 1) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const id = setInterval(() => {
-      setCurrent((c) => (c + 1) % images.length);
+      setCurrent((c) => (c + 1) % slides.length);
     }, INTERVAL_MS);
     return () => clearInterval(id);
-  }, [images.length]);
+  }, [slides.length]);
 
   // Khi ảnh hiện tại đổi -> giữ ảnh cũ lại để trượt ra, rồi bỏ sau khi xong.
   useEffect(() => {
@@ -43,7 +46,7 @@ export function HeroCarousel({
     return () => clearTimeout(t);
   }, [current]);
 
-  if (images.length === 0) {
+  if (slides.length === 0) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-tint">
         <span className="font-serif text-7xl text-accent/60">
@@ -58,7 +61,7 @@ export function HeroCarousel({
       {prev !== null && prev !== current && (
         <div key={`prev-${prev}`} className="absolute inset-0 hero-slide-out">
           <Image
-            src={images[prev].url}
+            src={slides[prev].url}
             alt=""
             aria-hidden
             fill
@@ -74,8 +77,8 @@ export function HeroCarousel({
         className={`absolute inset-0 ${prev !== null ? 'hero-slide-in' : ''}`}
       >
         <Image
-          src={images[current].url}
-          alt={images[current].alt}
+          src={slides[current].url}
+          alt={slides[current].alt}
           fill
           priority={current === 0}
           placeholder="blur"
@@ -83,7 +86,46 @@ export function HeroCarousel({
           sizes={SIZES}
           className="object-cover"
         />
+
+        {/* Chữ shop muốn hiện đè lên ảnh tự do. null -> không vẽ gì. */}
+        {slides[current].caption && (
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-4 pb-4 pt-10">
+            <p className="text-balance text-center font-serif text-lg leading-snug text-white drop-shadow">
+              {slides[current].caption}
+            </p>
+          </div>
+        )}
+
+        {/* Cả slide thành một vùng bấm được khi shop có gắn liên kết. */}
+        {slides[current].href && (
+          <SlideLink href={slides[current].href as string} label={slides[current].alt} />
+        )}
       </div>
     </>
   );
+}
+
+/**
+ * Vùng bấm phủ kín slide.
+ *
+ * Liên kết shop nhập có thể là đường dẫn trong web ("/khuyen-mai") hoặc URL
+ * ngoài (fanpage, form đăng ký). `next/link` chỉ hợp với đường dẫn nội bộ —
+ * đưa URL ngoài vào nó sẽ cố prefetch một trang không thuộc web này.
+ */
+function SlideLink({ href, label }: { href: string; label: string }) {
+  const laNgoai = /^https?:\/\//i.test(href);
+
+  if (laNgoai) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        className="absolute inset-0"
+      />
+    );
+  }
+
+  return <Link href={href} aria-label={label} className="absolute inset-0" />;
 }

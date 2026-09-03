@@ -1,5 +1,7 @@
 import 'server-only';
 import type { Product, ProductSale } from '@/types/product';
+import type { HeroSlide } from '@/types/hero';
+import { siteConfig } from '@/lib/site-config';
 import { normalizeImageUrl } from '@/lib/format';
 import { buildProductSlug } from '@/lib/slug';
 import { deriveCategory } from '@/lib/brands';
@@ -289,4 +291,92 @@ export function fetchNewArrivalsFromInternalApi(
   soMau: number,
 ): Promise<Product[]> {
   return fetchDanhSachShopChon('moi_ve', 'moi_ve_thu_tu', soMau);
+}
+
+// ---------------------------------------------------------------------------
+// KHUNG ẢNH ĐẦU TRANG (hero) — endpoint riêng, có cả ảnh tự do
+// ---------------------------------------------------------------------------
+
+/** Một slide đúng như `GET /api/cong-khai/hero` trả về (api-cong-khai.md §2.3). */
+interface HeroSlideApi {
+  /** 'san_pham' = mẫu trong catalogue; 'anh' = ảnh tự do (banner, ảnh studio). */
+  kieu: 'san_pham' | 'anh';
+  /** Mã SP. LUÔN null với slide kiểu 'anh' — đừng dựng đường dẫn từ đây. */
+  ma: string | null;
+  /** Tên mẫu, hoặc với ảnh tự do là chữ shop muốn hiện đè lên ảnh. Có thể null. */
+  ten: string | null;
+  anh: string | null;
+  gia_thue: number | null;
+  tien_coc: number | null;
+  /** Chỉ slide 'anh' mới có: bấm vào thì mở trang nào. null = không bấm được. */
+  lien_ket: string | null;
+  thu_tu: number;
+}
+
+interface TraVeHeroApi {
+  tong: number;
+  slide: HeroSlideApi[];
+}
+
+/**
+ * Lấy danh sách slide cho khung hero từ endpoint MỚI `/hero`.
+ *
+ * Khác `fetchHeroProductsFromInternalApi` (đường cũ `?trung_bay=1`) ở chỗ nó
+ * trả về CẢ ảnh tự do — thứ shop treo được từ 04/09/2026 mà đường cũ cố ý
+ * không đưa ra (nhét dòng thiếu `ma` vào mảng sản phẩm là sinh link hỏng).
+ *
+ * KHÔNG sắp lại: hai loại slide dùng chung một dãy `thu_tu` nên API đã trả
+ * đúng thứ tự shop kéo–thả trong app.
+ *
+ * Danh sách RỖNG là chuyện bình thường (shop bỏ hết) — nơi gọi phải có phương
+ * án dự phòng, xem `getHeroSlides` ở lib/products.ts.
+ */
+export async function fetchHeroSlidesFromInternalApi(): Promise<HeroSlide[]> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '604800');
+
+  const res = await fetch(`${apiUrl.replace(/\/$/, '')}/hero`, {
+    headers: { Accept: 'application/json' },
+    // Cùng nhãn với catalogue: shop đổi hero là app gọi /api/lam-moi, cache
+    // của khối này bay theo luôn chứ không phải chờ hết hạn.
+    next: { revalidate, tags: [TAG_SAN_PHAM] },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (hero)`);
+  }
+
+  const data = (await res.json()) as TraVeHeroApi;
+  const rows = Array.isArray(data.slide) ? data.slide : [];
+
+  return rows.flatMap((r) => {
+    const url = normalizeImageUrl(r.anh ?? '');
+    // §2.3 nói `anh` không bao giờ null ở endpoint này, nhưng bỏ qua dòng
+    // thiếu ảnh vẫn rẻ hơn nhiều so với một khung hero trắng ngay đầu trang.
+    if (!url) return [];
+
+    const ten = (r.ten ?? '').trim();
+
+    if (r.kieu === 'anh') {
+      return [{
+        url,
+        alt: ten || `Ảnh giới thiệu ${siteConfig.name}`,
+        // Chữ đè lên ảnh: chỉ ảnh tự do mới có. Rỗng -> ảnh trơn, không vẽ
+        // khối chữ rỗng.
+        caption: ten || null,
+        href: (r.lien_ket ?? '').trim() || null,
+      }];
+    }
+
+    return [{
+      url,
+      alt: ten ? `Mẫu ${ten} · ${siteConfig.name}` : siteConfig.name,
+      // Slide sản phẩm không có chữ đè và (hiện tại) không bấm được — giữ
+      // đúng cách khung hero đang chạy, đổi ở đây là đổi cả hành vi cũ.
+      caption: null,
+      href: null,
+    }];
+  });
 }

@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { Product } from '@/types/product';
+import type { HeroSlide } from '@/types/hero';
 import {
   getProducts,
-  getHeroProducts,
+  getHeroSlides,
   getNewArrivals,
   countByCategory,
 } from '@/lib/products';
@@ -18,14 +19,13 @@ import { Brand } from '@/components/Brand';
 import { PromoBanner } from '@/components/PromoBanner';
 import { NewArrivalsSection } from '@/components/NewArrivalsSection';
 
-type HeroSlide = { url: string; alt: string };
-
 /**
- * Chọn ảnh cho slideshow hero, theo thứ tự ưu tiên:
+ * Chọn slide cho hero, theo thứ tự ưu tiên:
  *  1. Mã SP ghim cứng trong heroConfig.productIds -> dùng đúng các mẫu đó.
  *     Đây là lối thoát hiểm khi cần ghim gấp mà không mở app; để rỗng là bỏ qua.
- *  2. Mẫu shop chọn ở màn hình "Trưng bày" bên app nội bộ -> ĐƯỜNG CHÍNH.
- *     Shop tự đổi được, không cần sửa code. Giữ nguyên thứ tự API trả về.
+ *  2. Danh sách shop sắp ở màn hình "Trưng bày" bên app -> ĐƯỜNG CHÍNH.
+ *     Gồm CẢ ảnh tự do (banner, ảnh studio) chứ không chỉ các mẫu — xem
+ *     `getHeroSlides`. Giữ nguyên thứ tự API trả về.
  *  3. Tự động lấy mẫu của heroConfig.fallbackBrand.
  *  4. Vẫn không có -> mẫu bất kỳ có ảnh, để hero không bao giờ trống.
  *
@@ -38,7 +38,7 @@ type HeroSlide = { url: string; alt: string };
  */
 function buildHeroSlides(
   products: Product[],
-  trungBay: Product[],
+  tuApp: HeroSlide[],
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const seen = new Set<string>();
@@ -49,6 +49,8 @@ function buildHeroSlides(
     slides.push({
       url: p.image,
       alt: `Mẫu ${p.name}${p.brand ? ` — ${p.brand}` : ''} · ${siteConfig.name}`,
+      caption: null,
+      href: null,
     });
   };
 
@@ -60,8 +62,13 @@ function buildHeroSlides(
   }
   if (slides.length > 0) return slides;
 
-  // 2. Mẫu shop chọn bên app. KHÔNG sắp lại — API đã trả đúng thứ tự shop đặt.
-  for (const p of trungBay) add(p);
+  // 2. Danh sách shop sắp bên app (mẫu + ảnh tự do). KHÔNG sắp lại — API đã
+  //    trả đúng thứ tự shop kéo–thả.
+  for (const s of tuApp) {
+    if (seen.has(s.url) || slides.length >= heroConfig.maxSlides) break;
+    seen.add(s.url);
+    slides.push(s);
+  }
   if (slides.length > 0) return slides;
 
   // 3. Tự động theo brand.
@@ -79,18 +86,18 @@ function buildHeroSlides(
 export default async function HomePage() {
   // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
   // khách chờ thêm một vòng mạng vô ích.
-  const [products, trungBay, moiVe] = await Promise.all([
+  const [products, heroTuApp, moiVe] = await Promise.all([
     getProducts(),
-    getHeroProducts(heroConfig.maxSlides),
+    getHeroSlides(heroConfig.maxSlides),
     getNewArrivals(SO_MAU_MOI_VE),
   ]);
   const counts = countByCategory(products);
 
-  const heroSlides = buildHeroSlides(products, trungBay);
+  const heroSlides = buildHeroSlides(products, heroTuApp);
 
   return (
     <>
-      <Hero images={heroSlides} productCount={products.length} counts={counts} />
+      <Hero slides={heroSlides} productCount={products.length} counts={counts} />
 
       {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
       <NewArrivalsSection products={moiVe} />

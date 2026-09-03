@@ -7,10 +7,13 @@ import 'server-only';
  */
 
 import type { Product, ProductCategory } from '../types/product';
+import type { HeroSlide } from '../types/hero';
+import { siteConfig } from './site-config';
 import { fetchProductsFromSheet, isSheetsConfigured } from './sheets';
 import {
   fetchProductsFromInternalApi,
   fetchHeroProductsFromInternalApi,
+  fetchHeroSlidesFromInternalApi,
   fetchNewArrivalsFromInternalApi,
   isInternalApiConfigured,
 } from './internal-api';
@@ -71,6 +74,51 @@ export async function getHeroProducts(soMau: number): Promise<Product[]> {
     );
     return [];
   }
+}
+
+/**
+ * Slide cho khung hero — ĐƯỜNG CHÍNH kể từ 04/09/2026.
+ *
+ * Gọi endpoint `/hero` (api-cong-khai.md §2.3) để lấy CẢ ảnh tự do shop treo
+ * (banner, ảnh studio) chứ không chỉ các mẫu.
+ *
+ * ---------------------------------------------------------------------------
+ * VÌ SAO VẪN GIỮ ĐƯỜNG CŨ `?trung_bay=1` LÀM DỰ PHÒNG
+ * ---------------------------------------------------------------------------
+ * Web và app là hai project Vercel riêng, deploy độc lập. Bản app đang chạy
+ * lúc viết đoạn này CHƯA có route `/hero` — gọi vào là nhận trang 404 dạng
+ * HTML. Nếu hero chỉ biết một đường thì cú deploy này làm trắng khung ảnh đầu
+ * trang cho tới khi ai đó nhớ ra phải deploy luôn repo app.
+ *
+ * Nên: `/hero` lỗi HOẶC trả rỗng thì rơi về danh sách trưng bày cũ, đúng như
+ * §2.3 bảo đảm ("`?trung_bay=1` KHÔNG đổi gì cả và sẽ tiếp tục chạy").
+ *
+ * Gỡ nhánh dự phòng này được, nhưng chỉ sau khi app đã deploy bản có `/hero`
+ * VÀ chạy migration `20260904120000_anh_hero.sql`.
+ */
+export async function getHeroSlides(soMau: number): Promise<HeroSlide[]> {
+  if (!isInternalApiConfigured()) return [];
+
+  try {
+    const slides = await fetchHeroSlidesFromInternalApi();
+    if (slides.length > 0) return slides.slice(0, soMau);
+  } catch (err) {
+    console.error(
+      '[products] Lỗi đọc /hero — quay về danh sách trưng bày cũ:',
+      err,
+    );
+  }
+
+  // Dự phòng: danh sách trưng bày cũ, chỉ có mẫu (không có ảnh tự do).
+  const trungBay = await getHeroProducts(soMau);
+  return trungBay
+    .filter((p) => p.image)
+    .map((p) => ({
+      url: p.image as string,
+      alt: `Mẫu ${p.name}${p.brand ? ` — ${p.brand}` : ''} · ${siteConfig.name}`,
+      caption: null,
+      href: null,
+    }));
 }
 
 /**
