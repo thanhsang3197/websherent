@@ -7,8 +7,9 @@ import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 
 /**
  * Gallery ảnh sản phẩm: khung vòm (arch), KÉO NGANG để đổi ảnh.
- * Nhiều ảnh -> hiện dãy chấm trắng ở đáy ảnh, vừa báo "còn ảnh nữa" vừa bấm
- * được để nhảy thẳng tới ảnh đó. 1 ảnh -> chỉ hiện ảnh. 0 ảnh -> khung monogram.
+ * Nhiều ảnh -> hiện nút mũi tên ở mép trái/phải để bấm qua lại, kèm dãy chấm
+ * trắng ở đáy ảnh vừa báo "còn ảnh nữa" vừa bấm được để nhảy thẳng tới ảnh đó.
+ * 1 ảnh -> chỉ hiện ảnh. 0 ảnh -> khung monogram.
  *
  * Dùng scroll-snap sẵn có của trình duyệt thay vì tự bắt cử chỉ: vuốt trên
  * điện thoại, kéo trackpad trên desktop và phím mũi tên đều chạy mà không tốn
@@ -43,6 +44,19 @@ export function ProductGallery({
     if (!el) return;
     el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
   }, []);
+
+  /**
+   * Lùi/tiến 1 ảnh, CUỘN VÒNG: ở ảnh cuối bấm tiếp thì quay về ảnh đầu.
+   * Phần lớn mẫu chỉ có 2 ảnh — khoá nút ở hai đầu sẽ khiến nút trông như hỏng.
+   */
+  const step = useCallback(
+    (delta: number) => {
+      const n = images.length;
+      if (n < 2) return;
+      goTo((active + delta + n) % n);
+    },
+    [active, goTo, images.length],
+  );
 
   return (
     <div className="w-full max-w-sm">
@@ -86,6 +100,21 @@ export function ProductGallery({
               </div>
 
               {hasMultiple && (
+                <>
+                  <ArrowButton
+                    side="left"
+                    label="Ảnh trước"
+                    onClick={() => step(-1)}
+                  />
+                  <ArrowButton
+                    side="right"
+                    label="Ảnh kế"
+                    onClick={() => step(1)}
+                  />
+                </>
+              )}
+
+              {hasMultiple && (
                 <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
                   {images.map((src, i) => (
                     <button
@@ -115,5 +144,46 @@ export function ProductGallery({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Nút mũi tên chồng lên mép trái/phải của ảnh.
+ *
+ * Mũi tên vẽ bằng inline SVG như các component khác trong repo (không kéo thêm
+ * thư viện icon). Nền hơi mờ để còn thấy được ảnh phía dưới, đậm lên khi rê
+ * chuột — trên điện thoại không có trạng thái hover nên để sẵn độ mờ đọc được.
+ */
+function ArrowButton({
+  side,
+  label,
+  onClick,
+}: {
+  side: 'left' | 'right';
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={`absolute top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-ink shadow-[0_1px_4px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:bg-white ${
+        side === 'left' ? 'left-2' : 'right-2'
+      }`}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        className="h-4 w-4"
+      >
+        <polyline points={side === 'left' ? '15 5 8 12 15 19' : '9 5 16 12 9 19'} />
+      </svg>
+    </button>
   );
 }
