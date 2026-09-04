@@ -5,7 +5,7 @@ import type { ProductCategory } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
 
 /**
- * Hero — điểm nhấn thị giác chính: khung ảnh vòm (arch) + tiêu đề serif.
+ * Hero — điểm nhấn thị giác chính: khung ảnh chữ nhật + tiêu đề serif.
  * `slides` là danh sách slide chạy slideshow (tự đổi mỗi 5s) — gồm cả mẫu lẫn
  * ảnh tự do shop treo bên app. Rỗng -> khung monogram.
  */
@@ -77,15 +77,22 @@ export function Hero({
           </dl>
         </div>
 
-        {/* Ảnh signature — slideshow */}
+        {/*
+          Ảnh signature — slideshow.
+
+          KHUNG CHỮ NHẬT, không dùng `.arch` như trang chi tiết sản phẩm: vòm
+          cắt mất hai góc TRÊN của ảnh, mà ở hero đó thường là chỗ có mặt mẫu
+          hoặc chữ trên banner shop treo (ảnh tự do, api-cong-khai.md §2.3).
+          Trang chi tiết vẫn giữ vòm — ở đó ảnh đã được chọn khuôn cho vừa.
+        */}
         <div className="order-1 flex justify-center lg:order-2">
           <div className="relative">
             {/* Quầng sáng thuỷ tinh phía sau */}
             <div
               aria-hidden="true"
-              className="arch absolute -right-4 -top-4 h-full w-full border border-white/80 bg-white/30 backdrop-blur-md shadow-glass-glow"
+              className="absolute -right-4 -top-4 h-full w-full rounded-2xl border border-white/80 bg-white/30 backdrop-blur-md shadow-glass-glow"
             />
-            <div className="arch relative aspect-[3/4] w-64 overflow-hidden shadow-2xl ring-1 ring-white/60 sm:w-72 lg:w-96">
+            <div className="relative aspect-[3/4] w-64 overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/60 sm:w-72 lg:w-96">
               <HeroCarousel slides={slides} />
             </div>
           </div>
