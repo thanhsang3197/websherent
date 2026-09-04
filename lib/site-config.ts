@@ -19,7 +19,7 @@ export const siteConfig = {
 
   /** Câu slogan (tiêu đề H1 của trang chủ). */
   slogan:
-    'Không đơn thuần là thuê 1 chiếc váy, bạn thuê một diện mạo hoàn hảo',
+    'Không đơn thuần là thuê 1 chiếc váy, bạn thuê một diện mạo HOÀN HẢO',
 
   /**
    * Mô tả dài, văn phong tự nhiên — dùng cho meta description & GEO (để AI hiểu tiệm).
