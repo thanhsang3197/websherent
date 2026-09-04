@@ -374,7 +374,7 @@ export async function fetchHeroSlidesFromInternalApi(): Promise<HeroSlide[]> {
   const data = (await res.json()) as TraVeHeroApi;
   const rows = Array.isArray(data.slide) ? data.slide : [];
 
-  return rows.flatMap((r) => {
+  return rows.flatMap<HeroSlide>((r) => {
     const url = normalizeImageUrl(r.anh ?? '');
     // §2.3 nói `anh` không bao giờ null ở endpoint này, nhưng bỏ qua dòng
     // thiếu ảnh vẫn rẻ hơn nhiều so với một khung hero trắng ngay đầu trang.
@@ -384,6 +384,7 @@ export async function fetchHeroSlidesFromInternalApi(): Promise<HeroSlide[]> {
 
     if (r.kieu === 'anh') {
       return [{
+        kieu: 'anh' as const,
         url,
         alt: ten || `Ảnh giới thiệu ${siteConfig.name}`,
         // Chữ đè lên ảnh: chỉ ảnh tự do mới có. Rỗng -> ảnh trơn, không vẽ
@@ -394,6 +395,7 @@ export async function fetchHeroSlidesFromInternalApi(): Promise<HeroSlide[]> {
     }
 
     return [{
+      kieu: 'san_pham' as const,
       url,
       alt: ten ? `Mẫu ${ten} · ${siteConfig.name}` : siteConfig.name,
       // Slide sản phẩm không có chữ đè và (hiện tại) không bấm được — giữ

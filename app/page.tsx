@@ -47,6 +47,7 @@ function buildHeroSlides(
     if (!p.image || seen.has(p.image) || slides.length >= heroConfig.maxSlides) return;
     seen.add(p.image);
     slides.push({
+      kieu: 'san_pham',
       url: p.image,
       alt: `Mẫu ${p.name}${p.brand ? ` — ${p.brand}` : ''} · ${siteConfig.name}`,
       caption: null,

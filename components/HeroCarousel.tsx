@@ -59,7 +59,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   return (
     <>
       {prev !== null && prev !== current && (
-        <div key={`prev-${prev}`} className="absolute inset-0 hero-slide-out">
+        <div key={`prev-${prev}`} className="absolute inset-0 bg-tint hero-slide-out">
           <Image
             src={slides[prev].url}
             alt=""
@@ -68,13 +68,13 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             placeholder="blur"
             blurDataURL={GLASS_BLUR_DATA_URL}
             sizes={SIZES}
-            className="object-cover"
+            className={classAnh(slides[prev].kieu)}
           />
         </div>
       )}
       <div
         key={`cur-${current}`}
-        className={`absolute inset-0 ${prev !== null ? 'hero-slide-in' : ''}`}
+        className={`absolute inset-0 bg-tint ${prev !== null ? 'hero-slide-in' : ''}`}
       >
         <Image
           src={slides[current].url}
@@ -84,7 +84,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           placeholder="blur"
           blurDataURL={GLASS_BLUR_DATA_URL}
           sizes={SIZES}
-          className="object-cover"
+          className={classAnh(slides[current].kieu)}
         />
 
         {/* Chữ shop muốn hiện đè lên ảnh tự do. null -> không vẽ gì. */}
@@ -128,4 +128,19 @@ function SlideLink({ href, label }: { href: string; label: string }) {
   }
 
   return <Link href={href} aria-label={label} className="absolute inset-0" />;
+}
+
+/**
+ * Cách lấp khung cho từng loại slide.
+ *
+ * `object-cover` phủ kín khung nhưng CẮT phần thừa. Với ảnh chụp mẫu thì đúng
+ * — ảnh đã chụp dọc sẵn, cắt hai mép không mất gì.
+ *
+ * Ảnh tự do thì ngược lại: tỉ lệ tuỳ ý (ảnh chụp màn hình trang IG, banner
+ * ngang…) và chữ shop muốn khách đọc — tên IG/Facebook, nội dung ưu đãi —
+ * thường nằm ngay MÉP TRÊN, đúng chỗ bị cắt đầu tiên. Nên dùng `object-contain`
+ * để thấy trọn ảnh; phần thừa lấp bằng nền `bg-tint` cho ra vẻ có chủ ý.
+ */
+function classAnh(kieu: HeroSlide['kieu']): string {
+  return kieu === 'anh' ? 'object-contain' : 'object-cover';
 }

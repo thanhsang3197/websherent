@@ -114,6 +114,7 @@ export async function getHeroSlides(soMau: number): Promise<HeroSlide[]> {
   return trungBay
     .filter((p) => p.image)
     .map((p) => ({
+      kieu: 'san_pham' as const,
       url: p.image as string,
       alt: `Mẫu ${p.name}${p.brand ? ` — ${p.brand}` : ''} · ${siteConfig.name}`,
       caption: null,

@@ -10,6 +10,15 @@
  * đúng một lần, ở chỗ map dữ liệu (`lib/internal-api.ts`).
  */
 export interface HeroSlide {
+  /**
+   * 'san_pham' = ảnh chụp mẫu; 'anh' = ảnh tự do shop treo (banner, ảnh
+   * studio, ảnh chụp màn hình trang IG…).
+   *
+   * Giao diện cần phân biệt vì hai loại phải CẮT KHÁC NHAU: ảnh mẫu đã chụp
+   * dọc sẵn nên phủ kín khung được, còn ảnh tự do thì tỉ lệ tuỳ ý và chữ có
+   * thể nằm sát mép — cắt là mất đúng phần shop muốn khách đọc.
+   */
+  kieu: 'san_pham' | 'anh';
   /** Ảnh để hiện. Luôn có — §2.3 bảo đảm `anh` không bao giờ null. */
   url: string;
   /** Chữ mô tả ảnh (thuộc tính `alt`). */
