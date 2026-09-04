@@ -162,16 +162,41 @@ export default async function ProductPage({
             {product.sizes.length > 0 && (
               <SpecRow label="Size" value={product.sizes.join(' / ')} />
             )}
+            {/*
+              Ghi rõ "3 ngày" thay vì "Phí thuê" trơn: ngay dưới nó là mức 1
+              ngày, để nhãn cũ thì hai dòng đọc như hai giá cho cùng một thứ.
+            */}
             <SpecRow
-              label="Phí thuê"
+              label="Phí thuê 3 ngày"
               value={formatVnd(product.rentPrice)}
               valueClassName="font-serif text-xl text-accent-dark"
             />
+            {/*
+              Mức 1 ngày CHỈ hiện ở trang này, không đưa lên thẻ trong lưới:
+              lưới đã có 3 dòng giá, thêm dòng thứ tư là khách phải đọc nhiều
+              hơn nhìn mẫu. `null` = shop chưa nhập -> ẩn hẳn dòng, không hiện
+              "0đ" hay "Liên hệ" (api-cong-khai.md §2).
+            */}
+            {product.rentPrice1Day != null && (
+              <SpecRow
+                label="Phí thuê 1 ngày"
+                value={formatVnd(product.rentPrice1Day)}
+                valueClassName="font-serif text-xl text-ink"
+              />
+            )}
             <SpecRow
               label="Phí cọc"
               value={formatVnd(product.depositPrice)}
               valueClassName="font-serif text-xl text-ink"
             />
+            {/*
+              Giá tag = giá gốc trên nhãn, KHÔNG phải khoản khách trả. Để cỡ
+              chữ thường (không serif-xl như ba dòng trên) đúng với vai trò
+              tham khảo của nó.
+            */}
+            {product.tagPrice != null && (
+              <SpecRow label="Giá tag" value={formatVnd(product.tagPrice)} />
+            )}
           </dl>
 
           <p className="mt-3 text-xs text-muted">
