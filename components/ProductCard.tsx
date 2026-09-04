@@ -75,18 +75,28 @@ export function ProductCard({
               .filter(Boolean)
               .join(' · ') || ' '}
           </p>
-          <p className="mt-2 text-sm font-semibold text-accent-dark">
-            {formatVnd(product.rentPrice)}
-            <span className="font-normal text-muted"> / 3 ngày</span>
+          {/*
+            Ba dòng giá cùng cỡ chữ (text-sm): nhãn nhạt, SỐ in đậm — khách lướt
+            lưới là bắt được ngay con số, không phải đọc cả câu.
+          */}
+          <p className="mt-2 text-sm text-muted">
+            Phí thuê:{' '}
+            <span className="font-semibold text-accent-dark">
+              {formatVnd(product.rentPrice)}
+            </span>
+            <span className="text-muted"> / 3 ngày</span>
           </p>
           {/*
-            Giá cọc: 0 = Sheet/app chưa điền, KHÔNG phải "cọc 0đ". `formatVnd`
-            trả "Liên hệ" cho số 0 — hợp với giá thuê nhưng đọc thành "Cọc Liên
-            hệ" thì vô nghĩa, nên ẩn hẳn dòng này thay vì hiện chữ đó.
+            Phí cọc: 0 = Sheet/app chưa điền, KHÔNG phải "cọc 0đ". `formatVnd`
+            trả "Liên hệ" cho số 0 — hợp với giá thuê nhưng đọc thành "Phí cọc:
+            Liên hệ" thì vô nghĩa, nên ẩn hẳn dòng này thay vì hiện chữ đó.
           */}
           {product.depositPrice > 0 && (
-            <p className="mt-0.5 text-xs text-muted">
-              Cọc {formatVnd(product.depositPrice)}
+            <p className="mt-0.5 text-sm text-muted">
+              Phí cọc:{' '}
+              <span className="font-semibold text-ink">
+                {formatVnd(product.depositPrice)}
+              </span>
             </p>
           )}
           {/*
@@ -95,8 +105,11 @@ export function ProductCard({
             không hiện "0đ" hay "Liên hệ" — cả hai đều nói sai với khách.
           */}
           {product.tagPrice != null && (
-            <p className="mt-0.5 text-xs text-muted">
-              Giá tag {formatVnd(product.tagPrice)}
+            <p className="mt-0.5 text-sm text-muted">
+              Giá tag:{' '}
+              <span className="font-semibold text-ink">
+                {formatVnd(product.tagPrice)}
+              </span>
             </p>
           )}
         </div>
