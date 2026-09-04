@@ -89,6 +89,16 @@ export function ProductCard({
               Cọc {formatVnd(product.depositPrice)}
             </p>
           )}
+          {/*
+            Giá tag = giá gốc trên nhãn của chiếc đầm, KHÔNG phải giá thuê.
+            `null` = shop chưa nhập -> ẩn hẳn dòng (api-cong-khai.md §2), chứ
+            không hiện "0đ" hay "Liên hệ" — cả hai đều nói sai với khách.
+          */}
+          {product.tagPrice != null && (
+            <p className="mt-0.5 text-xs text-muted">
+              Giá tag {formatVnd(product.tagPrice)}
+            </p>
+          )}
         </div>
       </Link>
 
