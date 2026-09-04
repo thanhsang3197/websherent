@@ -40,8 +40,24 @@ export interface Product {
   sizes: string[];
   /** Phân loại: đầm/váy (tiệc), áo dài, hoặc pháp phục. */
   category: ProductCategory;
-  /** Phí thuê (VND, số nguyên). Vd 200000. 0 nếu không parse được. */
+  /** Phí thuê 3 NGÀY (VND, số nguyên). Vd 200000. 0 nếu không parse được. */
   rentPrice: number;
+  /**
+   * Phí thuê 1–2 NGÀY (VND). `null` = shop CHƯA NHẬP, KHÔNG phải "0 đ".
+   *
+   * ĐỘC LẬP với `rentPrice` — đừng tính mức nọ ra mức kia. Nhiều mẫu shop đặt
+   * số riêng chứ không theo công thức "giá 3 ngày trừ một khoản cố định"
+   * (api-cong-khai.md §2).
+   *
+   * Optional (`?`) vì hai nguồn dữ liệu cũ không có trường này: Google Sheets
+   * không có cột tương ứng, và `lib/mock-data.ts` là file tự sinh từ CSV cũ.
+   */
+  rentPrice1Day?: number | null;
+  /**
+   * Giá tag trên nhãn (VND) — giá gốc của chiếc đầm, không phải giá thuê.
+   * `null` = shop chưa nhập. Cùng lý do optional như `rentPrice1Day`.
+   */
+  tagPrice?: number | null;
   /** Phí cọc (VND, số nguyên). */
   depositPrice: number;
   /** Ảnh CHÍNH (thumbnail/OG) — đã chuẩn hoá. null nếu chưa có ảnh. */

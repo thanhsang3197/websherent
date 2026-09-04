@@ -186,6 +186,12 @@ export function groupProducts(products: Product[]): Product[] {
       // pass. Nếu chỉ lấy `rep.sale` thì một mẫu đang pass ở size L sẽ biến mất
       // khỏi trang thanh lý mà không báo gì. Lấy dòng ĐẦU TIÊN có `sale`.
       sale: members.find((m) => m.sale)?.sale ?? null,
+      // Cùng lý do với `sale`: `rep` là dòng size nhỏ nhất, không nhất thiết là
+      // dòng shop đã nhập giá. Lấy dòng ĐẦU TIÊN có số, để một mẫu điền giá ở
+      // size L không bị mất giá chỉ vì size S bỏ trống.
+      rentPrice1Day:
+        members.find((m) => m.rentPrice1Day != null)?.rentPrice1Day ?? null,
+      tagPrice: members.find((m) => m.tagPrice != null)?.tagPrice ?? null,
     };
   });
 }

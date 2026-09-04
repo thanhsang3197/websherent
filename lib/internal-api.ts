@@ -53,7 +53,15 @@ interface SanPhamApi {
   loai: string;
   thuong_hieu: string | null;
   co: string | null;
+  /** Giá thuê 3 NGÀY. Luôn có số, không bao giờ null (api-cong-khai.md §2). */
   gia_thue: number;
+  /**
+   * Giá thuê 1–2 NGÀY. `null` = shop CHƯA NHẬP, không phải "0 đ".
+   * Optional (`?`) vì API cũ chưa có trường này.
+   */
+  gia_thue_1_ngay?: number | null;
+  /** Giá tag trên nhãn. `null` = chưa nhập. Cùng lý do optional như trên. */
+  gia_tag?: number | null;
   tien_coc: number;
   anh: string | null;
   anh_phu: string[];
@@ -134,6 +142,19 @@ function mapSale(item: SanPhamApi): ProductSale | null {
   return { price: safePrice, note: note || null };
 }
 
+/**
+ * Đọc một ô tiền CÓ THỂ TRỐNG: trả số, hoặc `null` khi shop chưa nhập.
+ *
+ * Gộp mọi cách "chưa có" về đúng một giá trị (`null`) để nơi hiển thị chỉ phải
+ * kiểm tra một điều kiện. `0` cũng thành `null`: api-cong-khai.md §2 nói rõ số
+ * 0 ở đây nghĩa là chưa nhập, và in "0 đ" ra cho khách là nói một mức giá
+ * không có thật.
+ */
+function soTienHoacNull(raw: number | null | undefined): number | null {
+  const n = Number(raw ?? 0);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
 function mapSanPham(item: SanPhamApi): Product {
   const id = String(item.ma ?? '').trim();
   const name = String(item.ten ?? '').trim();
@@ -159,6 +180,8 @@ function mapSanPham(item: SanPhamApi): Product {
     sizes,
     category: mapCategory(item.loai, id, name, mainImage || null),
     rentPrice: Number(item.gia_thue ?? 0),
+    rentPrice1Day: soTienHoacNull(item.gia_thue_1_ngay),
+    tagPrice: soTienHoacNull(item.gia_tag),
     depositPrice: Number(item.tien_coc ?? 0),
     image: mainImage,
     images: images.length > 0 ? images : mainImage ? [mainImage] : [],
