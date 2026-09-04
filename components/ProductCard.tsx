@@ -79,6 +79,16 @@ export function ProductCard({
             {formatVnd(product.rentPrice)}
             <span className="font-normal text-muted"> / 3 ngày</span>
           </p>
+          {/*
+            Giá cọc: 0 = Sheet/app chưa điền, KHÔNG phải "cọc 0đ". `formatVnd`
+            trả "Liên hệ" cho số 0 — hợp với giá thuê nhưng đọc thành "Cọc Liên
+            hệ" thì vô nghĩa, nên ẩn hẳn dòng này thay vì hiện chữ đó.
+          */}
+          {product.depositPrice > 0 && (
+            <p className="mt-0.5 text-xs text-muted">
+              Cọc {formatVnd(product.depositPrice)}
+            </p>
+          )}
         </div>
       </Link>
 
