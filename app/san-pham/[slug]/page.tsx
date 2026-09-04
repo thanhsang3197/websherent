@@ -190,12 +190,16 @@ export default async function ProductPage({
               valueClassName="font-serif text-xl text-ink"
             />
             {/*
-              Giá tag = giá gốc trên nhãn, KHÔNG phải khoản khách trả. Để cỡ
-              chữ thường (không serif-xl như ba dòng trên) đúng với vai trò
-              tham khảo của nó.
+              Giá tag = giá gốc trên nhãn, KHÔNG phải khoản khách trả. Vẫn để
+              CÙNG font và CÙNG cỡ với ba dòng giá trên: bốn con số nằm cùng
+              một bảng, chỉ một dòng lệch cỡ là trông như lỗi hiển thị.
             */}
             {product.tagPrice != null && (
-              <SpecRow label="Giá tag" value={formatVnd(product.tagPrice)} />
+              <SpecRow
+                label="Giá tag"
+                value={formatVnd(product.tagPrice)}
+                valueClassName="font-serif text-xl text-ink"
+              />
             )}
           </dl>
 
