@@ -17,8 +17,9 @@ export const siteConfig = {
   name: 'Sherent',
   legalName: 'Sherent — Cho thuê đầm, váy & áo dài',
 
-  /** Câu slogan ngắn (hero, header). */
-  slogan: 'Chiếc đầm ưng ý cho mọi dịp đặc biệt',
+  /** Câu slogan (tiêu đề H1 của trang chủ). */
+  slogan:
+    'Bạn thuê một diện mạo hoàn hảo, chứ không đơn thuần là thuê một chiếc váy',
 
   /**
    * Mô tả dài, văn phong tự nhiên — dùng cho meta description & GEO (để AI hiểu tiệm).
