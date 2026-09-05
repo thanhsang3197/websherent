@@ -211,9 +211,18 @@ export const promoBanner: PromoBannerConfig = {
   ctaHref: '',
 };
 
-/** Link Google Maps chỉ đường theo địa chỉ (tạm dùng địa chỉ dạng text). */
-export const mapsDirectionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  `${siteConfig.name} ${siteConfig.address.full}`,
-)}`;
+/**
+ * Link Google Maps trỏ THẲNG tới địa điểm SHERENT đã được Google xác nhận.
+ *
+ * Trước đây là link tìm kiếm dựng từ địa chỉ dạng text — Google phải tự đoán ra
+ * tiệm, và có lúc ra danh sách nhiều kết quả thay vì đúng chỗ. Chuỗi `data=`
+ * dưới đây chứa mã địa điểm nên luôn mở đúng trang của tiệm (đã kiểm tra: ra
+ * "SHERENT, Hóc Môn — Costume rental service").
+ *
+ * Đã bỏ mấy tham số `sa` / `ved` / `ictx` có trong link chủ shop gửi: đó là mã
+ * theo dõi lượt bấm của phiên tìm kiếm hôm đó, không liên quan tới địa điểm.
+ */
+export const mapsDirectionsUrl =
+  'https://www.google.com/maps/place/SHERENT/data=!4m2!3m1!1s0x0:0xc62065a754281c7c';
 
 export type SiteConfig = typeof siteConfig;

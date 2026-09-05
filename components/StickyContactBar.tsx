@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { siteConfig } from '@/lib/site-config';
+import { siteConfig, mapsDirectionsUrl } from '@/lib/site-config';
 
 /** Hiện sau khi khách cuộn qua khỏi Hero (không che nội dung ngay đầu trang). */
 const SHOW_AFTER_PX = 480;
 
 /**
- * Nút liên hệ nổi tròn ở góc dưới bên phải — CHỈ hiện trên mobile (header desktop
- * đã có sẵn nút Zalo luôn thấy). Tự ẩn khi khách cuộn tới gần Footer để không đè
- * lên khối "Liên hệ giữ mẫu" đã có sẵn ở đó.
+ * Nút nổi tròn ở góc dưới bên phải — CHỈ hiện trên mobile (header desktop đã có
+ * sẵn nút Zalo luôn thấy). Tự ẩn khi khách cuộn tới gần Footer để không đè lên
+ * khối "Liên hệ giữ mẫu" đã có sẵn ở đó.
+ *
+ * Hai nút: chỉ đường Google Maps (nút phụ) và nhắn Zalo (nút chính).
  */
 export function StickyContactBar() {
   const [visible, setVisible] = useState(false);
@@ -44,12 +46,14 @@ export function StickyContactBar() {
       style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
     >
       <a
-        href={`tel:${siteConfig.phone.tel}`}
+        href={mapsDirectionsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         tabIndex={visible ? 0 : -1}
-        aria-label={`Gọi ${siteConfig.name} số ${siteConfig.phone.display}`}
+        aria-label={`Chỉ đường tới ${siteConfig.name} trên Google Maps`}
         className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-ink shadow-[0_4px_14px_rgba(0,0,0,0.15)] ring-1 ring-hairline transition hover:bg-tint"
       >
-        <PhoneIcon />
+        <MapPinIcon />
       </a>
 
       <a
@@ -91,7 +95,8 @@ function ChatIcon() {
   );
 }
 
-function PhoneIcon() {
+/** Ghim bản đồ — cùng bộ nét vẽ với ChatIcon để hai nút nhìn thành một cặp. */
+function MapPinIcon() {
   return (
     <svg
       width="18"
@@ -104,7 +109,8 @@ function PhoneIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
+      <circle cx="12" cy="10" r="3" />
     </svg>
   );
 }
