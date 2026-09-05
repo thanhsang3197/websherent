@@ -57,7 +57,8 @@ export function Footer() {
                   className="transition-colors hover:text-accent"
                 >
                   {siteConfig.phone.display}
-                </a>
+                </a>{' '}
+                (Hotline)
                 {' · '}
                 <a
                   href={`tel:${siteConfig.phone2.tel}`}
@@ -78,7 +79,8 @@ export function Footer() {
                   className="transition-colors hover:text-accent"
                 >
                   Zalo: {siteConfig.phone.display}
-                </a>
+                </a>{' '}
+                (Hotline)
                 {' · '}
                 <a
                   href={siteConfig.zaloUrl2}
