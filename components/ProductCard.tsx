@@ -76,15 +76,32 @@ export function ProductCard({
               .join(' · ') || ' '}
           </p>
           {/*
-            Ba dòng giá cùng cỡ chữ (text-sm): nhãn nhạt, SỐ in đậm — khách lướt
-            lưới là bắt được ngay con số, không phải đọc cả câu.
+            Ba dòng giá LUÔN cùng cỡ chữ với nhau: nhãn nhạt, SỐ in đậm — khách
+            lướt lưới là bắt được ngay con số, không phải đọc cả câu.
+
+            Trên điện thoại cỡ chữ CO THEO BỀ RỘNG MÁY, từ sm trở lên mới cố
+            định text-sm.
+
+            Lý do: lưới điện thoại là 2 cột nên ô hẹp dần theo máy — đo thật:
+            375px -> ô 157px, 360px -> 151px, 320px -> 134px. Dòng "Phí thuê:
+            330.000₫ / 3 ngày" ở text-sm cần 184px, ở text-xs cần 156px: máy
+            375 vừa khít 1px, còn 360 và 320 vẫn tràn sang thẻ bên cạnh. Một cỡ
+            chữ cố định không thể vừa cả dải máy đó, nên dùng clamp().
+
+            Chỉ thu nhỏ riêng "/ 3 ngày" thì không cứu được: ở 375px còn thiếu
+            26px, mà cả cụm đó ở text-xs mới rộng chừng 46px.
           */}
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 whitespace-nowrap text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
             Phí thuê:{' '}
             <span className="font-semibold text-accent-dark">
               {formatVnd(product.rentPrice)}
             </span>
-            <span className="text-muted"> / 3 ngày</span>
+            {/*
+              Hậu tố nhỏ hơn nhãn một nấc — nó là chú thích, không phải giá.
+              Dùng `em` chứ không phải cỡ tuyệt đối: nó tự co theo clamp() của
+              dòng cha, khỏi phải viết thêm một clamp thứ hai cho khớp.
+            */}
+            <span className="text-[0.85em] text-muted"> / 3 ngày</span>
           </p>
           {/*
             Phí cọc: 0 = Sheet/app chưa điền, KHÔNG phải "cọc 0đ". `formatVnd`
@@ -92,7 +109,7 @@ export function ProductCard({
             Liên hệ" thì vô nghĩa, nên ẩn hẳn dòng này thay vì hiện chữ đó.
           */}
           {product.depositPrice > 0 && (
-            <p className="mt-0.5 text-sm text-muted">
+            <p className="mt-0.5 text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
               Phí cọc:{' '}
               <span className="font-semibold text-ink">
                 {formatVnd(product.depositPrice)}
@@ -105,7 +122,7 @@ export function ProductCard({
             không hiện "0đ" hay "Liên hệ" — cả hai đều nói sai với khách.
           */}
           {product.tagPrice != null && (
-            <p className="mt-0.5 text-sm text-muted">
+            <p className="mt-0.5 text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
               Giá tag:{' '}
               <span className="font-semibold text-ink">
                 {formatVnd(product.tagPrice)}
