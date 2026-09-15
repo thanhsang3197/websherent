@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd } from '@/lib/format';
+import { formatVnd, listRentPrice } from '@/lib/format';
 import { ProductGallery } from '@/components/ProductGallery';
 import { ContactButtons } from '@/components/ContactButtons';
 import { FavoriteButton } from '@/components/FavoriteButton';
@@ -93,9 +93,9 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                   </div>
                 )}
                 <div className="flex justify-between py-2 text-sm">
-                  <dt className="text-muted">Phí thuê</dt>
+                  <dt className="text-muted">Phí thuê {listRentPrice(product).days} ngày</dt>
                   <dd className="font-serif text-lg font-semibold text-accent-dark">
-                    {formatVnd(product.rentPrice)}
+                    {formatVnd(listRentPrice(product).price)}
                   </dd>
                 </div>
                 <div className="flex justify-between py-2 text-sm">

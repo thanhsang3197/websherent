@@ -169,25 +169,24 @@ export default async function ProductPage({
             <SpecRow
               label="Phí thuê 3 ngày"
               value={formatVnd(product.rentPrice)}
-              valueClassName="font-serif text-xl text-accent-dark"
+              valueClassName="text-xl text-accent-dark"
             />
             {/*
-              Mức 1 ngày CHỈ hiện ở trang này, không đưa lên thẻ trong lưới:
-              lưới đã có 3 dòng giá, thêm dòng thứ tư là khách phải đọc nhiều
-              hơn nhìn mẫu. `null` = shop chưa nhập -> ẩn hẳn dòng, không hiện
+              Thẻ trong lưới chỉ hiện MỘT mức (1 ngày, xem `listRentPrice`);
+              trang này hiện cả hai. `null` = shop chưa nhập -> ẩn hẳn dòng, không hiện
               "0đ" hay "Liên hệ" (api-cong-khai.md §2).
             */}
             {product.rentPrice1Day != null && (
               <SpecRow
                 label="Phí thuê 1 ngày"
                 value={formatVnd(product.rentPrice1Day)}
-                valueClassName="font-serif text-xl text-ink"
+                valueClassName="text-xl text-ink"
               />
             )}
             <SpecRow
               label="Phí cọc"
               value={formatVnd(product.depositPrice)}
-              valueClassName="font-serif text-xl text-ink"
+              valueClassName="text-xl text-ink"
             />
             {/*
               Giá tag = giá gốc trên nhãn, KHÔNG phải khoản khách trả. Vẫn để
@@ -198,7 +197,7 @@ export default async function ProductPage({
               <SpecRow
                 label="Giá tag"
                 value={formatVnd(product.tagPrice)}
-                valueClassName="font-serif text-xl text-ink"
+                valueClassName="text-xl text-ink"
               />
             )}
           </dl>

@@ -33,6 +33,23 @@ export function formatVndD(value: number): string {
 }
 
 /**
+ * Mức phí thuê hiện trên thẻ lưới, Xem nhanh, bộ lọc và sắp xếp giá.
+ *
+ * Chủ shop chốt 15/09/2026: khách lướt lưới thấy giá 1 NGÀY. Mẫu nào shop chưa
+ * nhập giá 1 ngày (`null`) thì lùi về giá 3 ngày KÈM số ngày — không được hiện
+ * giá 3 ngày dưới nhãn 1 ngày. Lọc/sắp xếp cũng dùng hàm này để khoảng giá khớp
+ * đúng con số khách nhìn thấy trên thẻ.
+ */
+export function listRentPrice(product: {
+  rentPrice: number;
+  rentPrice1Day?: number | null;
+}): { price: number; days: 1 | 3 } {
+  return product.rentPrice1Day != null
+    ? { price: product.rentPrice1Day, days: 1 }
+    : { price: product.rentPrice, days: 3 };
+}
+
+/**
  * CÂU GIÁ CHUẨN của một mẫu đang pass:
  *
  *   "Pass 200.000đ - Thuê 300.000đ/3 ngày."

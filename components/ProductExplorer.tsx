@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Product } from '@/types/product';
+import { listRentPrice } from '@/lib/format';
 import { ProductGrid } from '@/components/ProductGrid';
 import {
   ProductFilters,
@@ -135,7 +136,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       if (filters.category !== 'all' && p.category !== filters.category) return false;
       if (filters.brand !== 'all' && p.brand !== filters.brand) return false;
       if (filters.size !== 'all' && !p.sizes.includes(filters.size)) return false;
-      if (bucket && !bucket.test(p.rentPrice)) return false;
+      if (bucket && !bucket.test(listRentPrice(p).price)) return false;
       if (query) {
         const hay = norm(`${p.name} ${p.brand ?? ''}`);
         if (!hay.includes(query)) return false;
@@ -144,10 +145,10 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     });
 
     if (filters.sort === 'price-asc') {
-      return [...list].sort((a, b) => a.rentPrice - b.rentPrice);
+      return [...list].sort((a, b) => listRentPrice(a).price - listRentPrice(b).price);
     }
     if (filters.sort === 'price-desc') {
-      return [...list].sort((a, b) => b.rentPrice - a.rentPrice);
+      return [...list].sort((a, b) => listRentPrice(b).price - listRentPrice(a).price);
     }
     if (filters.sort === 'name-asc') {
       return [...list].sort((a, b) => a.name.localeCompare(b.name, 'vi'));

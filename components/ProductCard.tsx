@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd, GLASS_BLUR_DATA_URL } from '@/lib/format';
+import { formatVnd, GLASS_BLUR_DATA_URL, listRentPrice } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
 import { FavoriteButton } from '@/components/FavoriteButton';
 
@@ -20,6 +20,7 @@ export function ProductCard({
   priority?: boolean;
   onQuickView?: (product: Product) => void;
 }) {
+  const rent = listRentPrice(product);
   return (
     <div className="relative group">
       <Link
@@ -94,14 +95,14 @@ export function ProductCard({
           <p className="mt-2 whitespace-nowrap text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
             Phí thuê:{' '}
             <span className="font-semibold text-accent-dark">
-              {formatVnd(product.rentPrice)}
+              {formatVnd(rent.price)}
             </span>
             {/*
               Hậu tố nhỏ hơn nhãn một nấc — nó là chú thích, không phải giá.
               Dùng `em` chứ không phải cỡ tuyệt đối: nó tự co theo clamp() của
               dòng cha, khỏi phải viết thêm một clamp thứ hai cho khớp.
             */}
-            <span className="text-[0.85em] text-muted"> / 3 ngày</span>
+            <span className="text-[0.85em] text-muted"> / {rent.days} ngày</span>
           </p>
           {/*
             Phí cọc: 0 = Sheet/app chưa điền, KHÔNG phải "cọc 0đ". `formatVnd`
