@@ -30,7 +30,7 @@ export function Hero({
           <h1 className="mt-4 font-serif text-4xl leading-tight text-accent-dark sm:text-5xl lg:text-6xl">
             {siteConfig.slogan}
           </h1>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
+          <p className="mt-5 max-w-md text-base leading-relaxed text-ink">
             Tuyển chọn đầm, váy dự tiệc và áo dài thiết kế đa dạng size tại{' '}
             {siteConfig.address.district}, {siteConfig.address.city}. Xem mẫu
             thoải mái, chọn được rồi giữ mẫu nhanh qua Zalo.

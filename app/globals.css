@@ -7,7 +7,7 @@
   dùng được opacity modifier (bg-accent/10, text-ink/70...). Xem tailwind.config.ts.
 */
 :root {
-  --bg: 246 241 234; /* #F6F1EA kem */
+  --bg: 250 247 243; /* #FAF7F3 kem nhạt */
   --surface: 252 250 246; /* #FCFAF6 nền thẻ */
   --accent: 176 106 79; /* #B06A4F đất nung */
   --accent-dark: 149 87 63; /* #95573F đất nung đậm (hover) */

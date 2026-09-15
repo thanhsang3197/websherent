@@ -91,9 +91,9 @@ export default function RootLayout({
       <body className="relative min-h-screen bg-bg text-ink selection:bg-accent/20">
         {/* Nền quầng sáng chuyển động hiệu ứng Liquid Glass */}
         <div className="pointer-events-none fixed inset-0 z-[-1] overflow-hidden" aria-hidden="true">
-          <div className="absolute -left-20 -top-20 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-accent/25 to-amber-200/30 blur-[100px] animate-fluid-blob" />
-          <div className="absolute -right-20 top-1/3 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-rose-300/20 to-accent/20 blur-[120px] animate-fluid-blob-slow" />
-          <div className="absolute bottom-10 left-1/4 h-[550px] w-[550px] rounded-full bg-gradient-to-tr from-amber-300/20 to-accent/15 blur-[110px] animate-fluid-blob" />
+          <div className="absolute -left-20 -top-20 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-accent/12 to-amber-200/15 blur-[100px] animate-fluid-blob" />
+          <div className="absolute -right-20 top-1/3 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-rose-300/10 to-accent/10 blur-[120px] animate-fluid-blob-slow" />
+          <div className="absolute bottom-10 left-1/4 h-[550px] w-[550px] rounded-full bg-gradient-to-tr from-amber-300/10 to-accent/8 blur-[110px] animate-fluid-blob" />
         </div>
 
         {/* JSON-LD LocalBusiness — hiện trên mọi trang cho SEO & GEO. */}
