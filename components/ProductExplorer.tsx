@@ -20,20 +20,24 @@ const DEFAULT_FILTERS: Filters = {
   sort: 'default',
 };
 
-/** Khoảng giá thuê (VND). test() dùng để lọc; label để hiển thị. */
+/**
+ * Khoảng giá thuê 1 ngày (VND, xem `listRentPrice`). test() dùng để lọc; label
+ * để hiển thị. Nhãn viết "k" cho gọn: ô chọn trên điện thoại chỉ rộng ~147px,
+ * "100.000 – 200.000₫" bị cắt cụt ngay khi đã chọn.
+ */
 const PRICE_BUCKETS = [
-  { id: 'lt100', label: 'Dưới 100.000₫', test: (p: number) => p > 0 && p < 100000 },
+  { id: 'lt100', label: 'Dưới 100k', test: (p: number) => p > 0 && p < 100000 },
   {
     id: '100-200',
-    label: '100.000 – 200.000₫',
+    label: '100k – 200k',
     test: (p: number) => p >= 100000 && p < 200000,
   },
   {
     id: '200-300',
-    label: '200.000 – 300.000₫',
+    label: '200k – 300k',
     test: (p: number) => p >= 200000 && p < 300000,
   },
-  { id: 'gt300', label: 'Từ 300.000₫', test: (p: number) => p >= 300000 },
+  { id: 'gt300', label: 'Từ 300k', test: (p: number) => p >= 300000 },
 ] as const;
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'Freesize'];
@@ -83,6 +87,12 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     () => sortSizes(Array.from(new Set(products.flatMap((p) => p.sizes)))),
     [products],
   );
+
+  const categoryCounts = useMemo(() => {
+    const counts: Partial<Record<CategoryFilter, number>> = { all: products.length };
+    for (const p of products) counts[p.category] = (counts[p.category] ?? 0) + 1;
+    return counts;
+  }, [products]);
 
   // Khôi phục bộ lọc từ URL khi tải.
   const didInitFromUrl = useRef(false);
@@ -169,6 +179,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         brands={brands}
         sizes={sizes}
         priceBuckets={PRICE_BUCKETS}
+        categoryCounts={categoryCounts}
         resultCount={filtered.length}
         total={products.length}
         onChange={onChange}
