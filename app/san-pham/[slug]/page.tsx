@@ -232,7 +232,7 @@ export default async function ProductPage({
 
           <ContactButtons
             className="mt-6"
-            zaloLabel="Nhắn Zalo giữ mẫu này"
+            zaloLabel="Đặt lịch"
             contextLabel={`${product.name} (mã ${product.id})`}
           />
 

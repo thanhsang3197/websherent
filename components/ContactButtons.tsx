@@ -35,15 +35,31 @@ export function ContactButtons({
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  /*
+    Hai nút LUÔN bằng nhau và chung một dòng (grid 2 cột), ở mọi chỗ dùng:
+    trang chi tiết, Xem nhanh, Giới thiệu, Hỏi đáp.
+
+    Cỡ chữ co theo bề rộng KHUNG CHỨA (đơn vị cqi), không theo màn hình (vw):
+    trong Xem nhanh ô nút hẹp (~160px) dù màn hình rộng, dùng vw thì chữ vẫn
+    to và icon điện thoại bị ép về 0px. Nhãn dài nhất "Gọi 0982 476 969" rộng
+    ~8,2em + icon + lề ~40px, nên chữ phải ≤ ((khung − 8) / 2 − 40) / 8,2
+    -> 5,6cqi − 5px (thấp hơn giới hạn một chút để chữ không sát viền nút).
+    `max-w-md` để trên trang rộng hai nút không bị kéo dài quá mức.
+  */
+  const sizeClass =
+    'min-w-0 gap-1.5 whitespace-nowrap px-2 text-[clamp(10.5px,calc(5.6cqi-5px),15.2px)] [&>svg]:shrink-0';
+
   return (
     <>
-      <div className={`flex flex-wrap gap-3 ${className}`}>
+      <div
+        className={`grid w-full max-w-md grid-cols-2 gap-2 [container-type:inline-size] ${className}`}
+      >
         <a
           href={siteConfig.zaloUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleZaloClick}
-          className="btn btn-primary"
+          className={`btn btn-primary ${sizeClass}`}
           aria-label={
             contextLabel
               ? `Nhắn Zalo cho ${siteConfig.name} về ${contextLabel}`
@@ -55,7 +71,7 @@ export function ContactButtons({
         </a>
         <a
           href={`tel:${siteConfig.phone.tel}`}
-          className="btn btn-outline"
+          className={`btn btn-outline ${sizeClass}`}
           aria-label={`Gọi ${siteConfig.name} số ${siteConfig.phone.display}`}
         >
           <PhoneIcon />
