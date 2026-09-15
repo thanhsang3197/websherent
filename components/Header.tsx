@@ -17,7 +17,7 @@ export function Header() {
       <div className="container-content flex min-h-16 items-center justify-between gap-3 py-3">
         <Link
           href="/"
-          className="font-serif text-3xl font-bold uppercase leading-none tracking-wide text-accent-dark sm:text-4xl"
+          className="font-serif text-3xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
           aria-label={`${siteConfig.name} — về trang chủ`}
         >
           {siteConfig.name}
