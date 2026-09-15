@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
 import { HeroCarousel } from '@/components/HeroCarousel';
 import type { ProductCategory } from '@/types/product';
@@ -16,7 +15,7 @@ export function Hero({
 }: {
   slides?: HeroSlide[];
   productCount?: number;
-  /** Số mẫu theo từng loại — hiện dạng thống kê nhỏ bên dưới nút bấm. */
+  /** Số mẫu theo từng loại — hiện dạng thống kê nhỏ bên dưới tiêu đề. */
   counts?: Record<ProductCategory, number>;
 }) {
   return (
@@ -24,31 +23,23 @@ export function Hero({
       <div className="container-content grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         {/* Nội dung */}
         <div className="order-2 lg:order-1">
-          <p className="text-balance text-xs font-semibold uppercase tracking-[0.18em] text-accent-dark sm:text-sm sm:tracking-[0.2em]">
+          <p className="whitespace-nowrap text-center text-[clamp(10px,2.9vw,12px)] font-semibold uppercase tracking-[0.14em] text-accent-dark sm:text-left sm:text-sm sm:tracking-[0.2em]">
             Cho thuê váy · Đầm · Áo dài · Pháp phục
           </p>
-          <h1 className="mt-4 font-serif text-4xl leading-tight text-accent-dark sm:text-5xl lg:text-6xl">
-            {siteConfig.slogan}
+          {/*
+            Điện thoại: mỗi dòng slogan một khối, căn giữa; cỡ chữ theo bề rộng
+            máy để dòng dài nhất ("bạn thuê một diện mạo" ≈ 10,45em) luôn vừa
+            bề rộng nội dung (100vw − 40px lề) mà vẫn to nhất có thể. Đo thật:
+            375px -> 31px, 320px -> 26px, 414px -> 34,6px.
+          */}
+          <h1 className="mt-4 text-center font-serif text-[clamp(1.5rem,calc((100vw-40px)/10.8),2.25rem)] leading-tight text-accent-dark sm:text-left sm:text-5xl lg:text-6xl">
+            {siteConfig.sloganLines.map((line, i) => (
+              <span key={i} className="block sm:inline">
+                {i > 0 && ' '}
+                {line}
+              </span>
+            ))}
           </h1>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-ink">
-            Tuyển chọn đầm, váy dự tiệc và áo dài thiết kế đa dạng size tại{' '}
-            {siteConfig.address.district}, {siteConfig.address.city}. Xem mẫu
-            thoải mái, chọn được rồi giữ mẫu nhanh qua Zalo.
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="#san-pham" className="btn btn-primary">
-              Xem bộ sưu tập
-            </Link>
-            <a
-              href={siteConfig.zaloUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-outline"
-            >
-              Nhắn Zalo
-            </a>
-          </div>
 
           {/* Stat panel Liquid Glass */}
           <dl className="mt-10 grid grid-cols-2 gap-4 rounded-3xl glass-card p-5 sm:grid-cols-4">

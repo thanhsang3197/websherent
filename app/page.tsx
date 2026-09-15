@@ -126,11 +126,6 @@ export default async function HomePage() {
           <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
             Chọn mẫu bạn thích
           </h2>
-          <p className="mt-2 max-w-xl text-muted">
-            Từng đường may, từng chất liệu đều được chọn lọc kỹ càng — lướt qua
-            bộ sưu tập và tìm chiếc đầm khiến bạn phải dừng lại. Bấm vào mẫu
-            ưng ý để xem trọn bộ ảnh, giá thuê, giá cọc và giữ mẫu ngay.
-          </p>
         </header>
 
         <ProductExplorer products={products} />

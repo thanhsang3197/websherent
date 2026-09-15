@@ -17,9 +17,21 @@ export const siteConfig = {
   name: 'Sherent',
   legalName: 'Sherent — Cho thuê đầm, váy & áo dài',
 
-  /** Câu slogan (tiêu đề H1 của trang chủ). */
-  slogan:
-    'Không đơn thuần là thuê 1 chiếc váy, bạn thuê một diện mạo HOÀN HẢO',
+  /**
+   * Câu slogan (tiêu đề H1 của trang chủ), cắt SẴN thành từng dòng.
+   *
+   * Trên điện thoại mỗi phần tử là đúng một dòng, căn giữa (Hero.tsx) — cắt
+   * tay theo cụm nghĩa để không bao giờ rớt chữ lẻ kiểu "diện / mạo". Từ sm trở
+   * lên các phần tử nối lại chảy tự nhiên như một câu. Đổi chữ ở đây thì giữ
+   * dòng dài nhất không quá "bạn thuê một diện mạo", nếu không cỡ chữ điện
+   * thoại trong Hero.tsx phải tính lại.
+   */
+  sloganLines: [
+    'Không đơn thuần là',
+    'thuê 1 chiếc váy,',
+    'bạn thuê một diện mạo',
+    'HOÀN HẢO',
+  ],
 
   /**
    * Mô tả dài, văn phong tự nhiên — dùng cho meta description & GEO (để AI hiểu tiệm).
