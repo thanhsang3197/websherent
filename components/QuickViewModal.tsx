@@ -94,13 +94,13 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                 )}
                 <div className="flex justify-between py-2 text-sm">
                   <dt className="text-muted">Phí thuê {listRentPrice(product).days} ngày</dt>
-                  <dd className="font-serif text-lg font-semibold text-accent-dark">
+                  <dd className="font-medium text-accent-dark">
                     {formatVnd(listRentPrice(product).price)}
                   </dd>
                 </div>
                 <div className="flex justify-between py-2 text-sm">
                   <dt className="text-muted">Phí cọc</dt>
-                  <dd className="font-serif text-lg font-medium text-ink">
+                  <dd className="font-medium text-ink">
                     {formatVnd(product.depositPrice)}
                   </dd>
                 </div>

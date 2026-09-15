@@ -169,7 +169,7 @@ export default async function ProductPage({
             <SpecRow
               label="Phí thuê 3 ngày"
               value={formatVnd(product.rentPrice)}
-              valueClassName="text-xl text-accent-dark"
+              valueClassName="text-sm font-medium text-accent-dark"
             />
             {/*
               Thẻ trong lưới chỉ hiện MỘT mức (1 ngày, xem `listRentPrice`);
@@ -180,13 +180,13 @@ export default async function ProductPage({
               <SpecRow
                 label="Phí thuê 1 ngày"
                 value={formatVnd(product.rentPrice1Day)}
-                valueClassName="text-xl text-ink"
+                valueClassName="text-sm font-medium text-ink"
               />
             )}
             <SpecRow
               label="Phí cọc"
               value={formatVnd(product.depositPrice)}
-              valueClassName="text-xl text-ink"
+              valueClassName="text-sm font-medium text-ink"
             />
             {/*
               Giá tag = giá gốc trên nhãn, KHÔNG phải khoản khách trả. Vẫn để
@@ -197,7 +197,7 @@ export default async function ProductPage({
               <SpecRow
                 label="Giá tag"
                 value={formatVnd(product.tagPrice)}
-                valueClassName="text-xl text-ink"
+                valueClassName="text-sm font-medium text-ink"
               />
             )}
           </dl>
