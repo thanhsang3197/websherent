@@ -236,14 +236,10 @@ export default async function ProductPage({
             contextLabel={`${product.name} (mã ${product.id})`}
           />
 
-          {/* Trước đây chỗ này là ô "kiểm tra lịch trống".
-              Đã bỏ theo yêu cầu chủ shop (11/08/2026): website không hiện lịch
-              bận của từng món. Khách hỏi thì nhắn Zalo, nhân viên tra trong app
-              rồi trả lời — nút Zalo nằm ngay phía trên. */}
-          <p className="mt-8 rounded-lg border border-hairline bg-tint px-4 py-3 text-sm text-muted">
-            Muốn biết mẫu này còn trống ngày bạn cần? Nhắn Zalo cho tiệm, bọn mình
-            kiểm tra và báo lại ngay.
-          </p>
+          {/* Trước đây chỗ này là ô "kiểm tra lịch trống", rồi thành câu nhắc
+              "Muốn biết mẫu này còn trống ngày bạn cần? Nhắn Zalo…". Cả hai đã
+              bỏ theo yêu cầu chủ shop (11/08 và 16/09/2026) — website không hiện
+              lịch bận; khách bấm "Đặt lịch" ngay phía trên để hỏi. */}
         </div>
       </div>
 
