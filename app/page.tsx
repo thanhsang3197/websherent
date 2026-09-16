@@ -15,7 +15,6 @@ import {
 } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
-import { formatVndD } from '@/lib/format';
 import { PromoBanner } from '@/components/PromoBanner';
 import { NewArrivalsSection } from '@/components/NewArrivalsSection';
 
@@ -152,15 +151,15 @@ export default async function HomePage() {
               Sản phẩm thanh lý
             </h2>
             <p className="mt-4 leading-relaxed text-ink">
-              Tiệm đang pass lại <strong className="text-ink">{saleCount}</strong>{' '}
-              mẫu đầm, váy &amp; áo dài với giá bán đứt
+              {/* Câu chữ chủ shop viết 16/09/2026 — giá "chỉ từ" tự lấy theo dữ liệu. */}
+              Danh sách sản phẩm thanh lý ở link phía dưới, bấm vào để xem mẫu
+              thanh lý
               {minSalePrice > 0 && (
                 <>
-                  , chỉ từ{' '}
-                  <strong className="text-ink">{formatVndD(minSalePrice)}</strong>
+                  {' '}chỉ từ{' '}
+                  <strong>{minSalePrice.toLocaleString('vi-VN')}&nbsp;đ</strong>
                 </>
               )}
-              . Mẫu vẫn cho thuê song song nên ai chốt trước lấy trước.
             </p>
             <Link
               href="/thanh-ly"
