@@ -5,6 +5,7 @@ import {
   getProducts,
   getHeroSlides,
   getNewArrivals,
+  getAlbums,
   countByCategory,
 } from '@/lib/products';
 import {
@@ -17,6 +18,7 @@ import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
 import { PromoBanner } from '@/components/PromoBanner';
 import { NewArrivalsSection } from '@/components/NewArrivalsSection';
+import { AlbumSection } from '@/components/AlbumSection';
 
 /**
  * Chọn slide cho hero, theo thứ tự ưu tiên:
@@ -86,10 +88,11 @@ function buildHeroSlides(
 export default async function HomePage() {
   // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
   // khách chờ thêm một vòng mạng vô ích.
-  const [products, heroTuApp, moiVe] = await Promise.all([
+  const [products, heroTuApp, moiVe, albums] = await Promise.all([
     getProducts(),
     getHeroSlides(heroConfig.maxSlides),
     getNewArrivals(SO_MAU_MOI_VE),
+    getAlbums(),
   ]);
   const counts = countByCategory(products);
   // Mẫu đang pass lọc thẳng từ catalogue — y như getSaleProducts(), khỏi gọi lại.
@@ -106,6 +109,9 @@ export default async function HomePage() {
 
       {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
       <NewArrivalsSection products={moiVe} />
+
+      {/* Album shop dựng bên app (api-cong-khai.md §2.4). Rỗng -> ẩn cả khối. */}
+      <AlbumSection albums={albums} />
 
       {/*
         Banner khuyến mãi (bật ở lib/site-config.ts) vẫn nằm trên đầu — đây là

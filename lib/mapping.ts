@@ -140,7 +140,7 @@ function cleanSizeFromName(name: string): string {
  * phẩm. Gộp theo tên+brand đáng tin hơn cho catalogue này (đã đối chiếu dữ
  * liệu thật: không nhóm nào vượt quá 3 size/mẫu).
  */
-function groupingKey(p: Product): string {
+export function groupingKey(p: Product): string {
   return `name::${slugify(cleanSizeFromName(p.name))}::${slugify(p.brand ?? '')}`;
 }
 

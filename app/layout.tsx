@@ -6,6 +6,7 @@ import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { localBusinessJsonLd } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { Header } from '@/components/Header';
+import { getAlbums } from '@/lib/products';
 import { Footer } from '@/components/Footer';
 import { StickyContactBar } from '@/components/StickyContactBar';
 
@@ -81,11 +82,15 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Mục "Album" trên menu chỉ hiện khi đang có album — cùng lượt gọi (đã cache)
+  // với khối album trang chủ, nên không tốn thêm request.
+  const coAlbum = (await getAlbums()).length > 0;
+
   return (
     <html lang="vi" className={`${serif.variable} ${sans.variable}`}>
       <body className="relative min-h-screen bg-bg text-ink selection:bg-accent/20">
@@ -104,7 +109,7 @@ export default function RootLayout({
         >
           Bỏ qua tới nội dung
         </a>
-        <Header />
+        <Header coAlbum={coAlbum} />
         <main id="noi-dung">{children}</main>
         <Footer />
         <StickyContactBar />

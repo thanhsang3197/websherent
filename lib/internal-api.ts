@@ -1,6 +1,7 @@
 import 'server-only';
 import type { Product, ProductSale } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
+import type { Album } from '@/types/album';
 import { siteConfig } from '@/lib/site-config';
 import { normalizeImageUrl } from '@/lib/format';
 import { buildProductSlug } from '@/lib/slug';
@@ -404,4 +405,126 @@ export async function fetchHeroSlidesFromInternalApi(): Promise<HeroSlide[]> {
       href: null,
     }];
   });
+}
+
+// ---------------------------------------------------------------------------
+// ALBUM — "Váy dự lễ tốt nghiệp", "Váy ngắn"… (api-cong-khai.md §2.4)
+// ---------------------------------------------------------------------------
+
+/** Một album đúng như `GET /api/cong-khai/album` trả về. */
+interface AlbumApi {
+  slug: string;
+  ten: string;
+  mo_ta: string | null;
+  anh_bia: string | null;
+  /** Số SẢN PHẨM chưa gộp size — KHÔNG in thẳng ra cho khách (§2.4). */
+  so_mau: number;
+  thu_tu: number;
+}
+
+interface TraVeAlbumDsApi {
+  tong: number;
+  album: AlbumApi[];
+}
+
+interface TraVeAlbumSpApi extends TraVeApi {
+  album: Omit<AlbumApi, 'so_mau' | 'thu_tu'>;
+}
+
+/**
+ * Khuôn slug album — khớp `laSlugHopLe` bên app. Slug sai khuôn thì coi như
+ * không có album, KHÔNG gọi API: đường dẫn này ai cũng gõ bừa được.
+ */
+export function laSlugAlbumHopLe(slug: string): boolean {
+  return slug.length <= 80 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug);
+}
+
+function mapAlbum(a: Pick<AlbumApi, 'slug' | 'ten' | 'mo_ta' | 'anh_bia'>): Album {
+  return {
+    slug: a.slug,
+    ten: (a.ten ?? '').trim(),
+    moTa: (a.mo_ta ?? '').trim() || null,
+    anhBia: normalizeImageUrl(a.anh_bia ?? ''),
+  };
+}
+
+/**
+ * Danh sách album đang hiện trên web, ĐÚNG thứ tự shop sắp (không sắp lại).
+ *
+ * API chỉ trả album đang BẬT và có ít nhất một mẫu, nên mọi album ở đây đều
+ * dẫn tới một trang có đồ.
+ */
+export async function fetchAlbumsFromInternalApi(): Promise<Album[]> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '604800');
+
+  const res = await fetch(`${apiUrl.replace(/\/$/, '')}/album`, {
+    headers: { Accept: 'application/json' },
+    // Cùng nhãn với catalogue (§2.4 mục 4): app ping /api/lam-moi mỗi khi shop
+    // gắn nhãn, đổi điều kiện, ghim hay bật/tắt album.
+    next: { revalidate, tags: [TAG_SAN_PHAM] },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (album)`);
+  }
+
+  const data = (await res.json()) as TraVeAlbumDsApi;
+  const rows = Array.isArray(data.album) ? data.album : [];
+  return rows
+    .filter((a) => typeof a.slug === 'string' && laSlugAlbumHopLe(a.slug))
+    .map(mapAlbum);
+}
+
+/**
+ * Một album và TOÀN BỘ sản phẩm của nó, CHƯA gộp size, đúng thứ tự API.
+ *
+ * `null` = album không có (404: không tồn tại, đang ẩn, hoặc đang rỗng — với
+ * khách cả bốn là một). Lỗi khác thì NÉM để nơi gọi phân biệt được "không có
+ * album này" với "app đang hỏng".
+ *
+ * Gộp size là việc của nơi gọi, và phải làm SAU KHI tải hết mọi trang (§2.4):
+ * gộp từng trang thì `Fiona S` trang 1 và `Fiona L` trang 2 thành hai thẻ.
+ */
+export async function fetchAlbumFromInternalApi(
+  slug: string,
+): Promise<{ album: Album; products: Product[] } | null> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+  if (!laSlugAlbumHopLe(slug)) return null;
+
+  const base = `${apiUrl.replace(/\/$/, '')}/album/${slug}`;
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '604800');
+
+  let album: Album | null = null;
+  const tatCa: Product[] = [];
+
+  for (let trang = 1; trang <= TOI_DA_SO_TRANG; trang++) {
+    const q = new URLSearchParams({
+      trang: String(trang),
+      moi_trang: String(MOI_TRANG),
+    });
+
+    const res = await fetch(`${base}?${q}`, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate, tags: [TAG_SAN_PHAM] },
+    });
+
+    if (res.status === 404) return null;
+    if (!res.ok) {
+      throw new Error(`Internal API trả về mã lỗi ${res.status} (album ${slug}, trang ${trang})`);
+    }
+
+    const data = (await res.json()) as TraVeAlbumSpApi;
+    album ??= data.album ? mapAlbum(data.album) : null;
+    const rows = Array.isArray(data.san_pham) ? data.san_pham : [];
+    tatCa.push(...rows.map(mapSanPham));
+
+    if (!data.con_nua || rows.length === 0) break;
+  }
+
+  if (!album || tatCa.length === 0) return null;
+  return { album, products: tatCa };
 }

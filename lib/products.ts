@@ -10,14 +10,17 @@ import type { Product, ProductCategory } from '../types/product';
 import type { HeroSlide } from '../types/hero';
 import { siteConfig } from './site-config';
 import { fetchProductsFromSheet, isSheetsConfigured } from './sheets';
+import type { Album, AlbumChiTiet } from '../types/album';
 import {
   fetchProductsFromInternalApi,
   fetchHeroProductsFromInternalApi,
   fetchHeroSlidesFromInternalApi,
   fetchNewArrivalsFromInternalApi,
+  fetchAlbumsFromInternalApi,
+  fetchAlbumFromInternalApi,
   isInternalApiConfigured,
 } from './internal-api';
-import { sortProductsForDisplay, groupProducts } from './mapping';
+import { sortProductsForDisplay, groupProducts, groupingKey } from './mapping';
 import { mockProducts } from './mock-data';
 
 /** Gộp mẫu nhiều size thành 1, rồi sắp xếp hiển thị. */
@@ -225,4 +228,58 @@ export function countByCategory(
       number
     >,
   );
+}
+
+/**
+ * Danh sách album đang hiện trên web (api-cong-khai.md §2.4), đúng thứ tự shop.
+ *
+ * Trả `[]` — KHÔNG ném lỗi — khi không lấy được: chưa nối app nội bộ, API lỗi,
+ * hay bản app đang chạy chưa có tính năng album (gọi vào nhận 404). Mọi nơi
+ * dùng danh sách này (khối trang chủ, mục menu, sitemap) đều ẨN khi rỗng, nên
+ * một cú lỗi ở đây chỉ làm mất khối album chứ không kéo sập trang.
+ */
+export async function getAlbums(): Promise<Album[]> {
+  if (!isInternalApiConfigured()) return [];
+
+  try {
+    return await fetchAlbumsFromInternalApi();
+  } catch (err) {
+    console.error('[products] Lỗi đọc danh sách album — ẩn album:', err);
+    return [];
+  }
+}
+
+/**
+ * Một album và các mẫu của nó, đã gộp size, GIỮ thứ tự shop sắp bên app.
+ *
+ * `null` = không có album này (slug sai, album bị xoá/ẩn/rỗng, hoặc chưa nối
+ * app) -> trang gọi `notFound()`. Lỗi hệ thống thì NÉM, để Next giữ bản trang
+ * cũ còn tốt thay vì lưu đè một trang báo lỗi vào cache 7 ngày.
+ *
+ * Hai bước bắt buộc theo §2.4, theo đúng thứ tự:
+ *  1. Tải HẾT các trang rồi mới gộp size (fetchAlbumFromInternalApi lo phần tải).
+ *  2. `groupProducts` giữ thứ tự nhóm theo phần tử xuất hiện đầu tiên, và KHÔNG
+ *     gọi `sortProductsForDisplay` sau đó — sắp lại là đá mất mẫu shop ghim đầu.
+ *
+ * Bước thêm (spec chưa nhắc): mỗi thẻ được THAY bằng đúng mẫu tương ứng trong
+ * catalogue, khớp theo khoá gộp size. Lý do: slug trang chi tiết dựng từ mã của
+ * size NHỎ NHẤT trong nhóm. Album chỉ có `Fiona L` thì gộp riêng ra mã của L,
+ * lệch với trang chi tiết (dựng từ mã của S) -> bấm vào là 404. Lấy bản trong
+ * catalogue thì link đúng, và thẻ hiện đủ mọi size tiệm đang có như ở trang chủ.
+ */
+export async function getAlbum(slug: string): Promise<AlbumChiTiet | null> {
+  if (!isInternalApiConfigured()) return null;
+
+  const [data, catalogue] = await Promise.all([
+    fetchAlbumFromInternalApi(slug),
+    getProducts(),
+  ]);
+  if (!data) return null;
+
+  const theoKhoa = new Map(catalogue.map((p) => [groupingKey(p), p]));
+  const products = groupProducts(data.products).map(
+    (p) => theoKhoa.get(groupingKey(p)) ?? p,
+  );
+
+  return { album: data.album, products };
 }

@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site-config';
-import { getProducts } from '@/lib/products';
+import { getAlbums, getProducts } from '@/lib/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = await getProducts();
+  const [products, albums] = await Promise.all([getProducts(), getAlbums()]);
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -35,5 +35,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...productRoutes];
+  // Chưa có album nào thì bỏ luôn cả trang /album — khỏi mời Google vào một
+  // trang "Hiện chưa có album nào".
+  const albumRoutes: MetadataRoute.Sitemap =
+    albums.length === 0
+      ? []
+      : [
+          { url: `${SITE_URL}/album`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
+          ...albums.map((a) => ({
+            url: `${SITE_URL}/album/${a.slug}`,
+            lastModified: now,
+            changeFrequency: 'weekly' as const,
+            priority: 0.8,
+          })),
+        ];
+
+  return [...staticRoutes, ...albumRoutes, ...productRoutes];
 }
