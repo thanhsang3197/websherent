@@ -52,7 +52,7 @@ export function AlbumCard({
         className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/75 via-ink/25 to-transparent"
       />
       <span className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-        <span className="line-clamp-2 font-serif text-lg leading-snug text-surface sm:text-xl">
+        <span className="line-clamp-2 font-serif text-xl leading-snug text-surface sm:text-2xl">
           {album.ten}
         </span>
         <span className="mt-1 block text-xs font-medium text-surface/80">
