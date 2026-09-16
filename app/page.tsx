@@ -15,7 +15,7 @@ import {
 } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
-import { Brand } from '@/components/Brand';
+import { formatVndD } from '@/lib/format';
 import { PromoBanner } from '@/components/PromoBanner';
 import { NewArrivalsSection } from '@/components/NewArrivalsSection';
 
@@ -93,6 +93,11 @@ export default async function HomePage() {
     getNewArrivals(SO_MAU_MOI_VE),
   ]);
   const counts = countByCategory(products);
+  // Mẫu đang pass lọc thẳng từ catalogue — y như getSaleProducts(), khỏi gọi lại.
+  const salePrices = products.filter((p) => p.sale).map((p) => p.sale?.price ?? 0);
+  const saleCount = salePrices.length;
+  const pricedSales = salePrices.filter((price) => price > 0); // 0 = chưa chốt giá
+  const minSalePrice = pricedSales.length ? Math.min(...pricedSales) : 0;
 
   const heroSlides = buildHeroSlides(products, heroTuApp);
 
@@ -131,32 +136,41 @@ export default async function HomePage() {
         <ProductExplorer products={products} />
       </section>
 
-      {/* Giới thiệu tiệm — đặt cuối trang, sau khi khách xem xong bộ sưu tập.
-          Nội dung này phục vụ SEO/GEO là chính nên không cần nằm trên đầu. */}
-      <section className="container-content pb-16">
-        <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
-            Về {siteConfig.name}
-          </p>
-          <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
-            Tiệm cho thuê đầm, váy &amp; áo dài tại {siteConfig.address.district}
-          </h2>
-          <p className="mt-4 leading-relaxed text-muted">
-            <Brand /> tuyển chọn các mẫu đầm, váy dự tiệc và áo dài thiết
-            kế đa dạng size, phù hợp đi tiệc, chụp ảnh, dự sự kiện, cưới hỏi và
-            Tết. Hiện có <strong className="text-ink">{counts['dam-vay']}</strong>{' '}
-            mẫu đầm &amp; váy và <strong className="text-ink">{counts['ao-dai']}</strong>{' '}
-            mẫu áo dài để bạn thoải mái lựa chọn. Xem mẫu ngay trên trang này rồi
-            nhắn Zalo để giữ mẫu — không cần dùng Instagram&nbsp;hay&nbsp;Facebook.
-          </p>
-          <Link
-            href="/gioi-thieu"
-            className="mt-5 inline-block text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
-          >
-            Tìm hiểu thêm về tiệm →
-          </Link>
-        </div>
-      </section>
+      {/*
+        Giới thiệu mục Thanh lý — cuối trang, sau khi khách xem xong bộ sưu tập.
+        Thay cho đoạn "Về SHERENT" theo yêu cầu chủ shop 16/09/2026 (nội dung
+        giới thiệu tiệm vẫn còn ở /gioi-thieu). Không có mẫu nào đang pass thì
+        ẩn hẳn, khỏi dẫn khách sang một trang trống.
+      */}
+      {saleCount > 0 && (
+        <section className="container-content pb-16">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
+              Thanh lý
+            </p>
+            <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
+              Sản phẩm thanh lý
+            </h2>
+            <p className="mt-4 leading-relaxed text-ink">
+              Tiệm đang pass lại <strong className="text-ink">{saleCount}</strong>{' '}
+              mẫu đầm, váy &amp; áo dài với giá bán đứt
+              {minSalePrice > 0 && (
+                <>
+                  , chỉ từ{' '}
+                  <strong className="text-ink">{formatVndD(minSalePrice)}</strong>
+                </>
+              )}
+              . Mẫu vẫn cho thuê song song nên ai chốt trước lấy trước.
+            </p>
+            <Link
+              href="/thanh-ly"
+              className="mt-5 inline-block text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
+            >
+              Xem các mẫu đang thanh lý →
+            </Link>
+          </div>
+        </section>
+      )}
     </>
   );
 }
