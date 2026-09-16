@@ -45,9 +45,6 @@ export function ProductFilters({
   brands,
   sizes,
   priceBuckets,
-  categoryCounts,
-  resultCount,
-  total,
   onChange,
   onReset,
 }: {
@@ -55,10 +52,6 @@ export function ProductFilters({
   brands: string[];
   sizes: string[];
   priceBuckets: readonly { id: string; label: string }[];
-  /** Số mẫu mỗi loại, hiện cạnh tên loại. Thiếu key -> không hiện số. */
-  categoryCounts: Partial<Record<CategoryFilter, number>>;
-  resultCount: number;
-  total: number;
   onChange: (patch: Partial<Filters>) => void;
   onReset: () => void;
 }) {
@@ -143,7 +136,6 @@ export function ProductFilters({
         <div className="flex w-max gap-1.5 rounded-full glass-pill p-1.5 sm:w-full">
           {CATEGORIES.map((c) => {
             const active = filters.category === c.id;
-            const count = categoryCounts[c.id];
             return (
               <button
                 key={c.id}
@@ -157,11 +149,6 @@ export function ProductFilters({
                 }`}
               >
                 {c.label}
-                {count != null && (
-                  <span className={`ml-1 ${active ? 'text-surface/75' : 'text-muted'}`}>
-                    {count}
-                  </span>
-                )}
               </button>
             );
           })}
@@ -249,14 +236,13 @@ export function ProductFilters({
         </ul>
       )}
 
-      {/* Kết quả + reset */}
-      <div className="mt-3 flex items-center justify-between text-sm text-muted sm:mt-4">
-        <span aria-live="polite" className="font-medium">
-          {resultCount === total
-            ? `${total} mẫu`
-            : `${resultCount} / ${total} mẫu`}
-        </span>
-        {isFiltering && (
+      {/*
+        KHÔNG hiện số mẫu ở đâu trong khung lọc — cả cạnh tên loại lẫn "80 / 268
+        mẫu" khi lọc. Chủ shop chốt 17/09/2026: không muốn người ngoài đếm được
+        tiệm có bao nhiêu mẫu.
+      */}
+      {isFiltering && (
+        <div className="mt-3 flex justify-end text-sm sm:mt-4">
           <button
             type="button"
             onClick={onReset}
@@ -264,8 +250,8 @@ export function ProductFilters({
           >
             Xoá bộ lọc
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

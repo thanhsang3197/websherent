@@ -6,7 +6,6 @@ import {
   getHeroSlides,
   getNewArrivals,
   getAlbums,
-  countByCategory,
 } from '@/lib/products';
 import {
   siteConfig,
@@ -94,7 +93,6 @@ export default async function HomePage() {
     getNewArrivals(SO_MAU_MOI_VE),
     getAlbums(),
   ]);
-  const counts = countByCategory(products);
   // Mẫu đang pass lọc thẳng từ catalogue — y như getSaleProducts(), khỏi gọi lại.
   const salePrices = products.filter((p) => p.sale).map((p) => p.sale?.price ?? 0);
   const saleCount = salePrices.length;
@@ -105,7 +103,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero slides={heroSlides} productCount={products.length} counts={counts} />
+      <Hero slides={heroSlides} />
 
       {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
       <NewArrivalsSection products={moiVe} />

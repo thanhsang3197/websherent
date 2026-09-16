@@ -95,8 +95,7 @@ export default async function AlbumPage({ params }: { params: { slug: string } }
         </p>
         <h1 className="mt-2 font-serif text-3xl text-accent-dark sm:text-4xl">{album.ten}</h1>
         {album.moTa && <p className="mt-3 text-ink">{album.moTa}</p>}
-        {/* Đếm SAU khi gộp size = đúng số thẻ khách thấy (không dùng `so_mau`). */}
-        <p className="mt-2 text-sm font-medium text-muted">{products.length} mẫu</p>
+        {/* Không hiện số mẫu — chủ shop chốt 17/09/2026, giống khung lọc trang chủ. */}
       </header>
 
       {/* Giữ NGUYÊN thứ tự shop sắp — không lọc, không sắp lại (§2.4). */}

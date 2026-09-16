@@ -88,11 +88,6 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     [products],
   );
 
-  const categoryCounts = useMemo(() => {
-    const counts: Partial<Record<CategoryFilter, number>> = { all: products.length };
-    for (const p of products) counts[p.category] = (counts[p.category] ?? 0) + 1;
-    return counts;
-  }, [products]);
 
   // Khôi phục bộ lọc từ URL khi tải.
   const didInitFromUrl = useRef(false);
@@ -179,9 +174,6 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         brands={brands}
         sizes={sizes}
         priceBuckets={PRICE_BUCKETS}
-        categoryCounts={categoryCounts}
-        resultCount={filtered.length}
-        total={products.length}
         onChange={onChange}
         onReset={onReset}
       />

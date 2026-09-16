@@ -1,6 +1,5 @@
 import { siteConfig } from '@/lib/site-config';
 import { HeroCarousel } from '@/components/HeroCarousel';
-import type { ProductCategory } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
 
 /**
@@ -8,16 +7,7 @@ import type { HeroSlide } from '@/types/hero';
  * `slides` là danh sách slide chạy slideshow (tự đổi mỗi 5s) — gồm cả mẫu lẫn
  * ảnh tự do shop treo bên app. Rỗng -> khung monogram.
  */
-export function Hero({
-  slides = [],
-  productCount,
-  counts,
-}: {
-  slides?: HeroSlide[];
-  productCount?: number;
-  /** Số mẫu theo từng loại — hiện dạng thống kê nhỏ bên dưới tiêu đề. */
-  counts?: Record<ProductCategory, number>;
-}) {
+export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
   return (
     <section className="relative overflow-hidden py-10 lg:py-16">
       <div className="container-content grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
@@ -40,32 +30,8 @@ export function Hero({
               </span>
             ))}
           </h1>
-
-          {/* Stat panel Liquid Glass */}
-          <dl className="mt-10 grid grid-cols-2 gap-4 rounded-3xl glass-card p-5 sm:grid-cols-4">
-            <div className="text-center sm:text-left">
-              <dt className="sr-only">Tổng số mẫu</dt>
-              <dd className="font-serif text-2xl font-semibold text-accent-dark">
-                {productCount ? `${productCount}+` : 'Nhiều'}
-              </dd>
-              <p className="text-xs text-muted">mẫu để chọn</p>
-            </div>
-            <div className="border-l border-white/60 pl-4 text-center sm:text-left">
-              <dt className="sr-only">Số mẫu tiệc</dt>
-              <dd className="font-serif text-2xl font-semibold text-accent-dark">{counts?.['dam-vay'] ?? 0}+</dd>
-              <p className="text-xs text-muted">mẫu tiệc</p>
-            </div>
-            <div className="border-l border-white/60 pl-4 text-center sm:text-left">
-              <dt className="sr-only">Số mẫu áo dài</dt>
-              <dd className="font-serif text-2xl font-semibold text-accent-dark">{counts?.['ao-dai'] ?? 0}+</dd>
-              <p className="text-xs text-muted">mẫu áo dài</p>
-            </div>
-            <div className="border-l border-white/60 pl-4 text-center sm:text-left">
-              <dt className="sr-only">Số mẫu pháp phục</dt>
-              <dd className="font-serif text-2xl font-semibold text-accent-dark">{counts?.['phap-phuc'] ?? 0}+</dd>
-              <p className="text-xs text-muted">mẫu pháp phục</p>
-            </div>
-          </dl>
+          {/* Bảng số mẫu (268+ mẫu để chọn, mẫu tiệc, áo dài, pháp phục) đã bỏ
+              theo yêu cầu chủ shop 17/09/2026. */}
         </div>
 
         {/*
