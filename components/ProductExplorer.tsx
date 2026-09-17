@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Product } from '@/types/product';
 import { listRentPrice } from '@/lib/format';
+import { fitSize } from '@/lib/brands';
 import { ProductGrid } from '@/components/ProductGrid';
 import {
   ProductFilters,
@@ -84,7 +85,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
   );
 
   const sizes = useMemo(
-    () => sortSizes(Array.from(new Set(products.flatMap((p) => p.sizes)))),
+    () => sortSizes(Array.from(new Set(products.flatMap((p) => p.sizes.map(fitSize))))),
     [products],
   );
 
@@ -140,7 +141,9 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     const list = products.filter((p) => {
       if (filters.category !== 'all' && p.category !== filters.category) return false;
       if (filters.brand !== 'all' && p.brand !== filters.brand) return false;
-      if (filters.size !== 'all' && !p.sizes.includes(filters.size)) return false;
+      if (filters.size !== 'all' && !p.sizes.some((s) => fitSize(s) === filters.size)) {
+        return false;
+      }
       if (bucket && !bucket.test(listRentPrice(p).price)) return false;
       if (query) {
         const hay = norm(`${p.name} ${p.brand ?? ''}`);

@@ -65,6 +65,20 @@ export function normalizeSize(raw: string | null | undefined): string | null {
 }
 
 /**
+ * Size NGƯỜI MẶC VỪA — dùng để LỌC và so "cùng size", không dùng để hiển thị.
+ *
+ * Shop có ghi kiểu "M fit S", "XS fit S", "Xs fit S": nhãn trên áo là M/XS
+ * nhưng người size S mặc vừa. Khách chọn size theo người mình, nên phải tính
+ * theo vế sau chữ "fit". Trên thẻ sản phẩm vẫn in nguyên "M fit S" vì đó là
+ * thông tin có ích cho khách. Các size khác chỉ chuẩn hoá chữ hoa/thường.
+ */
+export function fitSize(raw: string): string {
+  const fit = raw.match(/\bfit\s+(xs|xl|s|m|l)\b/i);
+  if (fit) return fit[1].toUpperCase();
+  return normalizeSize(raw) ?? raw;
+}
+
+/**
  * Suy ra phân loại: đầm/váy (tiệc), áo dài, pháp phục hay gấm.
  * Ưu tiên mã SP theo quy ước của tiệm (đáng tin nhất): "AD" = áo dài,
  * "PP" = pháp phục, "G" = gấm. Không khớp mã -> dò tín hiệu "áo dài" trong

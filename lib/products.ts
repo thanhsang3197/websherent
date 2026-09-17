@@ -22,6 +22,7 @@ import {
 } from './internal-api';
 import { sortProductsForDisplay, groupProducts, groupingKey } from './mapping';
 import { mockProducts } from './mock-data';
+import { fitSize } from './brands';
 
 /** Gộp mẫu nhiều size thành 1, rồi sắp xếp hiển thị. */
 function prepare(products: Product[]): Product[] {
@@ -188,8 +189,9 @@ export async function getRelatedProducts(
   const all = await getProducts();
   const candidates = all.filter((p) => p.id !== product.id && p.image);
 
+  const mySizes = product.sizes.map(fitSize);
   const sharesSize = (p: Product) =>
-    p.sizes.some((s) => product.sizes.includes(s));
+    p.sizes.some((s) => mySizes.includes(fitSize(s)));
 
   return candidates
     .sort((a, b) => {
