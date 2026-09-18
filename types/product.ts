@@ -6,7 +6,12 @@
  * TUYỆT ĐỐI không được đưa vào đây (không lộ ra HTML / API response).
  */
 
-export type ProductCategory = 'ao-dai' | 'dam-vay' | 'phap-phuc' | 'gam';
+export type ProductCategory =
+  | 'ao-dai'
+  | 'dam-vay'
+  | 'phap-phuc'
+  | 'gam'
+  | 'phu-kien';
 
 /**
  * Thông tin THANH LÝ (pass mẫu) của một sản phẩm.
@@ -90,4 +95,5 @@ export const CATEGORY_LABELS: Record<ProductCategory, string> = {
   'dam-vay': 'Đầm & Váy',
   'phap-phuc': 'Pháp phục',
   gam: 'Gấm',
+  'phu-kien': 'Phụ kiện',
 };

@@ -104,7 +104,8 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       cat === 'ao-dai' ||
       cat === 'dam-vay' ||
       cat === 'phap-phuc' ||
-      cat === 'gam'
+      cat === 'gam' ||
+      cat === 'phu-kien'
     ) {
       next.category = cat as CategoryFilter;
     }

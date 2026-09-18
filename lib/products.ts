@@ -225,7 +225,7 @@ export function countByCategory(
       acc[p.category] += 1;
       return acc;
     },
-    { 'ao-dai': 0, 'dam-vay': 0, 'phap-phuc': 0, gam: 0 } as Record<
+    { 'ao-dai': 0, 'dam-vay': 0, 'phap-phuc': 0, gam: 0, 'phu-kien': 0 } as Record<
       ProductCategory,
       number
     >,

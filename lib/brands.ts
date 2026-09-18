@@ -79,10 +79,10 @@ export function fitSize(raw: string): string {
 }
 
 /**
- * Suy ra phân loại: đầm/váy (tiệc), áo dài, pháp phục hay gấm.
+ * Suy ra phân loại: đầm/váy (tiệc), áo dài, pháp phục, gấm hay phụ kiện.
  * Ưu tiên mã SP theo quy ước của tiệm (đáng tin nhất): "AD" = áo dài,
- * "PP" = pháp phục, "G" = gấm. Không khớp mã -> dò tín hiệu "áo dài" trong
- * tên/ảnh. Không khớp gì -> mặc định đầm/váy (tiệc).
+ * "PK" = phụ kiện, "PP" = pháp phục, "G" = gấm. Không khớp mã -> dò tín hiệu
+ * "áo dài" trong tên/ảnh. Không khớp gì -> mặc định đầm/váy (tiệc).
  *
  * GẤM chỉ nhận theo MÃ SP "G..." (chủ shop chốt 16/08/2026) — cố tình KHÔNG
  * dò chữ "gấm" trong tên, vì nhiều mẫu đầm/áo dài có chữ "gấm" trong tên mà
@@ -95,6 +95,7 @@ export function deriveCategory(
 ): ProductCategory {
   const code = id.trim();
   if (/^ad/i.test(code)) return 'ao-dai';
+  if (/^pk/i.test(code)) return 'phu-kien';
   if (/^pp/i.test(code)) return 'phap-phuc';
   if (/^g/i.test(code)) return 'gam';
 

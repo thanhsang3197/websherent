@@ -111,12 +111,14 @@ function mapCategory(
   if (v.includes('AO_DAI') || v.includes('AO-DAI')) return 'ao-dai';
   if (v.includes('PHAP_PHUC') || v.includes('PHAP-PHUC')) return 'phap-phuc';
   if (v.includes('GAM')) return 'gam';
+  if (v.includes('PHU_KIEN') || v.includes('PHU-KIEN')) return 'phu-kien';
 
-  // App nội bộ CHƯA có loại "Gấm" trong cột `loai`, nên mẫu gấm hiện về đây
-  // dưới dạng đầm/váy. Nhận thêm theo MÃ SP "G..." — đúng quy ước AD/PP đang
-  // dùng bên Google Sheets. Chỉ nhặt ra trường hợp gấm, các phân loại khác giữ
-  // nguyên để không xáo trộn dữ liệu sẵn có.
-  if (deriveCategory(id, name, image) === 'gam') return 'gam';
+  // App nội bộ CHƯA có loại "Gấm"/"Phụ kiện" trong cột `loai`, nên các mẫu này
+  // hiện về đây dưới dạng đầm/váy. Nhận thêm theo MÃ SP "G..."/"PK..." — đúng
+  // quy ước AD/PP đang dùng bên Google Sheets. Chỉ nhặt ra hai trường hợp đó,
+  // các phân loại khác giữ nguyên để không xáo trộn dữ liệu sẵn có.
+  const derived = deriveCategory(id, name, image);
+  if (derived === 'gam' || derived === 'phu-kien') return derived;
   return 'dam-vay';
 }
 

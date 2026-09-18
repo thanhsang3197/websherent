@@ -19,6 +19,7 @@ const CATEGORIES: { id: CategoryFilter; label: string }[] = [
   { id: 'ao-dai', label: 'Áo dài' },
   { id: 'phap-phuc', label: 'Pháp phục' },
   { id: 'gam', label: 'Gấm' },
+  { id: 'phu-kien', label: 'Phụ kiện' },
 ];
 
 /*
