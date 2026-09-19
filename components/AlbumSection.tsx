@@ -24,7 +24,7 @@ export function AlbumSection({ albums }: { albums: Album[] }) {
     <section className="container-content py-10" aria-labelledby="album-tieu-de">
       <div className="flex items-end justify-between gap-4">
         <h2 id="album-tieu-de" className="font-serif text-2xl text-accent-dark sm:text-3xl">
-          Album
+          Album tuyển chọn
         </h2>
         {conNua && (
           <Link
