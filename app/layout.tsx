@@ -43,9 +43,17 @@ export const metadata: Metadata = {
     'Sherent',
   ],
   authors: [{ name: siteConfig.name }],
+  /*
+    Favicon tab trình duyệt: SVG (app/icon.svg) — nét ở mọi cỡ, nhẹ.
+
+    Icon màn hình chính iOS thì PHẢI là PNG: Safari không đọc SVG cho
+    apple-touch-icon, thiếu file này máy tự chụp lại trang web làm icon. Ảnh
+    sinh bằng `npm run generate:icons`, để full-bleed không bo góc vì iOS tự
+    bo — mình bo sẵn thì bốn góc trong suốt sẽ thành viền đen.
+  */
   icons: {
     icon: '/icon.svg',
-    apple: '/icon.svg',
+    apple: '/apple-touch-icon.png',
   },
   alternates: { canonical: '/' },
   openGraph: {

@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "generate:mock": "tsx scripts/generate-mock.ts"
+    "generate:mock": "tsx scripts/generate-mock.ts",
+    "generate:icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
