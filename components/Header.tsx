@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
+import { trackZaloClick } from '@/lib/analytics';
 import { useFavorites } from '@/lib/useFavorites';
 
 /**
@@ -69,6 +70,7 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
             href={siteConfig.zaloUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackZaloClick('header')}
             className="btn btn-primary whitespace-nowrap !px-4 !py-2 text-sm shadow-md"
           >
             Nhắn Zalo
@@ -124,7 +126,10 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary w-full"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  trackZaloClick('header');
+                  setOpen(false);
+                }}
               >
                 Nhắn Zalo {siteConfig.phone.display}
               </a>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { siteConfig } from '@/lib/site-config';
+import { trackCallClick, trackZaloClick, type ViTri } from '@/lib/analytics';
 
 /**
  * Nút liên hệ dùng lại nhiều nơi: Nhắn Zalo + Gọi.
@@ -12,14 +13,21 @@ export function ContactButtons({
   zaloLabel = 'Nhắn Zalo giữ mẫu',
   /** Nội dung gợi ý khi khách bấm Zalo (đưa vào aria-label & copy text). */
   contextLabel,
+  viTri,
+  maSp,
 }: {
   className?: string;
   zaloLabel?: string;
   contextLabel?: string;
+  /** Chỗ đặt cặp nút này — ghi kèm vào sự kiện analytics (lib/analytics.ts). */
+  viTri: ViTri;
+  /** Mã SP nếu cặp nút gắn với một mẫu cụ thể. */
+  maSp?: string | null;
 }) {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleZaloClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    trackZaloClick(viTri, maSp);
     if (contextLabel && typeof navigator !== 'undefined' && navigator.clipboard) {
       const msg = `Hi ${siteConfig.name}, mình muốn tư vấn giữ mẫu: ${contextLabel}`;
       navigator.clipboard.writeText(msg).then(() => {
@@ -71,6 +79,7 @@ export function ContactButtons({
         </a>
         <a
           href={`tel:${siteConfig.phone.tel}`}
+          onClick={() => trackCallClick(viTri)}
           className={`btn btn-outline ${sizeClass}`}
           aria-label={`Gọi ${siteConfig.name} số ${siteConfig.phone.display}`}
         >

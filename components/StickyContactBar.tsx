@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { siteConfig, mapsDirectionsUrl } from '@/lib/site-config';
+import { trackZaloClick } from '@/lib/analytics';
 
 /** Hiện sau khi khách cuộn qua khỏi Hero (không che nội dung ngay đầu trang). */
 const SHOW_AFTER_PX = 480;
@@ -61,6 +62,7 @@ export function StickyContactBar() {
         target="_blank"
         rel="noopener noreferrer"
         tabIndex={visible ? 0 : -1}
+        onClick={() => trackZaloClick('nut-noi')}
         aria-label={`Nhắn Zalo cho ${siteConfig.name}`}
         className="relative flex h-14 w-14 items-center justify-center rounded-full bg-accent text-surface shadow-[0_6px_18px_rgba(176,106,79,0.45)] transition hover:bg-accent-dark"
       >

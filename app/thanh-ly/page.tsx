@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSaleProducts } from '@/lib/products';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
+import { TrackedContactLink } from '@/components/TrackedContactLink';
 import { SaleGrid } from '@/components/SaleGrid';
 import type { Product } from '@/types/product';
 
@@ -70,14 +71,14 @@ export default async function ThanhLyPage() {
             — có mẫu ra là bọn mình báo ngay.
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <a
+            <TrackedContactLink
               href={siteConfig.zaloUrl3}
-              target="_blank"
-              rel="noopener noreferrer"
+              kieu="zalo"
+              viTri="thanh-ly"
               className="btn btn-primary"
             >
               Nhắn Zalo {siteConfig.phone3.display}
-            </a>
+            </TrackedContactLink>
             <Link href="/#san-pham" className="btn btn-outline">
               Xem mẫu cho thuê
             </Link>

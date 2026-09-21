@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Product } from '@/types/product';
+import { CATEGORY_LABELS, type Product, type ProductCategory } from '@/types/product';
 import { listRentPrice } from '@/lib/format';
 import { fitSize } from '@/lib/brands';
+import { trackEmptySearch, trackFilterUse } from '@/lib/analytics';
 import { ProductGrid } from '@/components/ProductGrid';
 import {
   ProductFilters,
@@ -42,6 +43,25 @@ const PRICE_BUCKETS = [
 ] as const;
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'Freesize'];
+
+/**
+ * Tên trường hiển thị trên dashboard analytics. Chủ shop là người đọc báo cáo,
+ * nên để tiếng Việt thay vì tên biến trong code ('category', 'sort'...).
+ */
+const TEN_TRUONG: Record<string, string> = {
+  category: 'Loại',
+  brand: 'Thương hiệu',
+  size: 'Size',
+  price: 'Tầm giá',
+  sort: 'Sắp xếp',
+};
+
+/** Nhãn dễ đọc cho giá trị lọc; không có trong bảng thì giữ nguyên giá trị. */
+const TEN_GIA_TRI: Record<string, string> = {
+  'price-asc': 'Giá thấp → cao',
+  'price-desc': 'Giá cao → thấp',
+  'name-asc': 'Tên A → Z',
+};
 
 /** Bỏ dấu để tìm kiếm không phân biệt dấu ("ao dai" khớp "Áo dài"). */
 function norm(s: string): string {
@@ -166,8 +186,55 @@ export function ProductExplorer({ products }: { products: Product[] }) {
   }, [products, filters]);
 
   const onChange = useCallback((patch: Partial<Filters>) => {
+    /*
+      Ghi nhận việc khách CHỌN một bộ lọc (lib/analytics.ts).
+
+      Bỏ qua hai trường hợp, đều để khỏi đốt hạn mức sự kiện mà chẳng thu được
+      gì: ô tìm kiếm (`q` đổi theo từng phím — đã có sự kiện "Tìm không ra
+      mẫu" lo phần này) và thao tác BỎ lọc (về 'all'/'default').
+    */
+    for (const [truong, giaTri] of Object.entries(patch)) {
+      if (truong === 'q') continue;
+      if (giaTri === 'all' || giaTri === 'default' || giaTri == null) continue;
+      const giaTriStr = String(giaTri);
+      trackFilterUse(
+        TEN_TRUONG[truong] ?? truong,
+        CATEGORY_LABELS[giaTriStr as ProductCategory] ??
+          PRICE_BUCKETS.find((b) => b.id === giaTriStr)?.label ??
+          TEN_GIA_TRI[giaTriStr] ??
+          giaTriStr,
+      );
+    }
     setFilters((prev) => ({ ...prev, ...patch }));
   }, []);
+
+  /*
+    Khách gõ tìm mà không ra mẫu nào -> ghi lại từ khoá.
+
+    Đây là danh sách "thứ khách hỏi mà tiệm chưa có", dùng cho khâu nhập hàng,
+    nên phải sạch:
+      - đợi 1,2 giây sau phím cuối, không bắn theo từng chữ cái;
+      - bỏ qua từ khoá dưới 2 ký tự (gõ dở);
+      - mỗi từ khoá + loại chỉ bắn MỘT lần trong một phiên, để khách xoá đi gõ
+        lại không nhân đôi số liệu.
+  */
+  const daGhiTimKhongRa = useRef(new Set<string>());
+  useEffect(() => {
+    const tuKhoa = filters.q.trim();
+    if (tuKhoa.length < 2 || filtered.length > 0) return;
+
+    const khoa = `${norm(tuKhoa)}|${filters.category}`;
+    if (daGhiTimKhongRa.current.has(khoa)) return;
+
+    const id = setTimeout(() => {
+      daGhiTimKhongRa.current.add(khoa);
+      trackEmptySearch(
+        tuKhoa,
+        CATEGORY_LABELS[filters.category as ProductCategory] ?? 'Tất cả',
+      );
+    }, 1200);
+    return () => clearTimeout(id);
+  }, [filters.q, filters.category, filtered.length]);
 
   const onReset = useCallback(() => setFilters(DEFAULT_FILTERS), []);
 

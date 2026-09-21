@@ -234,6 +234,8 @@ export default async function ProductPage({
             className="mt-6"
             zaloLabel="Đặt lịch"
             contextLabel={`${product.name} (mã ${product.id})`}
+            viTri="chi-tiet"
+            maSp={product.id}
           />
 
           {/* Trước đây chỗ này là ô "kiểm tra lịch trống", rồi thành câu nhắc

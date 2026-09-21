@@ -74,7 +74,7 @@ export default function FaqPage() {
           Nhắn Zalo hoặc gọi trực tiếp — {siteConfig.name} sẽ phản hồi nhanh nhất
           có thể.
         </p>
-        <ContactButtons className="mt-4" />
+        <ContactButtons className="mt-4" viTri="hoi-dap" />
       </div>
     </article>
   );

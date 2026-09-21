@@ -111,6 +111,8 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
               <ContactButtons
                 zaloLabel="Đặt lịch"
                 contextLabel={`${product.name} (mã ${product.id})`}
+                viTri="xem-nhanh"
+                maSp={product.id}
               />
               <Link
                 href={`/san-pham/${product.slug}`}

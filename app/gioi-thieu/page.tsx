@@ -177,7 +177,7 @@ export default function GioiThieuPage() {
           Nhắn Zalo hoặc gọi trực tiếp — <Brand /> sẽ phản hồi nhanh nhất có
           thể.
         </p>
-        <ContactButtons className="mt-4" />
+        <ContactButtons className="mt-4" viTri="gioi-thieu" />
       </div>
     </article>
   );

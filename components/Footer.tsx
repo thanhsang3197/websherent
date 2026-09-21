@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { siteConfig, mapsDirectionsUrl } from '@/lib/site-config';
 import { Brand } from '@/components/Brand';
+import { TrackedContactLink } from '@/components/TrackedContactLink';
 
 /**
  * Footer — hiển thị thông tin liên hệ dạng text (tốt cho SEO & GEO).
@@ -52,54 +53,58 @@ export function Footer() {
             <li className="flex gap-2.5">
               <PhoneIcon />
               <span>
-                <a
+                <TrackedContactLink
                   href={`tel:${siteConfig.phone.tel}`}
+                  kieu="goi"
+                  viTri="footer"
                   className="transition-colors hover:text-accent"
                 >
                   {siteConfig.phone.display}
-                </a>{' '}
+                </TrackedContactLink>{' '}
                 (Hotline)
                 {' · '}
-                <a
+                <TrackedContactLink
                   href={`tel:${siteConfig.phone2.tel}`}
+                  kieu="goi"
+                  viTri="footer"
                   className="transition-colors hover:text-accent"
                 >
                   {siteConfig.phone2.display}
-                </a>{' '}
+                </TrackedContactLink>{' '}
                 ({siteConfig.phone2.hours})
               </span>
             </li>
             <li className="flex gap-2.5">
               <ChatIcon />
               <span>
-                <a
+                <TrackedContactLink
                   href={siteConfig.zaloUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  kieu="zalo"
+                  viTri="footer"
                   className="transition-colors hover:text-accent"
                 >
                   Zalo: {siteConfig.phone.display}
-                </a>{' '}
+                </TrackedContactLink>{' '}
                 (Hotline)
                 {' · '}
-                <a
+                <TrackedContactLink
                   href={siteConfig.zaloUrl2}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  kieu="zalo"
+                  viTri="footer"
                   className="transition-colors hover:text-accent"
                 >
                   {siteConfig.phone2.display}
-                </a>{' '}
+                </TrackedContactLink>{' '}
                 ({siteConfig.phone2.hours})
                 {' · '}
-                <a
+                <TrackedContactLink
                   href={siteConfig.zaloUrl3}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  kieu="zalo"
+                  viTri="footer"
                   className="transition-colors hover:text-accent"
                 >
                   {siteConfig.phone3.display}
-                </a>{' '}
+                </TrackedContactLink>{' '}
                 (Thanh lý)
               </span>
             </li>

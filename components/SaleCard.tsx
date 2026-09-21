@@ -7,6 +7,7 @@ import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
 import { saleLine, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
+import { trackZaloClick } from '@/lib/analytics';
 
 /**
  * Thẻ sản phẩm trên trang THANH LÝ.
@@ -40,6 +41,7 @@ export function SaleCard({
     ` - ${saleLine(sale.price, product.rentPrice)}`;
 
   const handleZaloClick = () => {
+    trackZaloClick('thanh-ly', product.id);
     if (typeof navigator === 'undefined' || !navigator.clipboard) return;
     navigator.clipboard
       .writeText(message)
