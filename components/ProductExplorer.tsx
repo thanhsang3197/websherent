@@ -161,6 +161,10 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     const bucket = PRICE_BUCKETS.find((b) => b.id === filters.price);
     const list = products.filter((p) => {
       if (filters.category !== 'all' && p.category !== filters.category) return false;
+      // "Tất cả" = trang phục (chủ shop 24/09/2026): phụ kiện chỉ hiện khi khách
+      // bấm mục Phụ kiện, hoặc khi khách chủ động gõ tìm — không thì gõ "túi"
+      // ra trống trơn và khách tưởng tiệm không có.
+      if (filters.category === 'all' && !query && p.category === 'phu-kien') return false;
       if (filters.brand !== 'all' && p.brand !== filters.brand) return false;
       if (filters.size !== 'all' && !p.sizes.some((s) => fitSize(s) === filters.size)) {
         return false;
