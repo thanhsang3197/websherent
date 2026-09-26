@@ -192,6 +192,8 @@ export function groupProducts(products: Product[]): Product[] {
       rentPrice1Day:
         members.find((m) => m.rentPrice1Day != null)?.rentPrice1Day ?? null,
       tagPrice: members.find((m) => m.tagPrice != null)?.tagPrice ?? null,
+      // Video thường chỉ gắn vào một size -> lấy dòng ĐẦU TIÊN có link.
+      video: members.find((m) => m.video)?.video ?? null,
     };
   });
 }

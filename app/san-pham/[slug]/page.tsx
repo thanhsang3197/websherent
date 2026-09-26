@@ -15,6 +15,7 @@ import { ContactButtons } from '@/components/ContactButtons';
 import { ProductGallery } from '@/components/ProductGallery';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FavoriteButton } from '@/components/FavoriteButton';
+import { resolveProductVideo } from '@/lib/video';
 
 // ─── Vì sao 604.800 giây (7 ngày) chứ không phải 6 giờ ────────────────────
 // Đây CHỈ LÀ LƯỚI AN TOÀN, không phải cách chính để website cập nhật. Đường
@@ -97,7 +98,10 @@ export default async function ProductPage({
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product, 8);
+  const [related, video] = await Promise.all([
+    getRelatedProducts(product, 8),
+    resolveProductVideo(product.video),
+  ]);
   const categoryLabel = CATEGORY_LABELS[product.category];
   const productUrl = `${SITE_URL}/san-pham/${product.slug}`;
 
@@ -136,8 +140,14 @@ export default async function ProductPage({
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Ảnh — gallery */}
-        <div className="flex justify-center lg:justify-start">
-          <ProductGallery images={product.images} alt={product.name} />
+        {/* min-w-0: khung Instagram có bề rộng tối thiểu riêng, thiếu dòng này
+            thì trên điện thoại nó nong cột lưới ra và trang bị cuộn ngang. */}
+        <div className="flex min-w-0 justify-center lg:justify-start">
+          <ProductGallery
+            images={product.images}
+            alt={product.name}
+            video={video}
+          />
         </div>
 
         {/* Thông tin */}

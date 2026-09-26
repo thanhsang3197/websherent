@@ -66,6 +66,11 @@ interface SanPhamApi {
   tien_coc: number;
   anh: string | null;
   anh_phu: string[];
+  /**
+   * Link video Instagram/TikTok của mẫu. null/trống = không có video.
+   * Optional vì API cũ chưa có (docs/ket-noi-webapp.md §6).
+   */
+  video?: string | null;
 
   // --- Thanh lý (pass mẫu) --- 3 trường dưới đây LÀ TUỲ CHỌN.
   // API cũ chưa có chúng; khi đó `sale` = null và trang /thanh-ly trống, chứ
@@ -189,6 +194,7 @@ function mapSanPham(item: SanPhamApi): Product {
     image: mainImage,
     images: images.length > 0 ? images : mainImage ? [mainImage] : [],
     sale: mapSale(item),
+    video: (item.video ?? '').trim() || null,
   };
 }
 

@@ -135,3 +135,46 @@ Vì vậy đã xoá `components/AvailabilityCheck.tsx`, `app/api/kiem-tra-lich/`
 
 Đừng dựng lại tính năng này bằng cách đoán từ dữ liệu hiện có — không còn đường
 nào lấy được lịch, và đó là chủ ý.
+
+---
+
+## 6. Video sản phẩm (link Instagram / TikTok) — cần bên app trả thêm 1 trường
+
+Trang chi tiết sản phẩm hiện được video: dải ảnh nhỏ có thêm ô ▶, bấm vào thì
+khung Instagram/TikTok hiện thẳng vào chỗ ảnh lớn. Video chạy từ máy chủ của
+Instagram/TikTok nên **không upload file video lên Supabase** (gói miễn phí chỉ
+~5GB lượt tải/tháng, vài trăm lượt xem video là cạn).
+
+### Việc phải làm bên repo `Sherent-app`
+
+Thêm 1 cột vào bảng sản phẩm (ô nhập "Link video" trong form sửa sản phẩm) và
+trả kèm trong `GET /api/cong-khai/san-pham`:
+
+| Trường JSON | Kiểu | Ý nghĩa |
+|---|---|---|
+| `video` | string \| null | Link dán nguyên từ Instagram hoặc TikTok. `null`/trống = không có video |
+
+Link nhận được:
+
+- Instagram: `https://www.instagram.com/p/<mã>/`, `/reel/<mã>/`, `/tv/<mã>/`
+  (có hay không có `?igsh=...` phía sau đều được).
+- TikTok: `https://www.tiktok.com/@<tài khoản>/video/<số>` hoặc link ngắn
+  `https://vt.tiktok.com/...`, `https://vm.tiktok.com/...`.
+
+Sửa link xong app gọi `/api/lam-moi` như mọi thay đổi khác.
+
+### Cách website đọc
+
+- `lib/internal-api.ts` đọc `video`; mẫu gộp nhiều size lấy link của dòng đầu
+  tiên có link (`lib/mapping.ts` → `groupProducts`).
+- `lib/video.ts` đổi link thành link nhúng ở server. Link lạ / hỏng / TikTok
+  không tra được ID → **ẩn ô ▶**, không hiện khung trống.
+- API chưa có trường `video` → trang sản phẩm y như cũ, **không lỗi**.
+
+Lưu ý cho nhân viên:
+
+- **Tài khoản Instagram/TikTok phải để công khai**, không thì khung nhúng báo lỗi.
+- Logo/watermark nằm sẵn trong file video (vd video tải từ TikTok người khác)
+  sẽ hiện nguyên trên web — web không che được.
+- Xoá bài trên IG/TikTok thì phải xoá link bên app, không thì khung video trên
+  web báo "bài không còn".

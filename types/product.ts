@@ -80,11 +80,27 @@ export interface Product {
    * trường này — thêm dấu `?` để mock vẫn hợp lệ mà không phải sinh lại.
    */
   sale?: ProductSale | null;
+  /**
+   * Link video Instagram (bài đăng / Reels) hoặc TikTok, đúng như nhân viên dán
+   * bên app. Trang chi tiết đổi sang link nhúng ở server (lib/video.ts).
+   * Optional vì Google Sheets và mock-data không có trường này.
+   */
+  video?: string | null;
   /*
    * Không có trường `status`: cột "Trạng Thái" trong Sheet chỉ dùng để LỌC ở
    * lib/mapping.ts (mẫu "Đã thanh lý" bị bỏ hẳn), không hiển thị cho khách —
    * nên cũng không gửi kèm xuống trình duyệt.
    */
+}
+
+/**
+ * Video của một mẫu, đã đổi từ link nhân viên dán bên app sang link NHÚNG
+ * (lib/video.ts). Video chạy từ máy chủ Instagram/TikTok: không tốn quota ảnh
+ * Vercel, không tốn băng thông Supabase. Đổi lại khung mang giao diện của họ.
+ */
+export interface ProductVideo {
+  kind: 'instagram' | 'tiktok';
+  embedUrl: string;
 }
 
 /**
