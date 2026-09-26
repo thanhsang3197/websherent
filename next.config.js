@@ -20,7 +20,7 @@ const nextConfig = {
     //
     // ĐÃ GỠ 96 và 1920 (28/08/2026) cùng lúc với việc gỡ dải thumbnail và
     // lightbox trong ProductGallery — hai vị trí duy nhất còn cần tới chúng:
-    //   96   -> thumbnail 48px (đã thay bằng dãy chấm + kéo ngang)
+    //   96   -> thumbnail 48px (dải thumbnail mới từ 26/09/2026 dùng lại cỡ 384)
     //   1920 -> lightbox phóng to (đã gỡ hẳn)
     // Khảo sát 08/2026 cho thấy đây là hai cỡ tốn nhất mà ít người xem nhất:
     // 98% ảnh ở cỡ 96 và 78% ảnh ở cỡ 1920 đã cạn quota, trong khi 640 chỉ 3%.

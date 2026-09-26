@@ -7,18 +7,24 @@ import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 
 /**
  * Gallery ảnh sản phẩm: khung vòm (arch), KÉO NGANG để đổi ảnh.
- * Nhiều ảnh -> hiện nút mũi tên ở mép trái/phải để bấm qua lại, kèm dãy chấm
- * trắng ở đáy ảnh vừa báo "còn ảnh nữa" vừa bấm được để nhảy thẳng tới ảnh đó.
+ * Nhiều ảnh -> hiện nút mũi tên ở mép trái/phải để bấm qua lại, kèm DẢI ẢNH
+ * NHỎ (thumbnail) để khách thấy ngay mẫu có mấy hình và bấm nhảy thẳng tới:
+ *   - từ `sm` trở lên: cột dọc bên TRÁI ảnh lớn, cao đúng bằng ảnh lớn
+ *     (nhiều ảnh thì tự cuộn dọc).
+ *   - điện thoại: hàng ngang NGAY DƯỚI ảnh — màn hẹp, đặt bên trái sẽ bóp nhỏ
+ *     ảnh chính.
  * 1 ảnh -> chỉ hiện ảnh. 0 ảnh -> khung monogram.
  *
  * Dùng scroll-snap sẵn có của trình duyệt thay vì tự bắt cử chỉ: vuốt trên
  * điện thoại, kéo trackpad trên desktop và phím mũi tên đều chạy mà không tốn
  * dòng JS nào.
  *
- * KHÔNG có dải thumbnail và KHÔNG có lightbox phóng to (gỡ 28/08/2026): hai
- * thứ đó ép Vercel gia công thêm cỡ 96px và 1920px cho mỗi tấm — hai cỡ đắt
- * nhất mà ít người xem nhất, và là thủ phạm chính làm cạn hạn mức Image
- * Transformations. Giờ mọi vị trí chỉ còn xài 384/640/1080.
+ * VỀ QUOTA ẢNH VERCEL: dải thumbnail cũ bị gỡ 28/08/2026 vì bắt Vercel gia công
+ * thêm cỡ 96px (xem next.config.js). Dải mới KHÔNG thêm cỡ nào: config giờ chỉ
+ * còn 384/640/1080, nên thumbnail 56-64px tự rơi vào cỡ 384 — đúng cỡ mà ô lưới
+ * sản phẩm ở trang chủ đã dùng, file đã có sẵn trong cache. Đừng thêm lại 96
+ * vào `imageSizes` chỉ để thumbnail "nhẹ hơn".
+ * Lightbox phóng to vẫn KHÔNG có (cần cỡ 1920).
  */
 export function ProductGallery({
   images,
@@ -31,7 +37,8 @@ export function ProductGallery({
   const [active, setActive] = useState(0);
   const hasMultiple = images.length > 1;
 
-  // Chấm bám theo vị trí cuộn thật, nên vuốt tay và bấm chấm luôn khớp nhau.
+  // Thumbnail đang chọn bám theo vị trí cuộn thật, nên vuốt tay và bấm
+  // thumbnail luôn khớp nhau.
   const onScroll = useCallback(() => {
     const el = trackRef.current;
     if (!el || el.clientWidth === 0) return;
@@ -59,8 +66,8 @@ export function ProductGallery({
   );
 
   return (
-    <div className="w-full max-w-sm">
-      <div className="relative">
+    <div className="flex w-full max-w-sm flex-col gap-3 sm:max-w-[460px] sm:flex-row-reverse">
+      <div className="relative min-w-0 flex-1">
         <div
           aria-hidden="true"
           className="arch absolute -right-3 -top-3 h-full w-full border border-accent/40"
@@ -113,25 +120,6 @@ export function ProductGallery({
                   />
                 </>
               )}
-
-              {hasMultiple && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
-                  {images.map((src, i) => (
-                    <button
-                      key={`dot-${src}-${i}`}
-                      type="button"
-                      onClick={() => goTo(i)}
-                      aria-label={`Xem ảnh ${i + 1}`}
-                      aria-current={i === active}
-                      className={`pointer-events-auto h-2 w-2 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.45)] transition ${
-                        i === active
-                          ? 'bg-white'
-                          : 'bg-white/50 hover:bg-white/80'
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
             </>
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-tint">
@@ -143,6 +131,37 @@ export function ProductGallery({
           )}
         </div>
       </div>
+
+      {hasMultiple && (
+        // Cột ngoài `relative` + lớp trong `absolute inset-0` (từ sm): cột lấy
+        // chiều cao theo ảnh lớn bên cạnh chứ không tự đẩy cao thêm khi nhiều ảnh.
+        <div className="relative shrink-0 sm:w-16">
+          <div className="no-scrollbar flex gap-2 overflow-x-auto sm:absolute sm:inset-0 sm:flex-col sm:overflow-y-auto sm:overflow-x-hidden">
+            {images.map((src, i) => (
+              <button
+                key={`thumb-${src}-${i}`}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Xem ảnh ${i + 1}`}
+                aria-current={i === active}
+                className={`relative aspect-[3/4] w-14 shrink-0 overflow-hidden rounded-md border-2 bg-tint transition sm:w-full ${
+                  i === active
+                    ? 'border-accent-dark'
+                    : 'border-transparent opacity-60 hover:opacity-100'
+                }`}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
