@@ -4,14 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
 import { trackZaloClick } from '@/lib/analytics';
-import { useFavorites } from '@/lib/useFavorites';
 
 /**
  * Header sticky, tối giản, mobile-first. Menu mobile mở/đóng bằng nút (có JS nhẹ).
  */
 export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
   const [open, setOpen] = useState(false);
-  const { favorites } = useFavorites();
 
   // "Album" chen ngay sau "Sản phẩm", CHỈ khi đang có album: bản app chưa có
   // tính năng album hoặc shop tắt hết thì menu không dẫn tới trang trống.
@@ -50,22 +48,6 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/yeu-thich"
-            aria-label={
-              favorites.length > 0
-                ? `Mẫu yêu thích (${favorites.length})`
-                : 'Mẫu yêu thích'
-            }
-            className="relative text-ink/80 transition-colors hover:text-accent"
-          >
-            <HeartIcon />
-            {favorites.length > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-surface shadow-sm">
-                {favorites.length}
-              </span>
-            )}
-          </Link>
           <a
             href={siteConfig.zaloUrl}
             target="_blank"
@@ -111,15 +93,6 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/yeu-thich"
-                className="block py-3 text-sm font-medium text-ink/90 transition-colors hover:text-accent"
-                onClick={() => setOpen(false)}
-              >
-                Yêu thích{favorites.length > 0 ? ` (${favorites.length})` : ''}
-              </Link>
-            </li>
             <li className="py-3">
               <a
                 href={siteConfig.zaloUrl}
@@ -138,23 +111,5 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
         </nav>
       )}
     </header>
-  );
-}
-
-function HeartIcon() {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20.8 4.6c-1.9-1.6-4.7-1.4-6.5.5L12 7.4l-2.3-2.3c-1.8-1.9-4.6-2-6.5-.5-2.2 1.8-2.3 5.1-.3 7.1l8.8 8.8c.2.2.5.2.7 0l8.8-8.8c2-2 1.9-5.3-.3-7.1z" />
-    </svg>
   );
 }

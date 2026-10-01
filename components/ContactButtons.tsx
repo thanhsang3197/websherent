@@ -2,11 +2,15 @@
 
 import { useState } from 'react';
 import { siteConfig } from '@/lib/site-config';
-import { trackCallClick, trackZaloClick, type ViTri } from '@/lib/analytics';
+import { trackMessengerClick, trackZaloClick, type ViTri } from '@/lib/analytics';
 
 /**
- * Nút liên hệ dùng lại nhiều nơi: Nhắn Zalo + Gọi.
- * Tự động sao chép tin nhắn mẫu khi nhấn Zalo để dán nhanh vào khung chat.
+ * Nút liên hệ dùng lại nhiều nơi: Nhắn Zalo + Nhắn Messenger.
+ * Tự động sao chép tin nhắn mẫu khi nhấn để dán nhanh vào khung chat.
+ *
+ * Nút thứ hai trước đây là "Gọi 0982 476 969" — đổi sang Messenger theo yêu
+ * cầu chủ shop 02/10/2026 vì khách hầu như không gọi. Số điện thoại vẫn còn
+ * ở Footer.
  */
 export function ContactButtons({
   className = '',
@@ -26,16 +30,25 @@ export function ContactButtons({
 }) {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const handleZaloClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    trackZaloClick(viTri, maSp);
+  const copyTemplate = (appName: string) => {
     if (contextLabel && typeof navigator !== 'undefined' && navigator.clipboard) {
       const msg = `Hi ${siteConfig.name}, mình muốn tư vấn giữ mẫu: ${contextLabel}`;
       navigator.clipboard.writeText(msg).then(() => {
-        showToast('Đã sao chép tin nhắn mẫu! Đang mở Zalo...');
+        showToast(`Đã sao chép tin nhắn mẫu! Đang mở ${appName}...`);
       }).catch(() => {
-        // Mở Zalo bình thường nếu clipboard không khả dụng
+        // Mở app bình thường nếu clipboard không khả dụng
       });
     }
+  };
+
+  const handleZaloClick = () => {
+    trackZaloClick(viTri, maSp);
+    copyTemplate('Zalo');
+  };
+
+  const handleMessengerClick = () => {
+    trackMessengerClick(viTri, maSp);
+    copyTemplate('Messenger');
   };
 
   const showToast = (msg: string) => {
@@ -45,13 +58,12 @@ export function ContactButtons({
 
   /*
     Hai nút LUÔN bằng nhau và chung một dòng (grid 2 cột), ở mọi chỗ dùng:
-    trang chi tiết, Xem nhanh, Giới thiệu, Hỏi đáp.
+    trang chi tiết, Giới thiệu, Hỏi đáp.
 
     Cỡ chữ co theo bề rộng KHUNG CHỨA (đơn vị cqi), không theo màn hình (vw):
-    trong Xem nhanh ô nút hẹp (~160px) dù màn hình rộng, dùng vw thì chữ vẫn
-    to và icon điện thoại bị ép về 0px. Nhãn dài nhất "Gọi 0982 476 969" rộng
-    ~8,2em + icon + lề ~40px, nên chữ phải ≤ ((khung − 8) / 2 − 40) / 8,2
-    -> 5,6cqi − 5px (thấp hơn giới hạn một chút để chữ không sát viền nút).
+    khung hẹp mà dùng vw thì chữ vẫn to và icon bị ép về 0px. Công thức tính
+    cho nhãn dài ~8,2em (nhãn cũ "Gọi 0982 476 969"; "Nhắn Messenger" ngắn
+    hơn nên càng dư): chữ ≤ ((khung − 8) / 2 − 40) / 8,2 -> 5,6cqi − 5px.
     `max-w-md` để trên trang rộng hai nút không bị kéo dài quá mức.
   */
   const sizeClass =
@@ -78,13 +90,19 @@ export function ContactButtons({
           {zaloLabel}
         </a>
         <a
-          href={`tel:${siteConfig.phone.tel}`}
-          onClick={() => trackCallClick(viTri)}
+          href={siteConfig.messengerUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleMessengerClick}
           className={`btn btn-outline ${sizeClass}`}
-          aria-label={`Gọi ${siteConfig.name} số ${siteConfig.phone.display}`}
+          aria-label={
+            contextLabel
+              ? `Nhắn Messenger cho ${siteConfig.name} về ${contextLabel}`
+              : `Nhắn Messenger cho ${siteConfig.name}`
+          }
         >
-          <PhoneIcon />
-          Gọi {siteConfig.phone.display}
+          <MessengerIcon />
+          Nhắn Messenger
         </a>
       </div>
 
@@ -116,7 +134,7 @@ function ChatIcon() {
   );
 }
 
-function PhoneIcon() {
+function MessengerIcon() {
   return (
     <svg
       width="18"
@@ -129,7 +147,8 @@ function PhoneIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+      <path d="M12 2.5c-5.3 0-9.5 3.9-9.5 9 0 2.8 1.3 5.3 3.5 7v3.3l3.2-1.8c.9.3 1.8.4 2.8.4 5.3 0 9.5-3.9 9.5-9s-4.2-8.9-9.5-8.9z" />
+      <path d="m7 13.5 3.2-3.4 2.4 2.3 3.4-3.4-3.2 3.4-2.4-2.3z" />
     </svg>
   );
 }

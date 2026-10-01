@@ -13,7 +13,7 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
       <div className="container-content grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         {/* Nội dung */}
         <div className="order-2 lg:order-1">
-          <p className="whitespace-nowrap text-center text-[clamp(10px,2.9vw,12px)] font-semibold uppercase tracking-[0.14em] text-accent-dark sm:text-left sm:text-sm sm:tracking-[0.2em]">
+          <p className="whitespace-nowrap text-center text-[clamp(10px,2.9vw,12px)] font-semibold uppercase tracking-[0.14em] text-ink sm:text-left sm:text-sm sm:tracking-[0.2em]">
             Cho thuê váy · Đầm · Áo dài · Pháp phục
           </p>
           {/*

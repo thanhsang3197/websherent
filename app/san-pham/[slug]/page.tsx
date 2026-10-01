@@ -14,7 +14,6 @@ import { JsonLd } from '@/components/JsonLd';
 import { ContactButtons } from '@/components/ContactButtons';
 import { ProductGallery } from '@/components/ProductGallery';
 import { ProductCarousel } from '@/components/ProductCarousel';
-import { FavoriteButton } from '@/components/FavoriteButton';
 import { resolveProductVideo } from '@/lib/video';
 
 // ─── Vì sao 604.800 giây (7 ngày) chứ không phải 6 giờ ────────────────────
@@ -112,7 +111,7 @@ export default async function ProductPage({
   ]);
 
   return (
-    <article className="container-content pb-4 pt-10 sm:pb-10">
+    <article className="container-content pb-4 pt-4 sm:py-10">
       <JsonLd data={productJsonLd(product, productUrl)} id="ld-product" />
       <JsonLd data={breadcrumb} id="ld-breadcrumb-product" />
 
@@ -161,7 +160,6 @@ export default async function ProductPage({
                 {product.name}
               </h1>
             </div>
-            <FavoriteButton slug={product.slug} size="md" className="mt-1 shrink-0" />
           </div>
 
           {/* Thông số */}
@@ -258,7 +256,17 @@ export default async function ProductPage({
       {/* Mẫu tương tự */}
       {related.length > 0 && (
         <section className="mt-10 sm:mt-16">
-          <h2 className="font-serif text-2xl text-accent-dark">Mẫu tương tự</h2>
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-serif text-2xl text-ink">Mẫu tương tự</h2>
+            {/* Mẫu tương tự giờ cùng loại (lib/products.ts) -> dẫn về trang
+                chủ đã lọc sẵn loại đó để khách xem hết. */}
+            <Link
+              href={`/?loai=${product.category}#san-pham`}
+              className="shrink-0 text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
+            >
+              Xem tất cả {categoryLabel.toLowerCase()} →
+            </Link>
+          </div>
           <div className="mt-6">
             <ProductCarousel products={related} />
           </div>

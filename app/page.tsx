@@ -128,10 +128,10 @@ export default async function HomePage() {
       {/* Bộ sưu tập + bộ lọc */}
       <section id="san-pham" className="container-content scroll-mt-24 pb-16 pt-5 sm:pt-16">
         <header className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink">
             Bộ sưu tập
           </p>
-          <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
+          <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
             Chọn mẫu bạn thích
           </h2>
         </header>
@@ -148,10 +148,10 @@ export default async function HomePage() {
       {saleCount > 0 && (
         <section className="container-content pb-16">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink">
               Thanh lý
             </p>
-            <h2 className="mt-3 font-serif text-3xl text-accent-dark sm:text-4xl">
+            <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
               Sản phẩm thanh lý
             </h2>
             <p className="mt-4 leading-relaxed text-ink">

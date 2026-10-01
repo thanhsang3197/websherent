@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import type { Product } from '@/types/product';
 import { ProductCard } from '@/components/ProductCard';
-import { QuickViewModal } from '@/components/QuickViewModal';
 import { useLoadMore } from '@/hooks/useLoadMore';
 
 const PAGE_SIZE = 40;
@@ -20,7 +18,6 @@ export function ProductGrid({
   /** Số card đầu ưu tiên tải ảnh (LCP). */
   priorityCount?: number;
 }) {
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const { visibleItems, hasMore, loadMore } = useLoadMore(products, PAGE_SIZE);
 
   if (products.length === 0) {
@@ -39,7 +36,6 @@ export function ProductGrid({
             <ProductCard
               product={product}
               priority={i < priorityCount}
-              onQuickView={setQuickViewProduct}
             />
           </li>
         ))}
@@ -57,10 +53,6 @@ export function ProductGrid({
         </p>
       )}
 
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-      />
     </>
   );
 }

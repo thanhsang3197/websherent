@@ -176,22 +176,29 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 /**
- * Gợi ý mẫu tương tự. CHỈ lấy mẫu CÓ ẢNH (để khách xem được hình), rồi sắp xếp ưu tiên:
+ * Gợi ý mẫu tương tự. CHỈ lấy mẫu CÓ ẢNH (để khách xem được hình) và CÙNG LOẠI
+ * với mẫu đang xem — đang xem áo dài thì chỉ gợi ý áo dài (chủ shop yêu cầu
+ * 02/10/2026). Loại đó không còn mẫu nào khác thì mới lấy sang loại khác.
+ * Sắp xếp ưu tiên:
  *   1) Cùng size (có chung ít nhất 1 size với mẫu đang xem)
- *   2) Cùng thương hiệu
- *   3) Phí thuê cao -> thấp
- *   (4) Cùng giá thì theo tên cho ổn định)
+ *   2) Phí thuê GẦN với mẫu đang xem nhất (khách xem mẫu 250k thấy mẫu
+ *      200–300k trước, không bị nhảy sang mẫu đắt gấp đôi)
+ *   3) Cùng thương hiệu
+ *   (4) Còn bằng nhau thì theo tên cho ổn định)
  */
 export async function getRelatedProducts(
   product: Product,
   limit = 4,
 ): Promise<Product[]> {
   const all = await getProducts();
-  const candidates = all.filter((p) => p.id !== product.id && p.image);
+  const withImage = all.filter((p) => p.id !== product.id && p.image);
+  const sameCategory = withImage.filter((p) => p.category === product.category);
+  const candidates = sameCategory.length > 0 ? sameCategory : withImage;
 
   const mySizes = product.sizes.map(fitSize);
   const sharesSize = (p: Product) =>
     p.sizes.some((s) => mySizes.includes(fitSize(s)));
+  const priceGap = (p: Product) => Math.abs(p.rentPrice - product.rentPrice);
 
   return candidates
     .sort((a, b) => {
@@ -199,12 +206,12 @@ export async function getRelatedProducts(
       const aSize = sharesSize(a) ? 0 : 1;
       const bSize = sharesSize(b) ? 0 : 1;
       if (aSize !== bSize) return aSize - bSize;
-      // 2) cùng brand
+      // 2) phí thuê gần nhất
+      if (priceGap(a) !== priceGap(b)) return priceGap(a) - priceGap(b);
+      // 3) cùng brand
       const aBrand = a.brand && a.brand === product.brand ? 0 : 1;
       const bBrand = b.brand && b.brand === product.brand ? 0 : 1;
       if (aBrand !== bBrand) return aBrand - bBrand;
-      // 3) phí thuê cao -> thấp
-      if (b.rentPrice !== a.rentPrice) return b.rentPrice - a.rentPrice;
       return a.name.localeCompare(b.name, 'vi');
     })
     .slice(0, limit);

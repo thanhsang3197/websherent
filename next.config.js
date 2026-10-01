@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Trang /yeu-thich đã gỡ cùng tính năng Yêu thích (02/10/2026). Ai còn lưu
+  // link cũ thì đưa về trang chủ thay vì trang 404.
+  async redirects() {
+    return [{ source: '/yeu-thich', destination: '/', permanent: true }];
+  },
   images: {
     // ─── Ghìm số "image transformation" của Vercel ─────────────────────────
     // Hobby chỉ cho 5.000 lượt gia công ảnh mỗi chu kỳ. Công thức tiêu thụ:

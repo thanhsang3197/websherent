@@ -66,6 +66,8 @@ export const siteConfig = {
   },
   zaloUrl3: `https://zalo.me/${PHONE_3_RAW}`,
   facebookUrl: 'https://www.facebook.com/profile.php?id=61550268010962',
+  /** Mở thẳng khung chat Messenger với trang Facebook trên (cùng id). */
+  messengerUrl: 'https://m.me/61550268010962',
   /** Instagram chính — mảng váy/đầm thiết kế. */
   instagramUrl: 'https://www.instagram.com/sherent.thuevaythietke/',
   /** Instagram thứ hai — tiệm tách riêng mảng áo dài. */

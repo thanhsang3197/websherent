@@ -53,7 +53,7 @@ export function NewArrivalsSection({ products }: { products: Product[] }) {
 
   return (
     <section className="container-content py-5 sm:py-10">
-      <h2 className="font-serif text-2xl text-accent-dark sm:text-3xl">
+      <h2 className="font-serif text-2xl text-ink sm:text-3xl">
         Sản phẩm mới về
       </h2>
 

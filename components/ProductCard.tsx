@@ -1,24 +1,19 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
-import { CATEGORY_LABELS } from '@/types/product';
 import { formatVnd, GLASS_BLUR_DATA_URL, listRentPrice } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
-import { FavoriteButton } from '@/components/FavoriteButton';
 
 /**
  * Thẻ sản phẩm trong lưới. Ảnh khung vòm; mẫu chưa có ảnh -> placeholder thanh lịch.
- * Bọc ngoài bằng <div relative> để nút yêu thích là ANH EM của <Link>, không lồng
- * bên trong (tránh <button> nằm trong <a>, sai chuẩn HTML).
+ * (Nút ❤ yêu thích trên góc ảnh đã bỏ cùng cả tính năng Yêu thích, 02/10/2026.)
  */
 export function ProductCard({
   product,
   priority = false,
-  onQuickView,
 }: {
   product: Product;
   priority?: boolean;
-  onQuickView?: (product: Product) => void;
 }) {
   const rent = listRentPrice(product);
   return (
@@ -43,28 +38,11 @@ export function ProductCard({
             <CardPlaceholder />
           )}
 
-          {product.category !== 'dam-vay' && (
-            <span className="glass-pill absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-[11px] font-semibold text-accent-dark shadow-sm">
-              {CATEGORY_LABELS[product.category]}
-            </span>
-          )}
+          {/* Nhãn loại ("Áo dài", "Pháp phục"…) góc trên ảnh đã bỏ theo yêu
+              cầu chủ shop 02/10/2026. */}
 
-          {/* Nút Xem nhanh (Quick View Overlay Liquid Glass) */}
-          {onQuickView && (
-            <div className="absolute inset-x-0 bottom-0 p-2.5 opacity-0 transition-all duration-300 group-hover:opacity-100 sm:p-3">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onQuickView(product);
-                }}
-                className="w-full rounded-full bg-white/80 py-2.5 text-xs font-semibold text-accent-dark shadow-lg backdrop-blur-md transition-all hover:bg-white hover:scale-[1.03] active:scale-95"
-              >
-                👁️ Xem nhanh
-              </button>
-            </div>
-          )}
+          {/* Nút "Xem nhanh" (cửa sổ nổi) đã bỏ theo yêu cầu chủ shop
+              02/10/2026 — bấm thẻ là vào thẳng trang chi tiết. */}
         </div>
 
         <div className="mt-3">
@@ -135,7 +113,6 @@ export function ProductCard({
         </div>
       </Link>
 
-      <FavoriteButton slug={product.slug} className="absolute right-2 top-2 z-10" />
     </div>
   );
 }

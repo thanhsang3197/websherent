@@ -24,7 +24,6 @@ import { track } from '@vercel/analytics';
 /** Nơi khách bấm — để biết nút nào trên trang nào đang thật sự được dùng. */
 export type ViTri =
   | 'chi-tiet'
-  | 'xem-nhanh'
   | 'thanh-ly'
   | 'header'
   | 'footer'
@@ -41,6 +40,11 @@ const KHONG_CO_MA = '—';
  */
 export function trackZaloClick(viTri: ViTri, maSp?: string | null) {
   track('Bấm Zalo', { vi_tri: viTri, ma_sp: maSp || KHONG_CO_MA });
+}
+
+/** Khách bấm nút nhắn Messenger (Facebook) — kênh thứ hai cạnh Zalo. */
+export function trackMessengerClick(viTri: ViTri, maSp?: string | null) {
+  track('Bấm Messenger', { vi_tri: viTri, ma_sp: maSp || KHONG_CO_MA });
 }
 
 /** Khách bấm nút gọi. Tách riêng khỏi Zalo: hai kiểu khách rất khác nhau. */
