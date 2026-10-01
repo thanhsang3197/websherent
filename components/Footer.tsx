@@ -26,7 +26,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t border-white/60 bg-surface/75 backdrop-blur-xl">
+    <footer className="mt-10 border-t sm:mt-20 border-white/60 bg-surface/75 backdrop-blur-xl">
       <div className="container-content grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-3">
         {/* Cột 1 — Về tiệm + liên hệ */}
         <div>

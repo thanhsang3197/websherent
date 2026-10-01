@@ -124,17 +124,13 @@ export function ProductFilters({
       </div>
 
       {/*
-        Loại: điện thoại xếp MỘT hàng vuốt ngang (trước đây gãy 3 + 2 nút, tốn
-        thêm một hàng); từ sm trở lên đủ rộng nên các nút giãn đều.
-        `-mx-4 px-4` cho hàng vuốt chạm sát mép khung, nút cuối không bị cắt
-        cứng giữa chừng trông như lỗi.
+        Loại: điện thoại xếp lưới 3 × 2 gọn, thấy đủ 6 mục không cần vuốt.
+        Trước đây là một hàng vuốt ngang, khách không biết còn Gấm / Phụ kiện
+        ở bên phải (chủ shop yêu cầu 02/10/2026). Từ sm trở lên đủ rộng nên
+        vẫn một hàng, các nút giãn đều.
       */}
-      <div
-        className="no-scrollbar -mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:mt-4 sm:px-0"
-        role="group"
-        aria-label="Lọc theo loại"
-      >
-        <div className="flex w-max gap-1.5 rounded-full glass-pill p-1.5 sm:w-full">
+      <div className="mt-3 sm:mt-4" role="group" aria-label="Lọc theo loại">
+        <div className="grid grid-cols-3 gap-1 rounded-2xl glass-pill p-1 sm:flex sm:gap-1.5 sm:rounded-full sm:p-1.5">
           {CATEGORIES.map((c) => {
             const active = filters.category === c.id;
             return (
@@ -143,7 +139,7 @@ export function ProductFilters({
                 type="button"
                 aria-pressed={active}
                 onClick={() => onChange({ category: c.id })}
-                className={`flex-1 whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium transition-all sm:text-sm ${
+                className={`whitespace-nowrap rounded-xl px-2 py-1.5 text-xs font-medium transition-all sm:flex-1 sm:rounded-full sm:px-3.5 sm:py-2 sm:text-sm ${
                   active
                     ? 'bg-gradient-to-r from-accent to-accent-dark text-surface shadow-md'
                     : 'text-ink/80 hover:bg-white/40 hover:text-accent-dark'

@@ -9,7 +9,7 @@ import type { HeroSlide } from '@/types/hero';
  */
 export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
   return (
-    <section className="relative overflow-hidden py-10 lg:py-16">
+    <section className="relative overflow-hidden pb-5 pt-10 sm:pb-10 lg:py-16">
       <div className="container-content grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         {/* Nội dung */}
         <div className="order-2 lg:order-1">

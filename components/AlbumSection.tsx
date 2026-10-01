@@ -21,7 +21,7 @@ export function AlbumSection({ albums }: { albums: Album[] }) {
   const conNua = albums.length > items.length;
 
   return (
-    <section className="container-content py-10" aria-labelledby="album-tieu-de">
+    <section className="container-content py-5 sm:py-10" aria-labelledby="album-tieu-de">
       <div className="flex items-end justify-between gap-4">
         <h2 id="album-tieu-de" className="font-serif text-2xl text-accent-dark sm:text-3xl">
           Album tuyển chọn

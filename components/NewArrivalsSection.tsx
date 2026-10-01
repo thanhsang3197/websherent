@@ -52,7 +52,7 @@ export function NewArrivalsSection({ products }: { products: Product[] }) {
   const durationSec = items.length * GIAY_MOI_MAU;
 
   return (
-    <section className="container-content py-10">
+    <section className="container-content py-5 sm:py-10">
       <h2 className="font-serif text-2xl text-accent-dark sm:text-3xl">
         Sản phẩm mới về
       </h2>

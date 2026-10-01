@@ -112,7 +112,7 @@ export default async function ProductPage({
   ]);
 
   return (
-    <article className="container-content py-10">
+    <article className="container-content pb-4 pt-10 sm:pb-10">
       <JsonLd data={productJsonLd(product, productUrl)} id="ld-product" />
       <JsonLd data={breadcrumb} id="ld-breadcrumb-product" />
 
@@ -165,7 +165,7 @@ export default async function ProductPage({
           </div>
 
           {/* Thông số */}
-          <dl className="mt-6 divide-y divide-hairline border-y border-hairline">
+          <dl className="mt-4 sm:mt-6 divide-y divide-hairline border-y border-hairline">
             {product.brand && (
               <SpecRow label="Thương hiệu" value={product.brand} />
             )}
@@ -257,7 +257,7 @@ export default async function ProductPage({
 
       {/* Mẫu tương tự */}
       {related.length > 0 && (
-        <section className="mt-16">
+        <section className="mt-10 sm:mt-16">
           <h2 className="font-serif text-2xl text-accent-dark">Mẫu tương tự</h2>
           <div className="mt-6">
             <ProductCarousel products={related} />
@@ -278,7 +278,7 @@ function SpecRow({
   valueClassName?: string;
 }) {
   return (
-    <div className="flex items-center justify-between py-3">
+    <div className="flex items-center justify-between py-2 sm:py-3">
       <dt className="text-sm text-muted">{label}</dt>
       <dd className={valueClassName}>{value}</dd>
     </div>
