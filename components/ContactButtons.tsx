@@ -94,7 +94,7 @@ export function ContactButtons({
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleMessengerClick}
-          className={`btn btn-outline ${sizeClass}`}
+          className={`btn btn-primary ${sizeClass}`}
           aria-label={
             contextLabel
               ? `Nhắn Messenger cho ${siteConfig.name} về ${contextLabel}`
