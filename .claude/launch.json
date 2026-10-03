@@ -7,6 +7,12 @@
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "sherent-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "../Sherent-app 1", "run", "dev", "--", "-p", "3001"],
+      "port": 3001
     }
   ]
 }
