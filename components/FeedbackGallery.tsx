@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { Feedback } from '@/types/feedback';
 import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackLightbox } from '@/components/FeedbackLightbox';
@@ -8,8 +8,8 @@ import { FeedbackLightbox } from '@/components/FeedbackLightbox';
 /**
  * Danh sách thẻ feedback + hộp xem ảnh lớn. Hai cách bày:
  *
- *  - `dai`  : một hàng vuốt ngang trên điện thoại, lưới 4 cột trên máy tính
- *             (trang chủ — giống khối Album, không đẩy bộ sưu tập xuống xa).
+ *  - `dai`  : MỘT hàng vuốt ngang ở mọi cỡ màn hình, không xuống dòng (trang
+ *             chủ — chủ shop 04/10/2026). Máy tính có thêm nút ‹ ›.
  *  - `so-le`: lưới so le kiểu Pinterest (trang Feedback, trang chi tiết sản
  *             phẩm), vẫn đọc trái→phải đúng thứ tự API — xem `LuoiSoLe`.
  *             `locTheoDip` bật hàng nút lọc theo dịp.
@@ -52,18 +52,7 @@ export function FeedbackGallery({
       )}
 
       {kieu === 'dai' ? (
-        <ul className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 sm:mx-0 sm:grid sm:snap-none sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4">
-          {ds.map((fb) => (
-            <li key={fb.id} className="w-[62vw] shrink-0 snap-start sm:w-auto">
-              <FeedbackCard
-                fb={fb}
-                kieu="dai"
-                onMo={() => setDangMo(fb)}
-                sizes="(max-width: 640px) 62vw, (max-width: 1024px) 33vw, 25vw"
-              />
-            </li>
-          ))}
-        </ul>
+        <DaiNgang ds={ds} onMo={setDangMo} />
       ) : (
         <LuoiSoLe ds={ds} onMo={setDangMo} />
       )}
@@ -145,5 +134,74 @@ function LuoiSoLe({ ds, onMo }: { ds: Feedback[]; onMo: (fb: Feedback) => void }
         </div>
       ))}
     </>
+  );
+}
+
+/**
+ * Dải ngang ở trang chủ: luôn một hàng, vuốt / cuộn ngang. Thẻ cuối lộ một
+ * phần để khách biết còn nữa. Máy tính không vuốt được bằng chuột nên có nút
+ * ‹ › cuộn đúng một khung nhìn.
+ */
+function DaiNgang({ ds, onMo }: { ds: Feedback[]; onMo: (fb: Feedback) => void }) {
+  const dai = useRef<HTMLUListElement>(null);
+  const [dau, setDau] = useState(true);
+  const [cuoi, setCuoi] = useState(false);
+  // Ẩn nút ‹ khi đang ở đầu dải, nút › khi đã tới cuối.
+  const doViTri = () => {
+    const el = dai.current;
+    if (!el) return;
+    setDau(el.scrollLeft <= 4);
+    setCuoi(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
+  };
+  const cuon = (huong: 1 | -1) => {
+    const el = dai.current;
+    if (el) el.scrollBy({ left: huong * el.clientWidth * 0.9, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="relative">
+      <ul
+        ref={dai}
+        onScroll={doViTri}
+        className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 sm:mx-0 sm:gap-4 sm:scroll-px-0 sm:px-0"
+      >
+        {ds.map((fb) => (
+          <li
+            key={fb.id}
+            className="w-[62vw] shrink-0 snap-start sm:w-[calc((100%-2rem)/3.3)] lg:w-[calc((100%-3rem)/4.3)]"
+          >
+            <FeedbackCard
+              fb={fb}
+              kieu="dai"
+              onMo={() => onMo(fb)}
+              sizes="(max-width: 640px) 62vw, (max-width: 1024px) 30vw, 23vw"
+            />
+          </li>
+        ))}
+      </ul>
+      {ds.length > 3 && (
+        <>
+          {!dau && <NutCuon huong={-1} onClick={() => cuon(-1)} />}
+          {!cuoi && <NutCuon huong={1} onClick={() => cuon(1)} />}
+        </>
+      )}
+    </div>
+  );
+}
+
+function NutCuon({ huong, onClick }: { huong: 1 | -1; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={huong === 1 ? 'Xem feedback tiếp' : 'Xem feedback trước'}
+      className={`absolute top-[40%] hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-ink shadow-glass ring-1 ring-hairline backdrop-blur transition hover:bg-surface sm:flex ${
+        huong === 1 ? '-right-3' : '-left-3'
+      }`}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d={huong === 1 ? 'm9 18 6-6-6-6' : 'm15 18-6-6 6-6'} />
+      </svg>
+    </button>
   );
 }

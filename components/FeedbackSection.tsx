@@ -27,7 +27,7 @@ export function FeedbackSection({ feedback }: { feedback: Feedback[] }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="container-content py-5 sm:py-10" aria-labelledby="feedback-tieu-de">
+    <section className="container-content pb-16" aria-labelledby="feedback-tieu-de">
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink">

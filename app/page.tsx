@@ -114,11 +114,6 @@ export default async function HomePage() {
       {/* Album shop dựng bên app (api-cong-khai.md §2.4). Rỗng -> ẩn cả khối. */}
       <AlbumSection albums={albums} />
 
-      {/* Ảnh khách mặc đồ (api-cong-khai.md §2.5) — ngay sau album, trước bộ
-          sưu tập: khách thấy người thật mặc đồ của tiệm rồi mới chọn mẫu.
-          Rỗng -> ẩn cả khối. */}
-      <FeedbackSection feedback={feedback} />
-
       {/*
         Banner khuyến mãi (bật ở lib/site-config.ts) vẫn nằm trên đầu — đây là
         tin thời vụ, để dưới cùng thì khách không kịp thấy.
@@ -146,6 +141,10 @@ export default async function HomePage() {
 
         <ProductExplorer products={products} />
       </section>
+
+      {/* Ảnh khách mặc đồ (api-cong-khai.md §2.5) — dưới bộ sưu tập, trên mục
+          Thanh lý (chủ shop 04/10/2026). Rỗng -> ẩn cả khối. */}
+      <FeedbackSection feedback={feedback} />
 
       {/*
         Giới thiệu mục Thanh lý — cuối trang, sau khi khách xem xong bộ sưu tập.
