@@ -16,63 +16,56 @@ export function dongPhu(fb: Feedback): string {
  *
  * Là một NÚT (mở hộp xem ảnh lớn), không phải link — nơi dùng truyền `onMo`.
  *
- * `kieu="luoi"` để ảnh giữ ĐÚNG tỉ lệ gốc ở lưới trang Feedback;
- * `kieu="dai"` ép khung 4:5 cho dải trượt ngang ở trang chủ, nơi các thẻ phải
- * cao bằng nhau.
+ * Ảnh luôn phủ kín khung và cắt GIỮA: `kieu="dai"` khung 4:5 cho dải trang
+ * chủ (các thẻ phải cao bằng nhau), `kieu="cat"` khung theo `tiLe` cho lưới so
+ * le. Hộp xem ảnh lớn mới hiện nguyên story.
  */
 export function FeedbackCard({
   fb,
   onMo,
-  kieu = 'luoi',
+  kieu = 'cat',
+  tiLe = 'aspect-[4/5]',
   sizes = '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw',
 }: {
   fb: Feedback;
   onMo: () => void;
-  kieu?: 'luoi' | 'dai';
+  /**
+   * - `dai`   : khung 4:5 cố định (dải trang chủ).
+   * - `cat`   : khung theo `tiLe`, ảnh cắt GIỮA cho vừa — lưới so le.
+   */
+  kieu?: 'dai' | 'cat';
+  /** Lớp Tailwind `aspect-[…]` cho `kieu="cat"` — viết nguyên văn để JIT thấy. */
+  tiLe?: string;
   sizes?: string;
 }) {
   const ten = fb.tenHienThi ?? TEN_AN_DANH;
   const phu = dongPhu(fb);
+  const alt = `${ten} mặc đồ của ${siteConfig.name}`;
+
+  const anhPhu = fb.anh.length > 1 && (
+    <span className="absolute right-2 top-2 rounded-full bg-ink/55 px-2 py-0.5 text-[11px] font-medium text-surface backdrop-blur-sm">
+      +{fb.anh.length - 1} ảnh
+    </span>
+  );
+
+  const vo =
+    'group block w-full overflow-hidden rounded-2xl bg-surface text-left shadow-glass ring-1 ring-hairline transition-all duration-300 hover:shadow-glass-hover hover:ring-accent/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent';
+
+  const khung = kieu === 'dai' ? 'aspect-[4/5]' : tiLe;
 
   return (
-    <button
-      type="button"
-      onClick={onMo}
-      className="group block w-full overflow-hidden rounded-2xl bg-surface text-left shadow-glass ring-1 ring-hairline transition-all duration-300 hover:shadow-glass-hover hover:ring-accent/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-      aria-label={`Xem feedback của ${ten}`}
-    >
-      <span
-        className={`relative block overflow-hidden bg-tint ${kieu === 'dai' ? 'aspect-[4/5]' : ''}`}
-      >
-        {kieu === 'dai' ? (
-          <Image
-            src={fb.anh[0]}
-            alt={`${ten} mặc đồ của ${siteConfig.name}`}
-            fill
-            placeholder="blur"
-            blurDataURL={GLASS_BLUR_DATA_URL}
-            sizes={sizes}
-            className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
-          />
-        ) : (
-          // width/height chỉ là tỉ lệ tạm lúc chưa tải; `h-auto` để ảnh về
-          // đúng tỉ lệ thật.
-          <Image
-            src={fb.anh[0]}
-            alt={`${ten} mặc đồ của ${siteConfig.name}`}
-            width={600}
-            height={800}
-            placeholder="blur"
-            blurDataURL={GLASS_BLUR_DATA_URL}
-            sizes={sizes}
-            className="h-auto w-full transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
-          />
-        )}
-        {fb.anh.length > 1 && (
-          <span className="absolute right-2 top-2 rounded-full bg-ink/55 px-2 py-0.5 text-[11px] font-medium text-surface backdrop-blur-sm">
-            +{fb.anh.length - 1} ảnh
-          </span>
-        )}
+    <button type="button" onClick={onMo} className={vo} aria-label={`Xem feedback của ${ten}`}>
+      <span className={`relative block overflow-hidden bg-tint ${khung}`}>
+        <Image
+          src={fb.anh[0]}
+          alt={alt}
+          fill
+          placeholder="blur"
+          blurDataURL={GLASS_BLUR_DATA_URL}
+          sizes={sizes}
+          className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
+        />
+        {anhPhu}
       </span>
 
       <span className="block space-y-1.5 p-3 sm:p-4">

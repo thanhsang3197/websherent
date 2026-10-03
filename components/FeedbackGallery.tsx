@@ -10,16 +10,17 @@ import { FeedbackLightbox } from '@/components/FeedbackLightbox';
  *
  *  - `dai`  : một hàng vuốt ngang trên điện thoại, lưới 4 cột trên máy tính
  *             (trang chủ — giống khối Album, không đẩy bộ sưu tập xuống xa).
- *  - `luoi` : lưới xếp theo hàng, ảnh giữ tỉ lệ gốc (trang Feedback, trang
- *             chi tiết sản phẩm) — thứ tự đọc trái→phải đúng thứ tự API. `locTheoDip` bật hàng nút lọc theo dịp.
+ *  - `so-le`: lưới so le kiểu Pinterest (trang Feedback, trang chi tiết sản
+ *             phẩm), vẫn đọc trái→phải đúng thứ tự API — xem `LuoiSoLe`.
+ *             `locTheoDip` bật hàng nút lọc theo dịp.
  */
 export function FeedbackGallery({
   feedback,
-  kieu = 'luoi',
+  kieu = 'so-le',
   locTheoDip = false,
 }: {
   feedback: Feedback[];
-  kieu?: 'dai' | 'luoi';
+  kieu?: 'dai' | 'so-le';
   locTheoDip?: boolean;
 }) {
   const [dangMo, setDangMo] = useState<Feedback | null>(null);
@@ -64,17 +65,7 @@ export function FeedbackGallery({
           ))}
         </ul>
       ) : (
-        // Lưới THEO HÀNG, không dùng CSS columns: columns đổ thẻ từ trên xuống
-        // hết cột này mới sang cột kia, nên hàng đầu thành feedback 1, 23,
-        // 45… và thứ tự "mới nhất trước" mất hẳn (chủ shop 04/10/2026). Ảnh
-        // feedback phần lớn là story khổ dọc như nhau nên lưới thường vẫn đều.
-        <ul className="grid grid-cols-2 items-start gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-          {ds.map((fb) => (
-            <li key={fb.id}>
-              <FeedbackCard fb={fb} onMo={() => setDangMo(fb)} />
-            </li>
-          ))}
-        </ul>
+        <LuoiSoLe ds={ds} onMo={setDangMo} />
       )}
 
       {dangMo && <FeedbackLightbox fb={dangMo} onDong={() => setDangMo(null)} />}
@@ -104,5 +95,55 @@ function NutLoc({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * Các khung cho lưới so le — viết NGUYÊN VĂN để Tailwind JIT sinh lớp. Không
+ * có khung vuông: story ghép nhiều ảnh nhỏ cắt vuông là mất nửa nội dung.
+ */
+const TI_LE = ['aspect-[9/16]', 'aspect-[3/4]', 'aspect-[2/3]', 'aspect-[4/5]'] as const;
+
+/** Khung của thẻ thứ i — cố định theo vị trí, đổi nhịp mỗi 4 thẻ để hai thẻ cạnh nhau ít khi trùng. */
+function tiLe(i: number): string {
+  return TI_LE[(i * 3 + Math.floor(i / 4)) % TI_LE.length];
+}
+
+/** Chia thẻ LẦN LƯỢT vào n cột: thẻ 0 cột 1, thẻ 1 cột 2… -> hàng trên cùng vẫn là mới nhất. */
+function chiaCot<T>(ds: T[], n: number): { item: T; i: number }[][] {
+  const cot = Array.from({ length: n }, () => [] as { item: T; i: number }[]);
+  ds.forEach((item, i) => cot[i % n].push({ item, i }));
+  return cot;
+}
+
+/**
+ * Lưới so le kiểu Pinterest mà GIỮ thứ tự theo hàng.
+ *
+ * Dựng sẵn bố cục 2 / 3 / 4 cột và để CSS chọn theo bề rộng màn hình — không
+ * đo bằng JS, nên không có cú nhảy bố cục lúc tải trang. Bản đang ẩn
+ * (`display:none`) không tải ảnh vì next/image để `loading="lazy"`.
+ */
+function LuoiSoLe({ ds, onMo }: { ds: Feedback[]; onMo: (fb: Feedback) => void }) {
+  const bo = [
+    { n: 2, lop: 'flex sm:hidden' },
+    { n: 3, lop: 'hidden sm:flex lg:hidden' },
+    { n: 4, lop: 'hidden lg:flex' },
+  ];
+  return (
+    <>
+      {bo.map(({ n, lop }) => (
+        <div key={n} className={`${lop} items-start gap-3 sm:gap-4`}>
+          {chiaCot(ds, n).map((cot, c) => (
+            <ul key={c} className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4">
+              {cot.map(({ item: fb, i }) => (
+                <li key={fb.id}>
+                  <FeedbackCard fb={fb} kieu="cat" tiLe={tiLe(i)} onMo={() => onMo(fb)} />
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      ))}
+    </>
   );
 }
