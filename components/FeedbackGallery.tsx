@@ -10,8 +10,8 @@ import { FeedbackLightbox } from '@/components/FeedbackLightbox';
  *
  *  - `dai`  : một hàng vuốt ngang trên điện thoại, lưới 4 cột trên máy tính
  *             (trang chủ — giống khối Album, không đẩy bộ sưu tập xuống xa).
- *  - `luoi` : lưới so le kiểu Pinterest, ảnh giữ tỉ lệ gốc (trang Feedback,
- *             trang chi tiết sản phẩm). `locTheoDip` bật hàng nút lọc theo dịp.
+ *  - `luoi` : lưới xếp theo hàng, ảnh giữ tỉ lệ gốc (trang Feedback, trang
+ *             chi tiết sản phẩm) — thứ tự đọc trái→phải đúng thứ tự API. `locTheoDip` bật hàng nút lọc theo dịp.
  */
 export function FeedbackGallery({
   feedback,
@@ -64,10 +64,13 @@ export function FeedbackGallery({
           ))}
         </ul>
       ) : (
-        // CSS columns cho lưới so le: không cần thư viện, không cần đo ảnh.
-        <ul className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
+        // Lưới THEO HÀNG, không dùng CSS columns: columns đổ thẻ từ trên xuống
+        // hết cột này mới sang cột kia, nên hàng đầu thành feedback 1, 23,
+        // 45… và thứ tự "mới nhất trước" mất hẳn (chủ shop 04/10/2026). Ảnh
+        // feedback phần lớn là story khổ dọc như nhau nên lưới thường vẫn đều.
+        <ul className="grid grid-cols-2 items-start gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
           {ds.map((fb) => (
-            <li key={fb.id} className="mb-3 break-inside-avoid sm:mb-4">
+            <li key={fb.id}>
               <FeedbackCard fb={fb} onMo={() => setDangMo(fb)} />
             </li>
           ))}

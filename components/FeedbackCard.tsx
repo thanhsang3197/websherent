@@ -16,7 +16,7 @@ export function dongPhu(fb: Feedback): string {
  *
  * Là một NÚT (mở hộp xem ảnh lớn), không phải link — nơi dùng truyền `onMo`.
  *
- * `kieu="luoi"` để ảnh giữ ĐÚNG tỉ lệ gốc cho lưới so le ở trang Feedback;
+ * `kieu="luoi"` để ảnh giữ ĐÚNG tỉ lệ gốc ở lưới trang Feedback;
  * `kieu="dai"` ép khung 4:5 cho dải trượt ngang ở trang chủ, nơi các thẻ phải
  * cao bằng nhau.
  */
@@ -56,7 +56,7 @@ export function FeedbackCard({
           />
         ) : (
           // width/height chỉ là tỉ lệ tạm lúc chưa tải; `h-auto` để ảnh về
-          // đúng tỉ lệ thật -> lưới so le kiểu Pinterest.
+          // đúng tỉ lệ thật.
           <Image
             src={fb.anh[0]}
             alt={`${ten} mặc đồ của ${siteConfig.name}`}
