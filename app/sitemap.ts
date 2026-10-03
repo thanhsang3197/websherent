@@ -1,9 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site-config';
-import { getAlbums, getProducts } from '@/lib/products';
+import { getAlbums, getFeedback, getProducts } from '@/lib/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, albums] = await Promise.all([getProducts(), getAlbums()]);
+  const [products, albums, feedback] = await Promise.all([
+    getProducts(),
+    getAlbums(),
+    getFeedback(),
+  ]);
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -50,5 +54,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           })),
         ];
 
-  return [...staticRoutes, ...albumRoutes, ...productRoutes];
+  // Cùng lý do với album: chưa có feedback thì khỏi mời Google vào trang rỗng.
+  const feedbackRoutes: MetadataRoute.Sitemap =
+    feedback.length === 0
+      ? []
+      : [{ url: `${SITE_URL}/feedback`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 }];
+
+  return [...staticRoutes, ...albumRoutes, ...feedbackRoutes, ...productRoutes];
 }

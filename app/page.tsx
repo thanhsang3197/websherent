@@ -6,6 +6,7 @@ import {
   getHeroSlides,
   getNewArrivals,
   getAlbums,
+  getFeedback,
 } from '@/lib/products';
 import {
   siteConfig,
@@ -18,6 +19,7 @@ import { ProductExplorer } from '@/components/ProductExplorer';
 import { PromoBanner } from '@/components/PromoBanner';
 import { NewArrivalsSection } from '@/components/NewArrivalsSection';
 import { AlbumSection } from '@/components/AlbumSection';
+import { FeedbackSection } from '@/components/FeedbackSection';
 
 /**
  * Chọn slide cho hero, theo thứ tự ưu tiên:
@@ -87,11 +89,12 @@ function buildHeroSlides(
 export default async function HomePage() {
   // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
   // khách chờ thêm một vòng mạng vô ích.
-  const [products, heroTuApp, moiVe, albums] = await Promise.all([
+  const [products, heroTuApp, moiVe, albums, feedback] = await Promise.all([
     getProducts(),
     getHeroSlides(heroConfig.maxSlides),
     getNewArrivals(SO_MAU_MOI_VE),
     getAlbums(),
+    getFeedback(),
   ]);
   // Mẫu đang pass lọc thẳng từ catalogue — y như getSaleProducts(), khỏi gọi lại.
   const salePrices = products.filter((p) => p.sale).map((p) => p.sale?.price ?? 0);
@@ -110,6 +113,11 @@ export default async function HomePage() {
 
       {/* Album shop dựng bên app (api-cong-khai.md §2.4). Rỗng -> ẩn cả khối. */}
       <AlbumSection albums={albums} />
+
+      {/* Ảnh khách mặc đồ (api-cong-khai.md §2.5) — ngay sau album, trước bộ
+          sưu tập: khách thấy người thật mặc đồ của tiệm rồi mới chọn mẫu.
+          Rỗng -> ẩn cả khối. */}
+      <FeedbackSection feedback={feedback} />
 
       {/*
         Banner khuyến mãi (bật ở lib/site-config.ts) vẫn nằm trên đầu — đây là

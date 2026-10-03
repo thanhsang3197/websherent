@@ -536,3 +536,71 @@ export async function fetchAlbumFromInternalApi(
   if (!album || tatCa.length === 0) return null;
   return { album, products: tatCa };
 }
+
+// ---------------------------------------------------------------------------
+// FEEDBACK CỦA KHÁCH (api-cong-khai.md §2.5)
+// ---------------------------------------------------------------------------
+
+/** Một feedback đúng như `GET /api/cong-khai/feedback` trả về. */
+export interface FeedbackApi {
+  id: string;
+  anh: string[];
+  anh_tin_nhan: string[];
+  loi_khach: string | null;
+  ten_hien_thi: string | null;
+  dip: string | null;
+  dip_ten: string | null;
+  /** "YYYY-MM" hoặc null. */
+  thang: string | null;
+  /** Mã SP CHƯA GỘP SIZE — chỉ có khi mẫu đang kinh doanh. */
+  ma: string | null;
+  ten_mau: string | null;
+  instagram: string | null;
+  noi_bat_thu_tu: number | null;
+  nang_tho: boolean;
+}
+
+interface TraVeFeedbackApi {
+  tong: number;
+  feedback: FeedbackApi[];
+}
+
+/**
+ * Toàn bộ feedback đang hiện, mới nhất trước — CHƯA đối chiếu mẫu với catalogue
+ * (việc đó cần danh sách đã gộp size, làm ở `getFeedback` trong lib/products.ts).
+ *
+ * 404 = bản app đang chạy chưa có route này (web và app deploy độc lập) -> coi
+ * như chưa có feedback, không phải lỗi.
+ */
+export async function fetchFeedbackFromInternalApi(): Promise<FeedbackApi[]> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+
+  const revalidate = Number(process.env.API_REVALIDATE_SECONDS ?? '604800');
+
+  const res = await fetch(`${apiUrl.replace(/\/$/, '')}/feedback`, {
+    headers: { Accept: 'application/json' },
+    // Cùng nhãn với catalogue: app gọi /api/lam-moi mỗi khi sửa feedback.
+    next: { revalidate, tags: [TAG_SAN_PHAM] },
+  });
+
+  if (res.status === 404) return [];
+  if (!res.ok) {
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (feedback)`);
+  }
+
+  const data = (await res.json()) as TraVeFeedbackApi;
+  const rows = Array.isArray(data.feedback) ? data.feedback : [];
+
+  return rows
+    .map((r) => ({
+      ...r,
+      anh: (r.anh ?? []).map((u) => normalizeImageUrl(u)).filter((u): u is string => Boolean(u)),
+      anh_tin_nhan: (r.anh_tin_nhan ?? [])
+        .map((u) => normalizeImageUrl(u))
+        .filter((u): u is string => Boolean(u)),
+    }))
+    // §2.5 bảo đảm luôn có ảnh, nhưng một thẻ không ảnh là một ô trắng giữa
+    // lưới — bỏ qua còn hơn.
+    .filter((r) => r.anh.length > 0);
+}

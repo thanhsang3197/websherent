@@ -5,6 +5,7 @@ import {
   getProductBySlug,
   getAllProductSlugs,
   getRelatedProducts,
+  getFeedback,
 } from '@/lib/products';
 import { CATEGORY_LABELS } from '@/types/product';
 import { formatVnd, saleLine, saleNoteLine } from '@/lib/format';
@@ -14,6 +15,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { ContactButtons } from '@/components/ContactButtons';
 import { ProductGallery } from '@/components/ProductGallery';
 import { ProductCarousel } from '@/components/ProductCarousel';
+import { FeedbackGallery } from '@/components/FeedbackGallery';
 import { resolveProductVideo } from '@/lib/video';
 
 // ─── Vì sao 604.800 giây (7 ngày) chứ không phải 6 giờ ────────────────────
@@ -97,10 +99,13 @@ export default async function ProductPage({
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
-  const [related, video] = await Promise.all([
+  const [related, video, feedback] = await Promise.all([
     getRelatedProducts(product, 8),
     resolveProductVideo(product.video),
+    getFeedback(),
   ]);
+  // Khách đã mặc ĐÚNG mẫu này — `getFeedback` đã quy mã size về mẫu đại diện.
+  const daMac = feedback.filter((f) => f.mau?.slug === product.slug);
   const categoryLabel = CATEGORY_LABELS[product.category];
   const productUrl = `${SITE_URL}/san-pham/${product.slug}`;
 
@@ -252,6 +257,25 @@ export default async function ProductPage({
               lịch bận; khách bấm "Đặt lịch" ngay phía trên để hỏi. */}
         </div>
       </div>
+
+      {/* Ảnh khách thật mặc mẫu này — tác dụng chốt đơn mạnh nhất: khách thấy
+          chiếc đầm ngoài đời trên người thật, không chỉ ảnh mẫu. */}
+      {daMac.length > 0 && (
+        <section className="mt-10 sm:mt-16">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-serif text-2xl text-ink">Khách đã mặc mẫu này</h2>
+            <Link
+              href="/feedback"
+              className="shrink-0 text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
+            >
+              Xem tất cả feedback →
+            </Link>
+          </div>
+          <div className="mt-6">
+            <FeedbackGallery feedback={daMac.slice(0, 8)} />
+          </div>
+        </section>
+      )}
 
       {/* Mẫu tương tự */}
       {related.length > 0 && (

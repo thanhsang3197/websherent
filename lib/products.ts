@@ -18,9 +18,17 @@ import {
   fetchNewArrivalsFromInternalApi,
   fetchAlbumsFromInternalApi,
   fetchAlbumFromInternalApi,
+  fetchFeedbackFromInternalApi,
   isInternalApiConfigured,
 } from './internal-api';
-import { sortProductsForDisplay, groupProducts, groupingKey } from './mapping';
+import type { Feedback } from '../types/feedback';
+import { slugify } from './slug';
+import {
+  sortProductsForDisplay,
+  groupProducts,
+  groupingKey,
+  cleanSizeFromName,
+} from './mapping';
 import { mockProducts } from './mock-data';
 import { fitSize } from './brands';
 
@@ -291,4 +299,64 @@ export async function getAlbum(slug: string): Promise<AlbumChiTiet | null> {
   );
 
   return { album: data.album, products };
+}
+
+/** "2026-09" -> "Tháng 9/2026". Sai khuôn -> null. */
+function inThang(thang: string | null): string | null {
+  const m = (thang ?? '').match(/^(\d{4})-(\d{2})$/);
+  return m ? `Tháng ${Number(m[2])}/${m[1]}` : null;
+}
+
+/**
+ * Feedback của khách đang hiện trên web (api-cong-khai.md §2.5), mới nhất trước.
+ *
+ * Trả `[]` — KHÔNG ném lỗi — khi không lấy được, cùng nguyên tắc `getAlbums`:
+ * mọi khối feedback đều ẨN khi rỗng, nên lỗi ở đây chỉ làm mất khối đó.
+ *
+ * ĐỐI CHIẾU MẪU: API trả mã SP chưa gộp size (vd T002 = size M), trong khi web
+ * chỉ có trang cho mẫu ĐẠI DIỆN sau khi gộp (thường là mã size S). Nên tìm theo
+ * mã trước, không thấy thì theo tên đã bỏ size — đúng phần tên trong khoá gộp
+ * `groupingKey`. Vẫn không thấy thì bỏ link, không đoán bừa.
+ */
+export async function getFeedback(): Promise<Feedback[]> {
+  if (!isInternalApiConfigured()) return [];
+
+  try {
+    const [rows, products] = await Promise.all([
+      fetchFeedbackFromInternalApi(),
+      getProducts(),
+    ]);
+    if (rows.length === 0) return [];
+
+    const theoMa = new Map(products.map((p) => [p.id.toUpperCase(), p]));
+    const theoTen = new Map<string, Product>();
+    for (const p of products) {
+      const k = slugify(cleanSizeFromName(p.name));
+      if (!theoTen.has(k)) theoTen.set(k, p);
+    }
+
+    return rows.map((r) => {
+      const sp =
+        (r.ma && theoMa.get(r.ma.toUpperCase())) ||
+        (r.ten_mau && theoTen.get(slugify(cleanSizeFromName(r.ten_mau)))) ||
+        null;
+      return {
+        id: r.id,
+        anh: r.anh,
+        anhTinNhan: r.anh_tin_nhan,
+        loiKhach: r.loi_khach?.trim() || null,
+        tenHienThi: r.ten_hien_thi?.trim() || null,
+        dip: r.dip,
+        dipTen: r.dip_ten,
+        thang: inThang(r.thang),
+        mau: sp ? { slug: sp.slug, ten: sp.name } : null,
+        instagram: r.instagram,
+        noiBatThuTu: typeof r.noi_bat_thu_tu === 'number' ? r.noi_bat_thu_tu : null,
+        nangTho: r.nang_tho === true,
+      };
+    });
+  } catch (err) {
+    console.error('[products] Lỗi đọc feedback — ẩn các khối feedback:', err);
+    return [];
+  }
 }

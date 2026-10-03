@@ -178,3 +178,21 @@ Lưu ý cho nhân viên:
   sẽ hiện nguyên trên web — web không che được.
 - Xoá bài trên IG/TikTok thì phải xoá link bên app, không thì khung video trên
   web báo "bài không còn".
+
+## 7. Feedback của khách (04/10/2026)
+
+Bên app: màn **Feedback** (menu Tổng quan) + `GET /api/cong-khai/feedback`, hợp đồng ở
+`docs/api-cong-khai.md` §2.5 của repo `Sherent-app`. Migration `20261004090000_feedback.sql`
+phải chạy TRƯỚC khi app deploy route này.
+
+Bên web:
+
+- `fetchFeedbackFromInternalApi` (`lib/internal-api.ts`) — 404 coi như chưa có feedback, nên web
+  deploy trước hay sau app đều được.
+- `getFeedback` (`lib/products.ts`) — đổi mã SP của API (CHƯA gộp size) sang mẫu ĐÃ gộp size
+  của web: theo mã trước, không thấy thì theo tên đã bỏ size. Lỗi thì trả `[]`.
+- Ba nơi hiện: dải "Khách hàng của Sherent" ở trang chủ (`FeedbackSection`, 8 ô: feedback được
+  ghim theo thứ tự app, chưa ghim cái nào thì lấy mới nhất), trang `/feedback` (nàng thơ của
+  tháng + lưới so le + lọc theo dịp + lời mời gửi ảnh), và mục "Khách đã mặc mẫu này" ở trang
+  chi tiết sản phẩm. Rỗng thì trang chủ và trang sản phẩm ẩn hẳn khối.
+- Cùng nhãn cache `san-pham`: app sửa feedback là gọi `/api/lam-moi`, web dựng lại ngay.

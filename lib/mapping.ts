@@ -121,7 +121,7 @@ export function sortSizeList(sizes: string[]): string[] {
 }
 
 /** Bỏ token size đứng riêng khỏi tên ("Amy Dress S" -> "Amy Dress"). */
-function cleanSizeFromName(name: string): string {
+export function cleanSizeFromName(name: string): string {
   const cleaned = name
     .replace(/\b(xs|xl|s|m|l|freesize|free\s?size|size)\b/gi, ' ')
     .replace(/\s{2,}/g, ' ')

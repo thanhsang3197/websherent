@@ -29,7 +29,8 @@ export type ViTri =
   | 'footer'
   | 'nut-noi'
   | 'gioi-thieu'
-  | 'hoi-dap';
+  | 'hoi-dap'
+  | 'feedback';
 
 /** Dùng khi cú bấm không gắn với mẫu nào (header, footer, nút nổi...). */
 const KHONG_CO_MA = '—';
