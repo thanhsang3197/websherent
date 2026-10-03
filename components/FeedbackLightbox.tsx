@@ -12,6 +12,10 @@ import { TEN_AN_DANH, dongPhu } from '@/components/FeedbackCard';
  * kiểm tra (đặt sau một nút để ảnh chat không lấn át ảnh khách mặc đồ).
  *
  * Đóng bằng Esc, nút ✕, hoặc bấm ra nền tối.
+ *
+ * Hộp nằm GIỮA màn hình ở mọi cỡ, không kiểu trượt từ đáy lên: feedback ẩn
+ * danh, không lời khách thì phần chữ chỉ còn một dòng, hộp ngắn lại và dính
+ * đáy trông như lệch (chủ shop 04/10/2026).
  */
 export function FeedbackLightbox({ fb, onDong }: { fb: Feedback; onDong: () => void }) {
   const [xemChat, setXemChat] = useState(false);
@@ -61,11 +65,11 @@ export function FeedbackLightbox({ fb, onDong }: { fb: Feedback; onDong: () => v
       role="dialog"
       aria-modal="true"
       aria-label={`Feedback của ${ten}`}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/70 backdrop-blur-sm sm:items-center sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/70 p-3 backdrop-blur-sm sm:p-6"
       onClick={onDong}
     >
       <div
-        className="relative flex max-h-[94dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl bg-surface shadow-glass-lg sm:rounded-3xl md:flex-row"
+        className="relative flex max-h-[94dvh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-surface shadow-glass-lg md:flex-row"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -84,7 +88,7 @@ export function FeedbackLightbox({ fb, onDong }: { fb: Feedback; onDong: () => v
         <div className="relative min-h-0 bg-tint md:w-[58%]">
           <div
             ref={daiAnh}
-            className="no-scrollbar flex h-[58dvh] snap-x snap-mandatory overflow-x-auto md:h-[80dvh]"
+            className="no-scrollbar flex h-[68dvh] snap-x snap-mandatory overflow-x-auto md:h-[80dvh]"
             onScroll={(e) => {
               const el = e.currentTarget;
               setDangXem(Math.round(el.scrollLeft / Math.max(1, el.clientWidth)));
