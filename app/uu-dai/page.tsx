@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getUuDai } from '@/lib/products';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
-import { demNguoc, khoangNgay } from '@/lib/uu-dai';
+import { demNguoc, khoangNgay, kieuLoai } from '@/lib/uu-dai';
 import { ContactButtons } from '@/components/ContactButtons';
 
 // ISR 1 giờ: chương trình hết hạn / tới ngày bắt đầu tự đổi mà không cần ai
@@ -66,6 +66,7 @@ export default async function UuDaiPage() {
           {uuDai.map((u, i) => {
             const han = demNguoc(u.ketThuc);
             const ngay = khoangNgay(u.batDau, u.ketThuc);
+            const kieu = kieuLoai(u.loai);
             return (
               // `id` = mã ưu đãi: thanh trên cùng và thẻ trang chủ dẫn thẳng tới
               // đúng chương trình khách vừa bấm. scroll-mt chừa chỗ cho Header dính.
@@ -90,7 +91,8 @@ export default async function UuDaiPage() {
                 )}
                 <div className="p-5 sm:p-8">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent-dark">
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${kieu.badge}`}>
+                      <span aria-hidden="true">{kieu.icon} </span>
                       {u.loaiTen}
                     </span>
                     {han && <span className="text-sm font-semibold text-accent-dark">{han}</span>}

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { UuDai } from '@/types/uu-dai';
-import { nhanHan } from '@/lib/uu-dai';
+import { kieuLoai, nhanHan } from '@/lib/uu-dai';
 
 /**
  * Bề rộng thẻ theo số chương trình — viết nguyên văn để Tailwind JIT thấy.
@@ -50,6 +50,7 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
       >
         {items.map((u, i) => {
           const han = nhanHan(u.ketThuc);
+          const kieu = kieuLoai(u.loai);
           return (
             <li key={u.id} className={`${lopRong(items.length)} shrink-0 snap-start`}>
               <Link
@@ -74,11 +75,19 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/25 via-tint to-surface px-4 text-center font-serif text-2xl text-accent-dark">
+                    <div
+                      className={`flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br px-4 text-center font-serif text-2xl ${kieu.nen} ${kieu.chu}`}
+                    >
+                      <span className="text-5xl" aria-hidden="true">
+                        {kieu.icon}
+                      </span>
                       {u.loaiTen}
                     </div>
                   )}
-                  <span className="absolute left-3 top-3 rounded-full bg-surface/90 px-2.5 py-1 text-xs font-semibold text-accent-dark backdrop-blur">
+                  <span
+                    className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${kieu.badge}`}
+                  >
+                    <span aria-hidden="true">{kieu.icon} </span>
                     {u.loaiTen}
                   </span>
                 </div>

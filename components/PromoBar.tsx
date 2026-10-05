@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { kieuLoai } from '@/lib/uu-dai';
 
 const KHOA_LUU = 'sherent-uu-dai-da-tat';
 
@@ -10,6 +11,8 @@ const DOI_SAU_MS = 5000;
 
 export interface PromoBarItem {
   id: string;
+  /** Mã loại — chọn biểu tượng đứng trước tiêu đề. */
+  loai: string;
   tieuDe: string;
   loaiTen: string;
 }
@@ -94,6 +97,8 @@ export function PromoBar({ items }: { items: PromoBarItem[] }) {
             {cur.loaiTen}
           </span>
           <span key={cur.id} className="uu-dai-doi min-w-0 truncate font-medium">
+            {/* Biểu tượng hiện cả trên điện thoại, nơi nhãn chữ bị ẩn. */}
+            <span aria-hidden="true">{kieuLoai(cur.loai).icon} </span>
             {cur.tieuDe}
           </span>
           <span className="shrink-0 font-semibold">Xem →</span>

@@ -52,3 +52,50 @@ export function khoangNgay(batDau: string | null, ketThuc: string | null): strin
   if (batDau) return `Từ ${ngayThang(batDau)}`;
   return null;
 }
+
+/** Biểu tượng + màu theo loại ưu đãi. */
+export interface KieuLoai {
+  icon: string;
+  /** Nhãn nhỏ (nền nhạt, chữ đậm cùng tông) — đọc rõ cả khi đè lên ảnh. */
+  badge: string;
+  /** Nền thẻ chữ khi không có poster. */
+  nen: string;
+  /** Màu chữ trên nền thẻ chữ. */
+  chu: string;
+}
+
+/**
+ * Mã loại (`uu_dai.loai` bên app) -> kiểu hiển thị. Class Tailwind viết nguyên
+ * văn để JIT thấy. Ba màu ấm/nhạt hợp bảng màu kem–đất nung của web; loại lạ
+ * (app thêm loại mới mà web chưa biết) rơi về `KHAC` chứ không vỡ.
+ */
+const KIEU_LOAI: Record<string, KieuLoai> = {
+  VOUCHER: {
+    icon: '🎟️',
+    badge: 'bg-amber-100 text-amber-800',
+    nen: 'from-amber-200/70 via-amber-50 to-surface',
+    chu: 'text-amber-800',
+  },
+  GUI_ANH: {
+    icon: '📸',
+    badge: 'bg-rose-100 text-rose-800',
+    nen: 'from-rose-200/70 via-rose-50 to-surface',
+    chu: 'text-rose-800',
+  },
+  SU_KIEN: {
+    icon: '🎉',
+    badge: 'bg-emerald-100 text-emerald-800',
+    nen: 'from-emerald-200/70 via-emerald-50 to-surface',
+    chu: 'text-emerald-800',
+  },
+  KHAC: {
+    icon: '✨',
+    badge: 'bg-accent/10 text-accent-dark',
+    nen: 'from-accent/25 via-tint to-surface',
+    chu: 'text-accent-dark',
+  },
+};
+
+export function kieuLoai(loai: string): KieuLoai {
+  return KIEU_LOAI[loai] ?? KIEU_LOAI.KHAC;
+}

@@ -104,7 +104,7 @@ export default async function RootLayout({
   // "Ưu đãi" ở trang chủ; rỗng thì không vẽ gì.
   const thanhUuDai = (await getUuDai())
     .filter((u) => u.hienThanhTren)
-    .map((u) => ({ id: u.id, tieuDe: u.tieuDe, loaiTen: u.loaiTen }));
+    .map((u) => ({ id: u.id, loai: u.loai, tieuDe: u.tieuDe, loaiTen: u.loaiTen }));
 
   return (
     <html lang="vi" className={`${serif.variable} ${sans.variable}`}>
