@@ -176,57 +176,6 @@ export const heroConfig = {
 export const SO_MAU_MOI_VE = 8;
 
 /**
- * 🖼️ BANNER QUẢNG CÁO (trang chủ).
- *
- * CÁCH DÙNG:
- *  - `enabled: false`  -> không hiện gì.
- *  - `enabled: true`   -> banner hiện ở ĐẦU trang chủ (ngay dưới khung ảnh hero).
- *
- * Từ 16/08/2026 banner KHÔNG còn thay thế đoạn "Về SHERENT" nữa: đoạn giới
- * thiệu đã dời xuống cuối trang để khách thấy sản phẩm sớm hơn, còn banner giữ
- * nguyên trên đầu vì là tin khuyến mãi thời vụ.
- *
- * Điền `image` và/hoặc `title`+`description` đều được (có ảnh không chữ, có chữ không ảnh,
- * hoặc cả hai). Ảnh upload lên repo GitHub `sherent-hinhanh` giống ảnh sản phẩm.
- * Ảnh nên làm tỉ lệ ngang ~16:9 (vd 1600×900px) để hiển thị đẹp trên cả điện thoại lẫn máy tính.
- */
-export interface PromoBannerConfig {
-  /** Bật/tắt banner. Tắt -> hiện lại đoạn "Về SHERENT". */
-  enabled: boolean;
-  /** Link ảnh banner. Để trống nếu chỉ dùng chữ. */
-  image: string;
-  /** Mô tả ảnh (cho SEO + trình đọc màn hình). Bắt buộc nếu có ảnh. */
-  imageAlt: string;
-  /** Tiêu đề chữ (tuỳ chọn). */
-  title: string;
-  /** Mô tả chữ (tuỳ chọn). */
-  description: string;
-  /** Chữ trên nút (tuỳ chọn). Để trống thì không hiện nút. */
-  ctaText: string;
-  /** Nút dẫn đi đâu: '#san-pham', '/gioi-thieu', hoặc link ngoài (Zalo/Facebook...). */
-  ctaHref: string;
-}
-
-export const promoBanner: PromoBannerConfig = {
-  // TODO(banner): khi có ảnh/nội dung khuyến mãi -> đổi thành true và điền bên dưới.
-  // Ví dụ khi bật:
-  //   enabled: true,
-  //   image: 'https://raw.githubusercontent.com/thanhsang3197/sherent-hinhanh/main/banner_tet.jpg',
-  //   imageAlt: 'Ưu đãi áo dài Tết tại Sherent',
-  //   title: 'Ưu đãi Tết 2026',
-  //   description: 'Giảm 20% toàn bộ áo dài thiết kế khi thuê từ 3 ngày.',
-  //   ctaText: 'Xem mẫu áo dài',
-  //   ctaHref: '#san-pham',
-  enabled: false,
-  image: '',
-  imageAlt: '',
-  title: '',
-  description: '',
-  ctaText: '',
-  ctaHref: '',
-};
-
-/**
  * Link Google Maps trỏ THẲNG tới địa điểm SHERENT đã được Google xác nhận.
  *
  * Trước đây là link tìm kiếm dựng từ địa chỉ dạng text — Google phải tự đoán ra

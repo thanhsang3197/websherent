@@ -32,8 +32,8 @@ const nextConfig = {
     // Gỡ chúng KHÔNG đổi cỡ nào đang được tải thật, chỉ cắt bớt candidate thừa
     // trong srcset -> cache 384/640/1080 hiện có vẫn nguyên vẹn.
     //
-    // Lưu ý nếu bật lại PromoBanner (lib/site-config.ts): banner rộng 1152px
-    // giờ trần là 1080 thay vì 1920. Cần nét hơn thì thêm 1920 vào lại.
+    // Ảnh poster ưu đãi (UuDaiSection, /uu-dai) rộng tối đa 1152px nên trần là
+    // 1080 — đủ nét cho poster ngang; cần nét hơn thì thêm 1920 vào lại.
     //
     // KHÔNG mất chất lượng: ảnh gốc rộng nhất trong kho chỉ 1392px, mà Next
     // không bao giờ phóng to ảnh — nên 1920 chưa từng tạo ra thứ gì lớn hơn

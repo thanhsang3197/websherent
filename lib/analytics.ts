@@ -30,7 +30,8 @@ export type ViTri =
   | 'nut-noi'
   | 'gioi-thieu'
   | 'hoi-dap'
-  | 'feedback';
+  | 'feedback'
+  | 'uu-dai';
 
 /** Dùng khi cú bấm không gắn với mẫu nào (header, footer, nút nổi...). */
 const KHONG_CO_MA = '—';

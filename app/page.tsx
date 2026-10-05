@@ -7,16 +7,16 @@ import {
   getNewArrivals,
   getAlbums,
   getFeedback,
+  getUuDai,
 } from '@/lib/products';
 import {
   siteConfig,
-  promoBanner,
   heroConfig,
   SO_MAU_MOI_VE,
 } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
 import { ProductExplorer } from '@/components/ProductExplorer';
-import { PromoBanner } from '@/components/PromoBanner';
+import { UuDaiSection } from '@/components/UuDaiSection';
 import { NewArrivalsSection } from '@/components/NewArrivalsSection';
 import { AlbumSection } from '@/components/AlbumSection';
 import { FeedbackSection } from '@/components/FeedbackSection';
@@ -89,12 +89,13 @@ function buildHeroSlides(
 export default async function HomePage() {
   // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
   // khách chờ thêm một vòng mạng vô ích.
-  const [products, heroTuApp, moiVe, albums, feedback] = await Promise.all([
+  const [products, heroTuApp, moiVe, albums, feedback, uuDai] = await Promise.all([
     getProducts(),
     getHeroSlides(heroConfig.maxSlides),
     getNewArrivals(SO_MAU_MOI_VE),
     getAlbums(),
     getFeedback(),
+    getUuDai(),
   ]);
   // Mẫu đang pass lọc thẳng từ catalogue — y như getSaleProducts(), khỏi gọi lại.
   const salePrices = products.filter((p) => p.sale).map((p) => p.sale?.price ?? 0);
@@ -108,19 +109,18 @@ export default async function HomePage() {
     <>
       <Hero slides={heroSlides} />
 
+      {/*
+        Ưu đãi shop đăng bên app (api-cong-khai.md §2.6) — ngay dưới hero để khách
+        thấy trước khi cuộn tới sản phẩm (chủ shop chốt 06/10/2026). Rỗng -> ẩn
+        cả khối. Thanh mỏng trên cùng mọi trang nằm ở app/layout.tsx.
+      */}
+      <UuDaiSection items={uuDai} />
+
       {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
       <NewArrivalsSection products={moiVe} />
 
       {/* Album shop dựng bên app (api-cong-khai.md §2.4). Rỗng -> ẩn cả khối. */}
       <AlbumSection albums={albums} />
-
-      {/*
-        Banner khuyến mãi (bật ở lib/site-config.ts) vẫn nằm trên đầu — đây là
-        tin thời vụ, để dưới cùng thì khách không kịp thấy.
-        Còn đoạn giới thiệu "Về SHERENT" đã chuyển xuống CUỐI trang (chủ shop
-        chốt 16/08/2026: khách vào trang phải thấy sản phẩm càng nhanh càng tốt).
-      */}
-      {promoBanner.enabled && <PromoBanner />}
 
       {/*
         Mục "Quy trình thuê" (3 bước + nút liên hệ) đã bỏ hẳn 16/08/2026 theo

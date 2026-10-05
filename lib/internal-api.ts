@@ -2,6 +2,7 @@ import 'server-only';
 import type { Product, ProductSale } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
 import type { Album } from '@/types/album';
+import type { UuDai } from '@/types/uu-dai';
 import { siteConfig } from '@/lib/site-config';
 import { normalizeImageUrl } from '@/lib/format';
 import { buildProductSlug } from '@/lib/slug';
@@ -603,4 +604,77 @@ export async function fetchFeedbackFromInternalApi(): Promise<FeedbackApi[]> {
     // §2.5 bảo đảm luôn có ảnh, nhưng một thẻ không ảnh là một ô trắng giữa
     // lưới — bỏ qua còn hơn.
     .filter((r) => r.anh.length > 0);
+}
+
+// ---------------------------------------------------------------------------
+// ƯU ĐÃI — gửi ảnh nhận quà, voucher, sự kiện nhỏ (api-cong-khai.md §2.6)
+// ---------------------------------------------------------------------------
+
+/** Một ưu đãi đúng như `GET /api/cong-khai/uu-dai` trả về. */
+interface UuDaiApi {
+  id: string;
+  loai: string;
+  loai_ten: string | null;
+  tieu_de: string;
+  mo_ta_ngan: string | null;
+  anh: string | null;
+  the_le: string | null;
+  bat_dau: string | null;
+  ket_thuc: string | null;
+  hien_thanh_tren: boolean;
+}
+
+interface TraVeUuDaiApi {
+  tong: number;
+  uu_dai: UuDaiApi[];
+}
+
+/**
+ * Nhịp làm mới riêng của ưu đãi: 1 GIỜ, không theo `API_REVALIDATE_SECONDS`.
+ *
+ * API tự ẩn chương trình hết hạn và tự hiện chương trình tới ngày bắt đầu,
+ * nhưng chỉ ở thời điểm web gọi nó. Để cache 7 ngày như catalogue thì một ưu
+ * đãi hết hạn vẫn nằm trên web gần cả tuần, còn ưu đãi hẹn ngày thì lên trễ.
+ * Cache theo tag vẫn có: shop sửa ưu đãi là app gọi /api/lam-moi, bay ngay.
+ */
+const UU_DAI_REVALIDATE_SECONDS = 3600;
+
+/**
+ * Ưu đãi đang chạy, ĐÚNG thứ tự API (sắp hết hạn lên trước).
+ *
+ * 404 = bản app đang chạy chưa có route này (web và app deploy độc lập) -> coi
+ * như chưa có ưu đãi, không phải lỗi.
+ */
+export async function fetchUuDaiFromInternalApi(): Promise<UuDai[]> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+
+  const res = await fetch(`${apiUrl.replace(/\/$/, '')}/uu-dai`, {
+    headers: { Accept: 'application/json' },
+    next: { revalidate: UU_DAI_REVALIDATE_SECONDS, tags: [TAG_SAN_PHAM] },
+  });
+
+  if (res.status === 404) return [];
+  if (!res.ok) {
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (uu-dai)`);
+  }
+
+  const data = (await res.json()) as TraVeUuDaiApi;
+  const rows = Array.isArray(data.uu_dai) ? data.uu_dai : [];
+
+  return rows
+    // Thẻ không có tiêu đề là một ô trắng — bỏ qua còn hơn.
+    .filter((r) => typeof r.id === 'string' && (r.tieu_de ?? '').trim() !== '')
+    .map((r) => ({
+      id: r.id,
+      loai: r.loai,
+      loaiTen: (r.loai_ten ?? '').trim() || 'Ưu đãi',
+      tieuDe: r.tieu_de.trim(),
+      moTaNgan: (r.mo_ta_ngan ?? '').trim() || null,
+      anh: normalizeImageUrl(r.anh ?? '') || null,
+      theLe: (r.the_le ?? '').trim() || null,
+      batDau: r.bat_dau,
+      ketThuc: r.ket_thuc,
+      hienThanhTren: r.hien_thanh_tren !== false,
+    }));
 }

@@ -5,8 +5,9 @@ import './globals.css';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { localBusinessJsonLd } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
+import { PromoBar } from '@/components/PromoBar';
 import { Header } from '@/components/Header';
-import { getAlbums } from '@/lib/products';
+import { getAlbums, getUuDai } from '@/lib/products';
 import { Footer } from '@/components/Footer';
 import { StickyContactBar } from '@/components/StickyContactBar';
 
@@ -99,6 +100,12 @@ export default async function RootLayout({
   // với khối album trang chủ, nên không tốn thêm request.
   const coAlbum = (await getAlbums()).length > 0;
 
+  // Thanh ưu đãi mỏng trên cùng mọi trang. Cùng lượt gọi (đã cache) với khối
+  // "Ưu đãi" ở trang chủ; rỗng thì không vẽ gì.
+  const thanhUuDai = (await getUuDai())
+    .filter((u) => u.hienThanhTren)
+    .map((u) => ({ id: u.id, tieuDe: u.tieuDe, loaiTen: u.loaiTen }));
+
   return (
     <html lang="vi" className={`${serif.variable} ${sans.variable}`}>
       <body className="relative min-h-screen bg-bg text-ink selection:bg-accent/20">
@@ -117,6 +124,7 @@ export default async function RootLayout({
         >
           Bỏ qua tới nội dung
         </a>
+        <PromoBar items={thanhUuDai} />
         <Header coAlbum={coAlbum} />
         <main id="noi-dung">{children}</main>
         <Footer />

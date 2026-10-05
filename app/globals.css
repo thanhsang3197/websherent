@@ -203,6 +203,21 @@
   }
 }
 
+/* Thanh ưu đãi: dòng mới hiện lên nhẹ khi xoay sang chương trình kế. */
+@keyframes uu-dai-doi {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.uu-dai-doi {
+  animation: uu-dai-doi 350ms ease-out both;
+}
+
 /* Tôn trọng người dùng bật giảm chuyển động. */
 @media (prefers-reduced-motion: reduce) {
   html {

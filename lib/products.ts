@@ -19,9 +19,11 @@ import {
   fetchAlbumsFromInternalApi,
   fetchAlbumFromInternalApi,
   fetchFeedbackFromInternalApi,
+  fetchUuDaiFromInternalApi,
   isInternalApiConfigured,
 } from './internal-api';
 import type { Feedback } from '../types/feedback';
+import type { UuDai } from '../types/uu-dai';
 import { slugify } from './slug';
 import {
   sortProductsForDisplay,
@@ -357,6 +359,24 @@ export async function getFeedback(): Promise<Feedback[]> {
     });
   } catch (err) {
     console.error('[products] Lỗi đọc feedback — ẩn các khối feedback:', err);
+    return [];
+  }
+}
+
+/**
+ * Ưu đãi đang chạy, đúng thứ tự API.
+ *
+ * Mọi nơi dùng danh sách này (thanh trên cùng, khối trang chủ, trang /uu-dai,
+ * sitemap) đều ẨN khi rỗng, nên một cú lỗi ở đây chỉ làm mất phần ưu đãi chứ
+ * không kéo sập trang — kể cả layout, nơi mọi trang đều đi qua.
+ */
+export async function getUuDai(): Promise<UuDai[]> {
+  if (!isInternalApiConfigured()) return [];
+
+  try {
+    return await fetchUuDaiFromInternalApi();
+  } catch (err) {
+    console.error('[products] Lỗi đọc ưu đãi — ẩn ưu đãi:', err);
     return [];
   }
 }

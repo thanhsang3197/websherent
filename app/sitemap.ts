@@ -1,12 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site-config';
-import { getAlbums, getFeedback, getProducts } from '@/lib/products';
+import { getAlbums, getFeedback, getProducts, getUuDai } from '@/lib/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, albums, feedback] = await Promise.all([
+  const [products, albums, feedback, uuDai] = await Promise.all([
     getProducts(),
     getAlbums(),
     getFeedback(),
+    getUuDai(),
   ]);
   const now = new Date();
 
@@ -60,5 +61,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ? []
       : [{ url: `${SITE_URL}/feedback`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 }];
 
-  return [...staticRoutes, ...albumRoutes, ...feedbackRoutes, ...productRoutes];
+  // Cùng lý do: không có chương trình nào thì khỏi mời Google vào trang rỗng.
+  const uuDaiRoutes: MetadataRoute.Sitemap =
+    uuDai.length === 0
+      ? []
+      : [{ url: `${SITE_URL}/uu-dai`, lastModified: now, changeFrequency: 'daily', priority: 0.6 }];
+
+  return [...staticRoutes, ...albumRoutes, ...feedbackRoutes, ...uuDaiRoutes, ...productRoutes];
 }
