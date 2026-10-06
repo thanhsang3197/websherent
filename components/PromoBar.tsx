@@ -92,15 +92,8 @@ export function PromoBar({ items }: { items: PromoBarItem[] }) {
         </Link>
 
         {soCt > 1 && (
-          <span className="flex shrink-0 gap-1" aria-hidden="true">
-            {hien.map((i, n) => (
-              <span
-                key={i.id}
-                className={`h-1.5 w-1.5 rounded-full ${
-                  n === chiSo % soCt ? 'bg-surface' : 'bg-surface/40'
-                }`}
-              />
-            ))}
+          <span className="shrink-0 text-xs font-medium tabular-nums text-surface/80">
+            {(chiSo % soCt) + 1}/{soCt}
           </span>
         )}
       </div>
