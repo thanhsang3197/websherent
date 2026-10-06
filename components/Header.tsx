@@ -6,7 +6,7 @@ import { siteConfig } from '@/lib/site-config';
 import { trackZaloClick } from '@/lib/analytics';
 
 /**
- * Header sticky, tối giản, mobile-first. Menu mobile mở/đóng bằng nút (có JS nhẹ).
+ * Header (dính cùng PromoBar, xem app/layout.tsx), tối giản, mobile-first. Menu mobile mở/đóng bằng nút (có JS nhẹ).
  */
 export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
     : siteConfig.nav;
 
   return (
-    <header className="glass-header sticky top-0 z-40">
+    <header className="glass-header">
       <div className="container-content flex min-h-16 items-center justify-between gap-3 py-3">
         <Link
           href="/"

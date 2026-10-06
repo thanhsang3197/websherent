@@ -34,8 +34,8 @@ function docDaTat(): string[] {
  *
  * - Có nhiều chương trình thì tự xoay vòng; dừng khi rê chuột / chạm vào, và
  *   không tự xoay nếu khách bật "giảm chuyển động".
- * - Không dính khi cuộn (khác Header): chỉ tốn ~36px ở đầu trang, cuộn xuống
- *   là mất, không che ảnh mẫu.
+ * - Dính trên cùng cùng Header khi cuộn (bọc chung trong app/layout.tsx) để
+ *   khách luôn thấy; ai thấy vướng thì bấm ✕.
  * - Khách bấm ✕ thì các chương trình đang hiện không hiện lại với họ; chương
  *   trình MỚI (id khác) vẫn hiện.
  *

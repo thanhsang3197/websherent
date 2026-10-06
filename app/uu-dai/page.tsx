@@ -73,7 +73,7 @@ export default async function UuDaiPage() {
               <article
                 key={u.id}
                 id={u.id}
-                className="scroll-mt-24 overflow-hidden rounded-3xl border border-hairline bg-surface shadow-glass"
+                className="scroll-mt-28 overflow-hidden rounded-3xl border border-hairline bg-surface shadow-glass"
               >
                 {u.anh && (
                   <div className="relative aspect-[16/10] bg-tint sm:aspect-[16/7]">

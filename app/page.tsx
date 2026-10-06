@@ -129,7 +129,7 @@ export default async function HomePage() {
       */}
 
       {/* Bộ sưu tập + bộ lọc */}
-      <section id="san-pham" className="container-content scroll-mt-24 pb-16 pt-5 sm:pt-16">
+      <section id="san-pham" className="container-content scroll-mt-28 pb-16 pt-5 sm:pt-16">
         <header className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink">
             Bộ sưu tập
