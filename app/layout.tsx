@@ -124,10 +124,10 @@ export default async function RootLayout({
         >
           Bỏ qua tới nội dung
         </a>
-        {/* Thanh ưu đãi dính cùng Header khi cuộn để khách luôn thấy ưu đãi. */}
+        {/* Thanh ưu đãi nằm ngay dưới Header, dính cùng Header khi cuộn để khách luôn thấy ưu đãi. */}
         <div className="sticky top-0 z-40">
-          <PromoBar items={thanhUuDai} />
           <Header coAlbum={coAlbum} />
+          <PromoBar items={thanhUuDai} />
         </div>
         <main id="noi-dung">{children}</main>
         <Footer />

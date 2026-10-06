@@ -29,7 +29,7 @@ function docDaTat(): string[] {
 }
 
 /**
- * Thanh thông báo mỏng trên cùng MỌI trang: khách vào từ link sản phẩm cũng
+ * Thanh thông báo mỏng ngay dưới Header trên MỌI trang: khách vào từ link sản phẩm cũng
  * thấy ưu đãi, không chỉ khách vào trang chủ.
  *
  * - Có nhiều chương trình thì tự xoay vòng; dừng khi rê chuột / chạm vào, và
