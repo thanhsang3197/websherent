@@ -88,6 +88,12 @@ const KIEU_LOAI: Record<string, KieuLoai> = {
     nen: 'from-emerald-200/70 via-emerald-50 to-surface',
     chu: 'text-emerald-800',
   },
+  THONG_BAO: {
+    icon: '📢',
+    badge: 'bg-sky-100 text-sky-800',
+    nen: 'from-sky-200/70 via-sky-50 to-surface',
+    chu: 'text-sky-800',
+  },
   KHAC: {
     icon: '✨',
     badge: 'bg-accent/10 text-accent-dark',

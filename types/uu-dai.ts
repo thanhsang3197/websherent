@@ -5,7 +5,7 @@
  */
 export interface UuDai {
   id: string;
-  /** Mã cố định: `VOUCHER` · `GUI_ANH` · `SU_KIEN` · `KHAC`. */
+  /** Mã cố định: `VOUCHER` · `GUI_ANH` · `SU_KIEN` · `THONG_BAO` · `KHAC`. */
   loai: string;
   /** Nhãn tiếng Việt sẵn, vd "Gửi ảnh nhận quà". */
   loaiTen: string;
