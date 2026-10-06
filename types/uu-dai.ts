@@ -21,4 +21,9 @@ export interface UuDai {
   ketThuc: string | null;
   /** Có hiện trong thanh mỏng trên cùng mọi trang không. */
   hienThanhTren: boolean;
+  /**
+   * Có thẻ ở khối "Ưu đãi đang có" trang chủ không. Tắt + `hienThanhTren` bật
+   * = chỉ chạy trên thanh (thông báo ngắn kiểu nghỉ lễ). Trang /uu-dai vẫn hiện.
+   */
+  hienKhoi: boolean;
 }

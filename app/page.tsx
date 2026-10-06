@@ -114,7 +114,7 @@ export default async function HomePage() {
         thấy trước khi cuộn tới sản phẩm (chủ shop chốt 06/10/2026). Rỗng -> ẩn
         cả khối. Thanh mỏng trên cùng mọi trang nằm ở app/layout.tsx.
       */}
-      <UuDaiSection items={uuDai} />
+      <UuDaiSection items={uuDai.filter((u) => u.hienKhoi)} />
 
       {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
       <NewArrivalsSection products={moiVe} />

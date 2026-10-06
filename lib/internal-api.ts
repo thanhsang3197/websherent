@@ -622,6 +622,8 @@ interface UuDaiApi {
   bat_dau: string | null;
   ket_thuc: string | null;
   hien_thanh_tren: boolean;
+  /** Thêm 06/10/2026 — bản app cũ chưa có thì coi như bật. */
+  hien_khoi?: boolean;
 }
 
 interface TraVeUuDaiApi {
@@ -676,5 +678,6 @@ export async function fetchUuDaiFromInternalApi(): Promise<UuDai[]> {
       batDau: r.bat_dau,
       ketThuc: r.ket_thuc,
       hienThanhTren: r.hien_thanh_tren !== false,
+      hienKhoi: r.hien_khoi !== false,
     }));
 }

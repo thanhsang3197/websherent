@@ -218,6 +218,21 @@
   animation: uu-dai-doi 350ms ease-out both;
 }
 
+/* Thanh ưu đãi: tiêu đề dài hơn thanh thì chạy ngang. Dừng một nhịp ở đầu
+   vòng cho khách kịp đọc chữ đầu. */
+@keyframes chu-chay {
+  0%,
+  12% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(var(--chu-chay-xa));
+  }
+}
+.chu-chay {
+  animation: chu-chay linear infinite;
+}
+
 /* Tôn trọng người dùng bật giảm chuyển động. */
 @media (prefers-reduced-motion: reduce) {
   html {
