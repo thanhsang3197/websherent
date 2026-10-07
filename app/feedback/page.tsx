@@ -54,6 +54,9 @@ export default async function FeedbackPage() {
         <p className="font-serif text-base text-accent-dark sm:text-xl">
           Ảnh của bạn có thể xuất hiện ở đây 💕
         </p>
+        <p className="mt-1 text-xs text-muted sm:text-sm">
+          Gửi ảnh FB để nhận voucher giảm 5% cho đơn thuê tiếp theo nhé
+        </p>
         <div className="mt-3 flex justify-center">
           <ContactButtons viTri="feedback" zaloLabel="Gửi ảnh qua Zalo" compact />
         </div>
