@@ -49,6 +49,16 @@ export default async function FeedbackPage() {
         </p>
       </header>
 
+      {/* Lời mời gửi ảnh — để khách sau mạnh dạn gửi feedback. */}
+      <section className="mx-auto mt-6 max-w-xl rounded-2xl border border-hairline bg-tint/70 px-4 py-4 text-center shadow-glass sm:px-8 sm:py-5">
+        <p className="font-serif text-base text-accent-dark sm:text-xl">
+          Ảnh của bạn có thể xuất hiện ở đây 💕
+        </p>
+        <div className="mt-3 flex justify-center">
+          <ContactButtons viTri="feedback" zaloLabel="Gửi ảnh qua Zalo" compact />
+        </div>
+      </section>
+
       {nangTho && <NangTho fb={nangTho} />}
 
       {feedback.length === 0 ? (
@@ -65,20 +75,6 @@ export default async function FeedbackPage() {
           <FeedbackGallery feedback={feedback} locTheoDip />
         </div>
       )}
-
-      {/* Lời mời gửi ảnh — để khách sau mạnh dạn gửi feedback. */}
-      <section className="mx-auto mt-14 max-w-xl rounded-3xl border border-hairline bg-tint/70 px-6 py-8 text-center shadow-glass sm:px-10">
-        <p className="font-serif text-2xl text-accent-dark">
-          Ảnh của bạn có thể xuất hiện ở đây 💕
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-ink">
-          Đã thuê đồ ở {siteConfig.name}? Gửi tiệm vài tấm ảnh bạn thích nhất nhé. Tiệm
-          luôn hỏi trước khi đăng, và bạn chọn để tên hay ẩn danh.
-        </p>
-        <div className="mt-5 flex justify-center">
-          <ContactButtons viTri="feedback" zaloLabel="Gửi ảnh qua Zalo" />
-        </div>
-      </section>
     </div>
   );
 }

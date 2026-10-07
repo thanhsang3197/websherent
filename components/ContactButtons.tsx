@@ -19,8 +19,11 @@ export function ContactButtons({
   contextLabel,
   viTri,
   maSp,
+  compact = false,
 }: {
   className?: string;
+  /** Bản nhỏ gọn (nút thấp, chữ nhỏ) — cho khối phụ như lời mời gửi ảnh. */
+  compact?: boolean;
   zaloLabel?: string;
   contextLabel?: string;
   /** Chỗ đặt cặp nút này — ghi kèm vào sự kiện analytics (lib/analytics.ts). */
@@ -66,13 +69,14 @@ export function ContactButtons({
     hơn nên càng dư): chữ ≤ ((khung − 8) / 2 − 40) / 8,2 -> 5,6cqi − 5px.
     `max-w-md` để trên trang rộng hai nút không bị kéo dài quá mức.
   */
-  const sizeClass =
-    'min-w-0 gap-1.5 whitespace-nowrap px-2 text-[clamp(10.5px,calc(5.6cqi-5px),15.2px)] [&>svg]:shrink-0';
+  const sizeClass = compact
+    ? 'min-w-0 gap-1 whitespace-nowrap px-2 py-2 text-xs shadow-md [&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:shrink-0'
+    : 'min-w-0 gap-1.5 whitespace-nowrap px-2 text-[clamp(10.5px,calc(5.6cqi-5px),15.2px)] [&>svg]:shrink-0';
 
   return (
     <>
       <div
-        className={`grid w-full max-w-md grid-cols-2 gap-2 [container-type:inline-size] ${className}`}
+        className={`grid w-full ${compact ? 'max-w-xs' : 'max-w-md'} grid-cols-2 gap-2 [container-type:inline-size] ${className}`}
       >
         <a
           href={siteConfig.zaloUrl}
