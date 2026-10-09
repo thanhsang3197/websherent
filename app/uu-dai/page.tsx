@@ -6,6 +6,7 @@ import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { demNguoc, khoangNgay, kieuLoai } from '@/lib/uu-dai';
 import { ContactButtons } from '@/components/ContactButtons';
+import { ACoSuKien } from '@/components/LinkCoSuKien';
 
 // ISR 1 giờ: chương trình hết hạn / tới ngày bắt đầu tự đổi mà không cần ai
 // bấm gì (lib/internal-api.ts, UU_DAI_REVALIDATE_SECONDS). Shop sửa ưu đãi
@@ -145,14 +146,15 @@ export default async function UuDaiPage() {
           </li>
           <li>
             Facebook:{' '}
-            <a
+            <ACoSuKien
+              suKien={{ loai: 'mxh', viTri: 'uu-dai', kenh: 'Facebook' }}
               href={siteConfig.facebookUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-accent-dark underline-offset-4 hover:underline"
             >
               Trang {siteConfig.name}
-            </a>
+            </ACoSuKien>
           </li>
         </ul>
       </section>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import Link from 'next/link';
 import { kieuLoai } from '@/lib/uu-dai';
+import { trackUuDaiClick } from '@/lib/analytics';
 
 /** Đổi sang chương trình kế tiếp sau ít nhất từng này mili-giây. */
 const DOI_SAU_MS = 5000;
@@ -72,6 +73,7 @@ export function PromoBar({ items }: { items: PromoBarItem[] }) {
       <div className="container-content flex min-h-9 items-center gap-2 text-[13px] sm:text-sm">
         <Link
           href={`/uu-dai#${cur.id}`}
+          onClick={() => trackUuDaiClick('thanh', cur.tieuDe)}
           className="flex min-w-0 flex-1 items-center gap-2 py-1.5 hover:underline"
         >
           {/* Nhãn loại chỉ hiện từ sm: điện thoại cần chỗ cho tiêu đề hơn. */}

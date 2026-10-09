@@ -6,6 +6,7 @@ import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { localBusinessJsonLd } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { PromoBar } from '@/components/PromoBar';
+import { TheoDoiChepSo } from '@/components/TheoDoiChepSo';
 import { Header } from '@/components/Header';
 import { getAlbums, getUuDai } from '@/lib/products';
 import { Footer } from '@/components/Footer';
@@ -133,6 +134,7 @@ export default async function RootLayout({
         <Footer />
         <StickyContactBar />
         <Analytics />
+        <TheoDoiChepSo />
       </body>
     </html>
   );

@@ -39,7 +39,7 @@ export function AlbumSection({ albums }: { albums: Album[] }) {
       <ul className="no-scrollbar -mx-5 mt-6 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 sm:mx-0 sm:grid sm:snap-none sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4">
         {items.map((album) => (
           <li key={album.slug} className="w-[42vw] shrink-0 snap-start sm:w-auto">
-            <AlbumCard album={album} sizes="(max-width: 640px) 42vw, (max-width: 1024px) 33vw, 25vw" />
+            <AlbumCard album={album} viTri="trang-chu" sizes="(max-width: 640px) 42vw, (max-width: 1024px) 33vw, 25vw" />
           </li>
         ))}
       </ul>

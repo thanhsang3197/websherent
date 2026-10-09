@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import type { Album } from '@/types/album';
 import { siteConfig } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
+import { LinkCoSuKien } from '@/components/LinkCoSuKien';
+import type { ViTriAlbum } from '@/lib/analytics';
 
 /**
  * Thẻ một album: ảnh bìa + tên đè lên ảnh.
@@ -17,14 +18,18 @@ import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 export function AlbumCard({
   album,
   sizes = '(max-width: 640px) 50vw, 25vw',
+  viTri,
 }: {
   album: Album;
+  /** Chỗ đặt thẻ — gửi kèm sự kiện "Mở album" để biết khách vào từ đâu. */
+  viTri: ViTriAlbum;
   /** Thuộc tính `sizes` của ảnh — nơi dùng thẻ biết thẻ rộng bao nhiêu. */
   sizes?: string;
 }) {
   return (
-    <Link
+    <LinkCoSuKien
       href={`/album/${album.slug}`}
+      suKien={{ loai: 'album', viTri, ten: album.ten }}
       className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-tint shadow-md ring-1 ring-white/70 transition-all duration-300 hover:shadow-glass-hover hover:ring-accent/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
       {album.anhBia ? (
@@ -59,6 +64,6 @@ export function AlbumCard({
           Xem album →
         </span>
       </span>
-    </Link>
+    </LinkCoSuKien>
   );
 }

@@ -54,7 +54,7 @@ export default async function AlbumListPage() {
         <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
           {albums.map((album) => (
             <li key={album.slug}>
-              <AlbumCard album={album} />
+              <AlbumCard album={album} viTri="trang-album" />
             </li>
           ))}
         </ul>

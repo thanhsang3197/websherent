@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { siteConfig } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 import type { ProductVideo } from '@/types/product';
+import { trackVideoOpen } from '@/lib/analytics';
 
 /**
  * Gallery ảnh sản phẩm: khung vòm (arch), KÉO NGANG để đổi ảnh.
@@ -37,14 +38,19 @@ export function ProductGallery({
   images,
   alt,
   video = null,
+  maSp,
 }: {
   images: string[];
   alt: string;
   video?: ProductVideo | null;
+  /** Mã mẫu — gửi kèm sự kiện "Xem video". */
+  maSp?: string;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
+  // Chỉ ghi "Xem video" ở lần mở ĐẦU: bấm qua lại ảnh ↔ video không tính thêm.
+  const daGhiVideo = useRef(false);
   const hasMultiple = images.length > 1;
   // Có video thì luôn hiện dải ảnh nhỏ, kể cả mẫu chỉ có 1 ảnh: ô ▶ nằm ở đó.
   const showStrip = hasMultiple || video != null;
@@ -197,7 +203,13 @@ export function ProductGallery({
             {video && (
               <button
                 type="button"
-                onClick={() => setShowVideo(true)}
+                onClick={() => {
+                  setShowVideo(true);
+                  if (!daGhiVideo.current && maSp) {
+                    daGhiVideo.current = true;
+                    trackVideoOpen(maSp, video.kind);
+                  }
+                }}
                 aria-label="Xem video"
                 aria-current={showVideo}
                 className={`relative flex aspect-[3/4] w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border-2 bg-accent-dark transition sm:w-full ${

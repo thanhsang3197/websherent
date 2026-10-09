@@ -151,6 +151,7 @@ export default async function ProductPage({
             images={product.images}
             alt={product.name}
             video={video}
+            maSp={product.id}
           />
         </div>
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { siteConfig, mapsDirectionsUrl } from '@/lib/site-config';
 import { Brand } from '@/components/Brand';
 import { TrackedContactLink } from '@/components/TrackedContactLink';
+import { ACoSuKien } from '@/components/LinkCoSuKien';
 
 /**
  * Footer — hiển thị thông tin liên hệ dạng text (tốt cho SEO & GEO).
@@ -116,7 +117,8 @@ export function Footer() {
           <h3 className={`mt-6 ${footerHeadingClass}`}>Theo dõi tiệm</h3>
           <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-ink">
             <li>
-              <a
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram váy' }}
                 href={siteConfig.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -125,10 +127,11 @@ export function Footer() {
               >
                 <InstagramIcon />
                 Váy thiết kế
-              </a>
+              </ACoSuKien>
             </li>
             <li>
-              <a
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram áo dài' }}
                 href={siteConfig.instagramUrl2}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -137,10 +140,11 @@ export function Footer() {
               >
                 <InstagramIcon />
                 Áo dài
-              </a>
+              </ACoSuKien>
             </li>
             <li>
-              <a
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Facebook' }}
                 href={siteConfig.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -149,10 +153,11 @@ export function Footer() {
               >
                 <FacebookIcon />
                 Facebook
-              </a>
+              </ACoSuKien>
             </li>
             <li>
-              <a
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'TikTok' }}
                 href={siteConfig.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -161,7 +166,7 @@ export function Footer() {
               >
                 <TiktokIcon />
                 TikTok
-              </a>
+              </ACoSuKien>
             </li>
           </ul>
         </div>

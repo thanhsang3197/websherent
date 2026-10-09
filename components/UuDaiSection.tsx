@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { UuDai } from '@/types/uu-dai';
 import { kieuLoai, nhanHan } from '@/lib/uu-dai';
+import { LinkCoSuKien } from '@/components/LinkCoSuKien';
 
 /**
  * Bề rộng thẻ theo số chương trình — viết nguyên văn để Tailwind JIT thấy.
@@ -50,8 +51,9 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
           const kieu = kieuLoai(u.loai);
           return (
             <li key={u.id} className={`${lopRong(items.length)} shrink-0 snap-start`}>
-              <Link
+              <LinkCoSuKien
                 href={`/uu-dai#${u.id}`}
+                suKien={{ loai: 'uu-dai', viTri: 'khoi', tieuDe: u.tieuDe }}
                 className="group flex h-full items-center gap-3 rounded-2xl border border-hairline bg-surface p-2.5 shadow-glass transition-shadow hover:shadow-glass-hover sm:gap-4 sm:p-3"
               >
                 <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-tint sm:size-20">
@@ -96,7 +98,7 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
                 >
                   →
                 </span>
-              </Link>
+              </LinkCoSuKien>
             </li>
           );
         })}

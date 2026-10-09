@@ -73,3 +73,70 @@ export function trackEmptySearch(tuKhoa: string, loai: string) {
 export function trackFilterUse(truong: string, giaTri: string) {
   track('Dùng bộ lọc', { truong, gia_tri: giaTri });
 }
+
+/* ─── Bổ sung 09/10/2026 — bốn câu hỏi app nội bộ đọc về màn Phân tích ─────
+ * Tên sự kiện ở dưới phải khớp NGUYÊN VĂN bên app (route
+ * `app/api/thong-ke-web/phan-tich`, lọc bằng `eventName eq '…'`). Đổi chữ nào
+ * ở đây thì sửa bên đó, nếu không số bên app về 0 mà không báo gì.
+ */
+
+/** Ưu đãi bấm từ thanh trên cùng hay từ khối dưới ảnh đầu trang chủ. */
+export type ViTriUuDai = 'thanh' | 'khoi';
+
+/**
+ * Khách bấm vào một chương trình ưu đãi. Gửi TIÊU ĐỀ chứ không gửi id: id là
+ * uuid, đọc trên dashboard không ra chương trình nào.
+ */
+export function trackUuDaiClick(viTri: ViTriUuDai, tieuDe: string) {
+  track('Bấm ưu đãi', { vi_tri: viTri, ten: tieuDe.slice(0, 80) });
+}
+
+/**
+ * Khách mở video của một mẫu. Chỉ gọi ở lần mở ĐẦU TIÊN trên trang — bấm qua
+ * lại giữa ảnh và video không tính thêm (mỗi sự kiện đều tốn tiền).
+ */
+export function trackVideoOpen(maSp: string, nenTang: string) {
+  track('Xem video', { ma_sp: maSp, nen_tang: nenTang });
+}
+
+/** Album bấm từ khối trang chủ hay từ trang /album. */
+export type ViTriAlbum = 'trang-chu' | 'trang-album';
+
+export function trackAlbumOpen(tenAlbum: string, viTri: ViTriAlbum) {
+  track('Mở album', { album: tenAlbum.slice(0, 80), vi_tri: viTri });
+}
+
+/** Kênh mạng xã hội — tiệm có HAI Instagram nên phải tách tên. */
+export type KenhMxh = 'Instagram váy' | 'Instagram áo dài' | 'Facebook' | 'TikTok';
+
+export function trackSocialClick(kenh: KenhMxh, viTri: ViTri) {
+  track('Bấm mạng xã hội', { kenh, vi_tri: viTri });
+}
+
+/**
+ * Khách CHÉP số điện thoại của tiệm (bôi đen rồi copy). Trên iPhone nhiều
+ * khách chép số để dán vào Zalo thay vì bấm nút — cú đó không đi qua link nào
+ * nên trước đây không đếm được. Xem `components/TheoDoiChepSo.tsx`.
+ *
+ * `trang` là đoạn đầu đường dẫn ('/' = trang chủ), không gửi cả đường dẫn để
+ * dashboard không vỡ thành hàng trăm dòng theo từng mẫu.
+ */
+export function trackPhoneCopy(trang: string) {
+  track('Chép SĐT', { trang });
+}
+
+/**
+ * Sự kiện của một link nằm trong SERVER component — dạng dữ liệu thuần để
+ * truyền qua ranh giới server → client (không truyền hàm được).
+ * Xem `components/LinkCoSuKien.tsx`.
+ */
+export type SuKienLink =
+  | { loai: 'uu-dai'; viTri: ViTriUuDai; tieuDe: string }
+  | { loai: 'album'; viTri: ViTriAlbum; ten: string }
+  | { loai: 'mxh'; viTri: ViTri; kenh: KenhMxh };
+
+export function guiSuKienLink(s: SuKienLink) {
+  if (s.loai === 'uu-dai') trackUuDaiClick(s.viTri, s.tieuDe);
+  else if (s.loai === 'album') trackAlbumOpen(s.ten, s.viTri);
+  else trackSocialClick(s.kenh, s.viTri);
+}

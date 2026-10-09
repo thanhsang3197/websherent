@@ -5,6 +5,7 @@ import { breadcrumbJsonLd } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { ContactButtons } from '@/components/ContactButtons';
 import { Brand } from '@/components/Brand';
+import { ACoSuKien } from '@/components/LinkCoSuKien';
 
 export const metadata: Metadata = {
   title: 'Giới thiệu',
@@ -137,36 +138,39 @@ export default function GioiThieuPage() {
           </li>
           <li>
             Facebook:{' '}
-            <a
+            <ACoSuKien
+              suKien={{ loai: 'mxh', viTri: 'gioi-thieu', kenh: 'Facebook' }}
               href={siteConfig.facebookUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-dark underline underline-offset-4"
             >
               <Brand /> - Cho Thuê Váy&nbsp;Thiết&nbsp;Kế
-            </a>
+            </ACoSuKien>
           </li>
           <li>
             Instagram:{' '}
-            <a
+            <ACoSuKien
+              suKien={{ loai: 'mxh', viTri: 'gioi-thieu', kenh: 'Instagram váy' }}
               href={siteConfig.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-dark underline underline-offset-4"
             >
               @sherent.thuevaythietke
-            </a>
+            </ACoSuKien>
           </li>
           <li>
             TikTok:{' '}
-            <a
+            <ACoSuKien
+              suKien={{ loai: 'mxh', viTri: 'gioi-thieu', kenh: 'TikTok' }}
               href={siteConfig.tiktokUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-dark underline underline-offset-4"
             >
               @sherent.chothuevay
-            </a>
+            </ACoSuKien>
           </li>
         </ul>
       </div>
