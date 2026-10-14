@@ -7,7 +7,7 @@ import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
 import { saleLine, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
-import { trackZaloClick } from '@/lib/analytics';
+import { trackSaleOpen, trackZaloClick } from '@/lib/analytics';
 
 /**
  * Thẻ sản phẩm trên trang THANH LÝ.
@@ -55,7 +55,11 @@ export function SaleCard({
 
   return (
     <div className="group flex h-full flex-col">
-      <Link href={`/san-pham/${product.slug}`} className="block focus:outline-none">
+      <Link
+        href={`/san-pham/${product.slug}`}
+        onClick={() => trackSaleOpen(product.id, product.name)}
+        className="block focus:outline-none"
+      >
         <div className="arch relative aspect-[3/4] overflow-hidden bg-tint shadow-md ring-1 ring-white/70 transition-all duration-300 group-hover:shadow-glass-hover group-hover:ring-accent/50">
           {product.image ? (
             <Image

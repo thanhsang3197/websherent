@@ -126,6 +126,15 @@ export function trackPhoneCopy(trang: string) {
 }
 
 /**
+ * Khách bấm vào một mẫu ở trang THANH LÝ (mở trang chi tiết). Lượt xem trang
+ * chi tiết không cho biết khách tới từ đâu, nên phải ghi riêng cú bấm này.
+ * Thêm 15/10/2026 — tên phải khớp `SU_KIEN_WEB.thanhLy` bên app.
+ */
+export function trackSaleOpen(maSp: string, ten: string) {
+  track('Bấm mẫu thanh lý', { ma_sp: maSp, ten: ten.slice(0, 80) });
+}
+
+/**
  * Sự kiện của một link nằm trong SERVER component — dạng dữ liệu thuần để
  * truyền qua ranh giới server → client (không truyền hàm được).
  * Xem `components/LinkCoSuKien.tsx`.
