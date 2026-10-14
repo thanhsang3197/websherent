@@ -21,25 +21,72 @@ import { ACoSuKien } from '@/components/LinkCoSuKien';
  * "Hỗ trợ khách hàng", "Liên kết"). Gom vào một chỗ để các tiêu đề không bị
  * lệch font/cỡ chữ mỗi lần thêm mục mới.
  */
-const footerHeadingClass = 'font-serif text-lg font-semibold text-accent-dark';
+const footerHeadingClass = 'font-serif text-base font-semibold text-accent-dark sm:text-lg';
+
+/** Nút mạng xã hội dạng viên thuốc nhỏ — 4 nút gọn trong 1–2 hàng trên điện thoại. */
+const chipMxh =
+  'flex items-center gap-1.5 rounded-full border border-accent/25 bg-white/50 px-2.5 py-1.5 transition-colors hover:border-accent sm:px-3 hover:text-accent';
+
+/** Một số điện thoại = một dòng: bấm số để gọi, bấm chip "Zalo" để nhắn. */
+function DongSo({
+  tel,
+  so,
+  ghiChu,
+  zalo,
+}: {
+  tel: string;
+  so: string;
+  ghiChu: string;
+  zalo: string;
+}) {
+  return (
+    <li className="flex items-center gap-2.5">
+      <PhoneIcon />
+      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <TrackedContactLink
+          href={`tel:${tel}`}
+          kieu="goi"
+          viTri="footer"
+          className="font-medium transition-colors hover:text-accent"
+        >
+          {so}
+        </TrackedContactLink>
+        <span className="text-xs text-muted">({ghiChu})</span>
+        <TrackedContactLink
+          href={zalo}
+          kieu="zalo"
+          viTri="footer"
+          className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent-dark transition-colors hover:bg-accent/20"
+        >
+          Zalo
+        </TrackedContactLink>
+      </span>
+    </li>
+  );
+}
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="mt-10 border-t sm:mt-20 border-white/60 bg-surface/75 backdrop-blur-xl">
-      <div className="container-content grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="container-content grid gap-7 py-8 sm:grid-cols-2 sm:gap-10 sm:py-12 lg:grid-cols-3">
         {/* Cột 1 — Về tiệm + liên hệ */}
         <div>
           <h2 className={footerHeadingClass}>
             Về <Brand />
           </h2>
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink">
+          <p className="mt-2 text-sm leading-relaxed text-ink sm:mt-3 sm:max-w-xs">
             <Brand /> là tiệm cho thuê váy, đầm dự tiệc thiết kế, áo dài &amp;
             pháp phục tại {siteConfig.address.district}, {siteConfig.address.city}.
           </p>
 
-          <ul className="mt-5 space-y-3 text-sm text-ink">
+          {/*
+            Liên hệ gọn (chủ shop 15/10/2026): trước đây mỗi số in hai lần — một
+            dòng "gọi", một dòng "Zalo" — nên trên điện thoại thành 5–6 dòng rối
+            mắt. Giờ MỘT dòng mỗi số: bấm số để gọi, bấm chip "Zalo" để nhắn.
+          */}
+          <ul className="mt-4 space-y-2.5 text-sm text-ink sm:mt-5 sm:space-y-3">
             <li className="flex gap-2.5">
               <PinIcon />
               <a
@@ -51,62 +98,30 @@ export function Footer() {
                 {siteConfig.address.full}
               </a>
             </li>
-            <li className="flex gap-2.5">
-              <PhoneIcon />
-              <span>
-                <TrackedContactLink
-                  href={`tel:${siteConfig.phone.tel}`}
-                  kieu="goi"
-                  viTri="footer"
-                  className="transition-colors hover:text-accent"
-                >
-                  {siteConfig.phone.display}
-                </TrackedContactLink>{' '}
-                (Hotline)
-                {' · '}
-                <TrackedContactLink
-                  href={`tel:${siteConfig.phone2.tel}`}
-                  kieu="goi"
-                  viTri="footer"
-                  className="transition-colors hover:text-accent"
-                >
-                  {siteConfig.phone2.display}
-                </TrackedContactLink>{' '}
-                ({siteConfig.phone2.hours})
-              </span>
-            </li>
-            <li className="flex gap-2.5">
+            <DongSo
+              tel={siteConfig.phone.tel}
+              so={siteConfig.phone.display}
+              ghiChu="Hotline"
+              zalo={siteConfig.zaloUrl}
+            />
+            <DongSo
+              tel={siteConfig.phone2.tel}
+              so={siteConfig.phone2.display}
+              ghiChu={siteConfig.phone2.hours}
+              zalo={siteConfig.zaloUrl2}
+            />
+            <li className="flex items-center gap-2.5">
               <ChatIcon />
               <span>
-                <TrackedContactLink
-                  href={siteConfig.zaloUrl}
-                  kieu="zalo"
-                  viTri="footer"
-                  className="transition-colors hover:text-accent"
-                >
-                  Zalo: {siteConfig.phone.display}
-                </TrackedContactLink>{' '}
-                (Hotline)
-                {' · '}
-                <TrackedContactLink
-                  href={siteConfig.zaloUrl2}
-                  kieu="zalo"
-                  viTri="footer"
-                  className="transition-colors hover:text-accent"
-                >
-                  {siteConfig.phone2.display}
-                </TrackedContactLink>{' '}
-                ({siteConfig.phone2.hours})
-                {' · '}
+                Thanh lý:{' '}
                 <TrackedContactLink
                   href={siteConfig.zaloUrl3}
                   kieu="zalo"
                   viTri="footer"
-                  className="transition-colors hover:text-accent"
+                  className="font-medium transition-colors hover:text-accent"
                 >
-                  {siteConfig.phone3.display}
-                </TrackedContactLink>{' '}
-                (Thanh lý)
+                  Zalo {siteConfig.phone3.display}
+                </TrackedContactLink>
               </span>
             </li>
           </ul>
@@ -114,8 +129,8 @@ export function Footer() {
           {/* Mạng xã hội. Tiệm có HAI Instagram (váy thiết kế / áo dài) nên
               phải kèm nhãn chữ — để trơ 2 icon Instagram giống hệt nhau thì
               khách không biết đâu là đâu. */}
-          <h3 className={`mt-6 ${footerHeadingClass}`}>Theo dõi tiệm</h3>
-          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-ink">
+          <h3 className={`mt-5 sm:mt-6 ${footerHeadingClass}`}>Theo dõi tiệm</h3>
+          <ul className="mt-2.5 flex flex-wrap gap-1.5 text-[13px] text-ink sm:mt-3 sm:gap-2">
             <li>
               <ACoSuKien
                 suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram váy' }}
@@ -123,7 +138,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram Sherent — váy, đầm thiết kế"
-                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+                className={chipMxh}
               >
                 <InstagramIcon />
                 Váy thiết kế
@@ -136,7 +151,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram Sherent — áo dài"
-                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+                className={chipMxh}
               >
                 <InstagramIcon />
                 Áo dài
@@ -149,7 +164,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook Sherent"
-                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+                className={chipMxh}
               >
                 <FacebookIcon />
                 Facebook
@@ -162,7 +177,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok Sherent"
-                className="flex items-center gap-1.5 transition-colors hover:text-accent"
+                className={chipMxh}
               >
                 <TiktokIcon />
                 TikTok
@@ -176,7 +191,7 @@ export function Footer() {
           <h2 className={footerHeadingClass}>
             Hỗ trợ khách hàng
           </h2>
-          <ul className="mt-4 space-y-3 text-sm text-ink">
+          <ul className="mt-3 space-y-2.5 text-sm text-ink sm:mt-4 sm:space-y-3">
             <li className="flex gap-2.5">
               <ClockIcon />
               <span>Giờ mở cửa: {siteConfig.openingHours.text}</span>
@@ -196,7 +211,7 @@ export function Footer() {
             Liên kết
           </h2>
           <nav aria-label="Chân trang">
-            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm marker:text-accent">
+            <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:mt-4 sm:block sm:list-disc sm:space-y-2 sm:pl-5 sm:marker:text-accent">
               {siteConfig.nav.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -213,7 +228,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/60 bg-surface/50">
-        <div className="container-content py-5 text-xs text-ink">
+        <div className="container-content py-4 text-xs text-ink sm:py-5">
           © {year} <Brand />. Cho thuê đầm, váy &amp; áo dài —{' '}
           {siteConfig.address.district}, {siteConfig.address.city}.
         </div>
