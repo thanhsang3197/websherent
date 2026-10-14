@@ -23,10 +23,15 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
 
   return (
     <header className="glass-header">
-      <div className="container-content flex min-h-16 items-center justify-between gap-3 py-3">
+      {/*
+        Điện thoại: header thấp (~48px thay vì 64px) — chủ shop 15/10/2026 muốn
+        nhường chỗ cho ảnh/sản phẩm bên dưới, vì header + thanh ưu đãi dính
+        trên đầu chiếm gần 1/7 màn hình 375px. Từ sm trở lên giữ nguyên.
+      */}
+      <div className="container-content flex min-h-12 items-center justify-between gap-3 py-1.5 sm:min-h-16 sm:py-3">
         <Link
           href="/"
-          className="font-serif text-3xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
+          className="font-serif text-2xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
           aria-label={`${siteConfig.name} — về trang chủ`}
         >
           {siteConfig.name}
@@ -62,13 +67,13 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
         {/* Toggle mobile */}
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface/60 text-ink backdrop-blur lg:hidden"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-surface/60 text-ink backdrop-blur sm:h-10 sm:w-10 lg:hidden"
           aria-expanded={open}
           aria-controls="menu-mobile"
           aria-label={open ? 'Đóng menu' : 'Mở menu'}
           onClick={() => setOpen((v) => !v)}
         >
-          <span aria-hidden="true" className="text-xl">
+          <span aria-hidden="true" className="text-lg sm:text-xl">
             {open ? '✕' : '☰'}
           </span>
         </button>
