@@ -92,6 +92,19 @@ const MA_PHU_KIEN: { ma: string; cum: string[]; tu: string[] }[] = [
   { ma: 'K', cum: ['khoac choang'], tu: ['kinh', 'kep', 'khoac', 'choang'] },
 ];
 
+/**
+ * Chữ (đã norm) để từ khoá khớp CẢ DANH MỤC: gõ "áo dài" ra mọi mẫu áo dài,
+ * không chỉ vài mẫu có chữ "áo dài" trong tên (chủ shop yêu cầu 15/10/2026).
+ * Chỉ dùng khi từ khoá từ 3 ký tự, để gõ "a", "da" không kéo cả danh mục ra.
+ */
+const CHU_DANH_MUC: Record<ProductCategory, string> = {
+  'ao-dai': 'ao dai',
+  'dam-vay': 'dam vay',
+  'phap-phuc': 'phap phuc',
+  gam: 'gam',
+  'phu-kien': 'phu kien',
+};
+
 /** Các chữ đầu mã phụ kiện ứng với từ khoá (đã norm), vd "tui xach" -> ["T"]. */
 function maTheoTuKhoa(query: string): string[] {
   const chu = query.split(/\s+/).filter(Boolean);
@@ -204,7 +217,8 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       }
       if (bucket && !bucket.test(listRentPrice(p).price)) return false;
       if (query) {
-        const hay = norm(`${p.name} ${p.brand ?? ''}`);
+        const danhMuc = query.length >= 3 ? ` ${CHU_DANH_MUC[p.category]}` : '';
+        const hay = norm(`${p.name} ${p.brand ?? ''}`) + danhMuc;
         const khopMa =
           p.category === 'phu-kien' && maRe.some((re) => re.test(p.name.trim()));
         if (!hay.includes(query) && !khopMa) return false;
