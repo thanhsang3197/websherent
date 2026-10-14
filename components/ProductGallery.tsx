@@ -101,7 +101,7 @@ export function ProductGallery({
   );
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-3 sm:max-w-[460px] sm:flex-row-reverse">
+    <div className="flex w-full max-w-sm flex-row-reverse gap-2 sm:max-w-[460px] sm:gap-3">
       <div className="relative min-w-0 flex-1">
         {video && showVideo && (
           <VideoFrame video={video} title={`${alt} — video`} />
@@ -174,10 +174,12 @@ export function ProductGallery({
       </div>
 
       {showStrip && (
-        // Cột ngoài `relative` + lớp trong `absolute inset-0` (từ sm): cột lấy
+        // Cột ảnh phụ dọc bên TRÁI ảnh lớn ở MỌI cỡ màn hình (chủ shop 15/10/2026;
+        // trước đây điện thoại xếp hàng ngang bên dưới). Cột ngoài `relative` +
+        // lớp trong `absolute inset-0`: cột lấy
         // chiều cao theo ảnh lớn bên cạnh chứ không tự đẩy cao thêm khi nhiều ảnh.
-        <div className="relative shrink-0 sm:w-16">
-          <div className="no-scrollbar flex gap-2 overflow-x-auto sm:absolute sm:inset-0 sm:flex-col sm:overflow-y-auto sm:overflow-x-hidden">
+        <div className="relative w-12 shrink-0 sm:w-16">
+          <div className="no-scrollbar absolute inset-0 flex flex-col gap-1.5 overflow-y-auto overflow-x-hidden sm:gap-2">
             {images.map((src, i) => (
               <button
                 key={`thumb-${src}-${i}`}
@@ -185,7 +187,7 @@ export function ProductGallery({
                 onClick={() => pickImage(i)}
                 aria-label={`Xem ảnh ${i + 1}`}
                 aria-current={!showVideo && i === active}
-                className={`relative aspect-[3/4] w-14 shrink-0 overflow-hidden rounded-md border-2 bg-tint transition sm:w-full ${
+                className={`relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-md border-2 bg-tint transition ${
                   !showVideo && i === active
                     ? 'border-accent-dark'
                     : 'border-transparent opacity-60 hover:opacity-100'
@@ -212,7 +214,7 @@ export function ProductGallery({
                 }}
                 aria-label="Xem video"
                 aria-current={showVideo}
-                className={`relative flex aspect-[3/4] w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border-2 bg-accent-dark transition sm:w-full ${
+                className={`relative flex aspect-[3/4] w-full shrink-0 items-center justify-center overflow-hidden rounded-md border-2 bg-accent-dark transition ${
                   showVideo
                     ? 'border-accent-dark'
                     : 'border-transparent opacity-80 hover:opacity-100'
