@@ -48,6 +48,7 @@ export function ProductFilters({
   priceBuckets,
   onChange,
   onReset,
+  onSubmitSearch,
 }: {
   filters: Filters;
   brands: string[];
@@ -55,6 +56,8 @@ export function ProductFilters({
   priceBuckets: readonly { id: string; label: string }[];
   onChange: (patch: Partial<Filters>) => void;
   onReset: () => void;
+  /** Khách bấm Enter / nút "Tìm" trên bàn phím điện thoại. */
+  onSubmitSearch?: () => void;
 }) {
   const isFiltering =
     filters.q !== '' ||
@@ -108,6 +111,10 @@ export function ProductFilters({
           inputMode="search"
           value={filters.q}
           onChange={(e) => onChange({ q: e.target.value })}
+          onKeyDown={(e) => {
+            // Bỏ qua lúc đang gõ dấu tiếng Việt (bộ gõ còn đang ghép chữ).
+            if (e.key === 'Enter' && !e.nativeEvent.isComposing) onSubmitSearch?.();
+          }}
           placeholder="Tìm tên mẫu hoặc thương hiệu…"
           className="w-full rounded-full glass-input py-3 pl-11 pr-11 text-sm text-ink placeholder:text-muted focus-visible:outline-none [&::-webkit-search-cancel-button]:appearance-none"
         />

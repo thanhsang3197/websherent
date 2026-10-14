@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { CATEGORY_LABELS, type Product, type ProductCategory } from '@/types/product';
 import { listRentPrice } from '@/lib/format';
 import { fitSize } from '@/lib/brands';
@@ -105,6 +107,17 @@ const CHU_DANH_MUC: Record<ProductCategory, string> = {
   'phu-kien': 'phu kien',
 };
 
+/**
+ * Khách gõ "thanh lý" / "thanh li" / "pass" (chủ shop 15/10/2026: từ khoá này
+ * nằm trong danh sách "tìm không ra mẫu"). Đồ thanh lý không có chữ đó trong
+ * tên, nên khớp theo TRẠNG THÁI: hiện các mẫu đang pass ngay trong lưới, kèm
+ * nút dẫn sang trang /thanh-ly; bấm Enter thì sang thẳng trang đó.
+ */
+const TU_THANH_LY = ['thanh li', 'thanh ly', 'pass', 'ban lai', 'do cu'];
+function laTuThanhLy(query: string): boolean {
+  return TU_THANH_LY.some((t) => query === t || query.startsWith(`${t} `));
+}
+
 /** Các chữ đầu mã phụ kiện ứng với từ khoá (đã norm), vd "tui xach" -> ["T"]. */
 function maTheoTuKhoa(query: string): string[] {
   const chu = query.split(/\s+/).filter(Boolean);
@@ -205,6 +218,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     const maRe = query
       ? maTheoTuKhoa(query).map((ma) => new RegExp(`^${ma}\\s*\\d`, 'i'))
       : [];
+    const thanhLy = laTuThanhLy(query);
     const list = products.filter((p) => {
       if (filters.category !== 'all' && p.category !== filters.category) return false;
       // "Tất cả" = trang phục (chủ shop 24/09/2026): phụ kiện chỉ hiện khi khách
@@ -221,7 +235,8 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         const hay = norm(`${p.name} ${p.brand ?? ''}`) + danhMuc;
         const khopMa =
           p.category === 'phu-kien' && maRe.some((re) => re.test(p.name.trim()));
-        if (!hay.includes(query) && !khopMa) return false;
+        const khopPass = thanhLy && p.sale != null;
+        if (!hay.includes(query) && !khopMa && !khopPass) return false;
       }
       return true;
     });
@@ -291,6 +306,12 @@ export function ProductExplorer({ products }: { products: Product[] }) {
 
   const onReset = useCallback(() => setFilters(DEFAULT_FILTERS), []);
 
+  const router = useRouter();
+  const dangTimThanhLy = laTuThanhLy(norm(filters.q.trim()));
+  const onSubmitSearch = useCallback(() => {
+    if (dangTimThanhLy) router.push('/thanh-ly');
+  }, [dangTimThanhLy, router]);
+
   return (
     <div>
       <ProductFilters
@@ -300,7 +321,20 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         priceBuckets={PRICE_BUCKETS}
         onChange={onChange}
         onReset={onReset}
+        onSubmitSearch={onSubmitSearch}
       />
+      {dangTimThanhLy && (
+        <Link
+          href="/thanh-ly"
+          className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent-dark transition-colors hover:bg-accent/15"
+        >
+          <span>
+            <span className="font-semibold">Đồ thanh lý (pass mẫu)</span> — xem giá bán
+            và tình trạng từng mẫu
+          </span>
+          <span className="shrink-0 font-semibold">Xem trang Thanh lý →</span>
+        </Link>
+      )}
       <div className="mt-8">
         <ProductGrid products={filtered} priorityCount={4} />
       </div>
