@@ -233,6 +233,53 @@
   animation: chu-chay linear infinite;
 }
 
+/* Nhãn HOT / NEW trên ảnh sản phẩm: vệt sáng chéo lướt qua mỗi ~3,5 giây,
+   kèm nhịp phóng nhẹ — đủ bắt mắt khi khách lướt lưới mà không nhấp nháy
+   gây khó chịu. `--nhan-tre` lệch nhịp nhãn thứ hai để hai nhãn không loé
+   cùng lúc. Bật giảm chuyển động thì khối bên dưới tắt hết. */
+.nhan-lap-lanh {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: nhan-nhip 3.5s ease-in-out infinite;
+  animation-delay: var(--nhan-tre, 0s);
+}
+.nhan-lap-lanh::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  animation: nhan-lap-lanh 3.5s ease-in-out infinite;
+  animation-delay: var(--nhan-tre, 0s);
+}
+@keyframes nhan-lap-lanh {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  85%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+@keyframes nhan-nhip {
+  0%,
+  60%,
+  100% {
+    transform: scale(1);
+  }
+  72% {
+    transform: scale(1.08);
+  }
+}
+
 /* Tôn trọng người dùng bật giảm chuyển động. */
 @media (prefers-reduced-motion: reduce) {
   html {

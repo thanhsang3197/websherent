@@ -102,7 +102,7 @@ export function NewArrivalsSection({ products }: { products: Product[] }) {
                 {/* Khối nằm ngay đầu trang nên ảnh vào vùng nhìn thấy sớm ->
                     ưu tiên tải cho bản gốc, tránh khách thấy ô trống lúc mới mở
                     trang. Bản lặp không cần ưu tiên (nằm ngoài khung hình). */}
-                <ProductCard product={product} priority={!isDup} />
+                <ProductCard product={product} priority={!isDup} hideNew />
               </li>
             );
           })}

@@ -11,9 +11,12 @@ import { siteConfig } from '@/lib/site-config';
 export function ProductCard({
   product,
   priority = false,
+  hideNew = false,
 }: {
   product: Product;
   priority?: boolean;
+  /** Khối "Sản phẩm mới về": mẫu nào cũng mới, gắn NEW lên hết thì thừa. */
+  hideNew?: boolean;
 }) {
   const rent = listRentPrice(product);
   return (
@@ -40,6 +43,8 @@ export function ProductCard({
 
           {/* Nhãn loại ("Áo dài", "Pháp phục"…) góc trên ảnh đã bỏ theo yêu
               cầu chủ shop 02/10/2026. */}
+
+          <NhanNoiBat hot={product.hot} isNew={product.isNew && !hideNew} />
 
           {/* Nút "Xem nhanh" (cửa sổ nổi) đã bỏ theo yêu cầu chủ shop
               02/10/2026 — bấm thẻ là vào thẳng trang chi tiết. */}
@@ -113,6 +118,34 @@ export function ProductCard({
         </div>
       </Link>
 
+    </div>
+  );
+}
+
+/**
+ * Nhãn HOT / NEW lấp lánh trên ảnh (chủ shop 15/10/2026) — khơi tò mò để
+ * khách bấm vào xem, nhắn hỏi.
+ *
+ * Đặt GÓC DƯỚI-TRÁI: khung ảnh hình vòm (`.arch`) bo rất sâu ở hai góc trên,
+ * nhãn đặt góc trên bị cắt mất nửa; góc dưới chỉ bo 6px và không che mặt mẫu.
+ * HOT đứng trước NEW: "được thuê nhiều" là lý do mạnh hơn "mới về".
+ * Ánh sáng lướt qua: `.nhan-lap-lanh` trong globals.css (tắt khi khách bật
+ * giảm chuyển động).
+ */
+function NhanNoiBat({ hot, isNew }: { hot?: boolean; isNew?: boolean }) {
+  if (!hot && !isNew) return null;
+  return (
+    <div className="pointer-events-none absolute bottom-2 left-2 flex gap-1 sm:bottom-2.5 sm:left-2.5">
+      {hot && (
+        <span className="nhan-lap-lanh rounded-full bg-gradient-to-r from-[#c2412d] to-[#e8774a] px-2 py-0.5 text-[10px] font-bold tracking-wider text-white shadow-md sm:text-[11px]">
+          🔥 HOT
+        </span>
+      )}
+      {isNew && (
+        <span className="nhan-lap-lanh rounded-full bg-gradient-to-r from-accent to-accent-dark px-2 py-0.5 text-[10px] font-bold tracking-wider text-surface shadow-md [--nhan-tre:1.2s] sm:text-[11px]">
+          ✨ NEW
+        </span>
+      )}
     </div>
   );
 }

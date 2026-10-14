@@ -86,6 +86,16 @@ export interface Product {
    * Optional vì Google Sheets và mock-data không có trường này.
    */
   video?: string | null;
+  /**
+   * Nhãn NEW: mẫu nằm trong khối "Sản phẩm mới về" shop chọn bên app.
+   * Optional vì Google Sheets và mock-data không có.
+   */
+  isNew?: boolean;
+  /**
+   * Nhãn HOT: app tính sẵn (top 5 thuê nhiều nhất 60 ngày mỗi danh mục, cộng
+   * mẫu chọn tay). Web chỉ nhận true/false — không có số lượt thuê.
+   */
+  hot?: boolean;
   /*
    * Không có trường `status`: cột "Trạng Thái" trong Sheet chỉ dùng để LỌC ở
    * lib/mapping.ts (mẫu "Đã thanh lý" bị bỏ hẳn), không hiển thị cho khách —

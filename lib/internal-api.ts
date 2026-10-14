@@ -97,6 +97,12 @@ interface SanPhamApi {
    * Cùng quy tắc với `trung_bay_thu_tu`: chỉ để biết, không dùng làm chỉ số.
    */
   moi_ve_thu_tu?: number | null;
+
+  /**
+   * Nhãn HOT: app tự tính (top 5 lượt thuê 60 ngày mỗi danh mục) + chọn tay.
+   * Chỉ true/false. Optional vì API trước migration 20261015090000 chưa có.
+   */
+  hot?: boolean | null;
 }
 
 interface TraVeApi {
@@ -196,6 +202,9 @@ function mapSanPham(item: SanPhamApi): Product {
     images: images.length > 0 ? images : mainImage ? [mainImage] : [],
     sale: mapSale(item),
     video: (item.video ?? '').trim() || null,
+    // `typeof` chứ không phải truthy: thứ tự 0 vẫn là đang nằm trong khối.
+    isNew: typeof item.moi_ve_thu_tu === 'number',
+    hot: item.hot === true,
   };
 }
 
