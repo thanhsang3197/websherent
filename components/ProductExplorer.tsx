@@ -73,6 +73,35 @@ function norm(s: string): string {
     .toLowerCase();
 }
 
+/**
+ * Phụ kiện đặt tên theo MÃ ("T1", "D30", "Q05"…) chứ không theo tên món, nên
+ * khách gõ "túi" không khớp chữ nào. Bảng này nối từ khoá khách hay gõ (đã bỏ
+ * dấu) với chữ cái đầu mã — chủ shop chốt 15/10/2026:
+ *   T = túi · D = dây chuyền / vòng cổ · C = cài tóc · Q = quạt
+ *   K = kính / kẹp / khoác choàng (một mã dùng chung nhiều món)
+ * Kẹp, choàng, trâm, guốc vốn có chữ trong tên nên vẫn tìm thấy theo tên như cũ.
+ *
+ * `cum`: cụm nhiều chữ, khớp khi nằm trong từ khoá. `tu`: một chữ, khớp khi
+ * khách gõ đúng chữ đó hoặc gõ dở từ 3 ký tự ("qua" -> "quat").
+ */
+const MA_PHU_KIEN: { ma: string; cum: string[]; tu: string[] }[] = [
+  { ma: 'T', cum: ['tui xach'], tu: ['tui', 'bop', 'vi', 'clutch'] },
+  { ma: 'D', cum: ['day chuyen', 'vong co'], tu: ['chuyen'] },
+  { ma: 'C', cum: ['cai toc'], tu: ['cai'] },
+  { ma: 'Q', cum: [], tu: ['quat'] },
+  { ma: 'K', cum: ['khoac choang'], tu: ['kinh', 'kep', 'khoac', 'choang'] },
+];
+
+/** Các chữ đầu mã phụ kiện ứng với từ khoá (đã norm), vd "tui xach" -> ["T"]. */
+function maTheoTuKhoa(query: string): string[] {
+  const chu = query.split(/\s+/).filter(Boolean);
+  return MA_PHU_KIEN.filter(
+    (g) =>
+      g.cum.some((c) => query.includes(c)) ||
+      chu.some((w) => g.tu.some((t) => t === w || (w.length >= 3 && t.startsWith(w)))),
+  ).map((g) => g.ma);
+}
+
 function sortSizes(sizes: string[]): string[] {
   return [...sizes].sort((a, b) => {
     const ia = SIZE_ORDER.indexOf(a);
@@ -159,6 +188,10 @@ export function ProductExplorer({ products }: { products: Product[] }) {
   const filtered = useMemo(() => {
     const query = norm(filters.q.trim());
     const bucket = PRICE_BUCKETS.find((b) => b.id === filters.price);
+    // "T" -> khớp tên "T1", "T 45"; không khớp tên có chữ như "Trâm 01".
+    const maRe = query
+      ? maTheoTuKhoa(query).map((ma) => new RegExp(`^${ma}\\s*\\d`, 'i'))
+      : [];
     const list = products.filter((p) => {
       if (filters.category !== 'all' && p.category !== filters.category) return false;
       // "Tất cả" = trang phục (chủ shop 24/09/2026): phụ kiện chỉ hiện khi khách
@@ -172,7 +205,9 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       if (bucket && !bucket.test(listRentPrice(p).price)) return false;
       if (query) {
         const hay = norm(`${p.name} ${p.brand ?? ''}`);
-        if (!hay.includes(query)) return false;
+        const khopMa =
+          p.category === 'phu-kien' && maRe.some((re) => re.test(p.name.trim()));
+        if (!hay.includes(query) && !khopMa) return false;
       }
       return true;
     });
