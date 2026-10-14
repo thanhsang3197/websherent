@@ -87,8 +87,8 @@ export interface Product {
    */
   video?: string | null;
   /**
-   * Nhãn NEW: mẫu nằm trong khối "Sản phẩm mới về" shop chọn bên app.
-   * Optional vì Google Sheets và mock-data không có.
+   * Nhãn NEW: app tính sẵn (ngày nhập trong 30 ngày, hoặc nhân viên chọn
+   * tay). Optional vì Google Sheets và mock-data không có.
    */
   isNew?: boolean;
   /**

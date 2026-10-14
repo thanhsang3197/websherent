@@ -103,6 +103,12 @@ interface SanPhamApi {
    * Chỉ true/false. Optional vì API trước migration 20261015090000 chưa có.
    */
   hot?: boolean | null;
+
+  /**
+   * Nhãn NEW: app tính (ngày nhập trong 30 ngày) + chọn tay. null/không có =
+   * API trước migration 20261015090000 -> lùi về `moi_ve_thu_tu`.
+   */
+  moi?: boolean | null;
 }
 
 interface TraVeApi {
@@ -202,8 +208,12 @@ function mapSanPham(item: SanPhamApi): Product {
     images: images.length > 0 ? images : mainImage ? [mainImage] : [],
     sale: mapSale(item),
     video: (item.video ?? '').trim() || null,
-    // `typeof` chứ không phải truthy: thứ tự 0 vẫn là đang nằm trong khối.
-    isNew: typeof item.moi_ve_thu_tu === 'number',
+    // NEW do app quyết (ngày nhập 30 ngày / chọn tay). API cũ chưa có `moi`
+    // thì tạm lấy khu "Mới về" — `typeof` vì thứ tự 0 vẫn là nằm trong khối.
+    isNew:
+      typeof item.moi === 'boolean'
+        ? item.moi
+        : typeof item.moi_ve_thu_tu === 'number',
     hot: item.hot === true,
   };
 }
