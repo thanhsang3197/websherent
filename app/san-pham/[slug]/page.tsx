@@ -14,6 +14,7 @@ import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { ContactButtons } from '@/components/ContactButtons';
 import { ProductGallery } from '@/components/ProductGallery';
+import { TieuDeMotDong } from '@/components/TieuDeMotDong';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FeedbackGallery } from '@/components/FeedbackGallery';
 import { resolveProductVideo } from '@/lib/video';
@@ -158,13 +159,15 @@ export default async function ProductPage({
         {/* Thông tin */}
         <div>
           <div className="flex items-start justify-between gap-4">
-            <div>
+            {/* min-w-0 flex-1: khung giãn hết bề ngang để tiêu đề đo đúng chỗ trống. */}
+            <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
                 {categoryLabel}
               </p>
-              <h1 className="mt-2 font-serif text-3xl text-accent-dark sm:text-4xl">
+              {/* Tên dài tự co chữ cho vừa một dòng; tên ngắn giữ cỡ gốc. */}
+              <TieuDeMotDong className="mt-2 font-serif text-3xl text-accent-dark sm:text-4xl">
                 {product.name}
-              </h1>
+              </TieuDeMotDong>
             </div>
           </div>
 
