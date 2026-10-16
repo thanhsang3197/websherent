@@ -80,8 +80,10 @@ function norm(s: string): string {
  * khách gõ "túi" không khớp chữ nào. Bảng này nối từ khoá khách hay gõ (đã bỏ
  * dấu) với chữ cái đầu mã — chủ shop chốt 15/10/2026:
  *   T = túi · D = dây chuyền / vòng cổ · C = cài tóc · Q = quạt
- *   K = kính / kẹp / khoác choàng (một mã dùng chung nhiều món)
+ *   K = kính / kẹp (một mã dùng chung nhiều món)
  * Kẹp, choàng, trâm, guốc vốn có chữ trong tên nên vẫn tìm thấy theo tên như cũ.
+ * Choàng KHÔNG nối với mã K: K01–K05 là kính, gõ "choàng" chỉ khớp theo tên
+ * (chủ shop 16/10/2026).
  *
  * `cum`: cụm nhiều chữ, khớp khi nằm trong từ khoá. `tu`: một chữ, khớp khi
  * khách gõ đúng chữ đó hoặc gõ dở từ 3 ký tự ("qua" -> "quat").
@@ -91,7 +93,7 @@ const MA_PHU_KIEN: { ma: string; cum: string[]; tu: string[] }[] = [
   { ma: 'D', cum: ['day chuyen', 'vong co'], tu: ['chuyen'] },
   { ma: 'C', cum: ['cai toc'], tu: ['cai'] },
   { ma: 'Q', cum: [], tu: ['quat'] },
-  { ma: 'K', cum: ['khoac choang'], tu: ['kinh', 'kep', 'khoac', 'choang'] },
+  { ma: 'K', cum: [], tu: ['kinh', 'kep'] },
 ];
 
 /**
