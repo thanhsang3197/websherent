@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Album } from '@/types/album';
-import { AlbumCard } from '@/components/AlbumCard';
+import { AlbumStrip } from '@/components/AlbumStrip';
 
 /** Khối trang chủ hiện tối đa bấy nhiêu album; nhiều hơn thì có link "Xem tất cả". */
 const SO_ALBUM_TRANG_CHU = 8;
@@ -11,8 +11,8 @@ const SO_ALBUM_TRANG_CHU = 8;
  * Rỗng thì ẩn CẢ KHỐI kể cả tiêu đề — gồm cả lúc bản app đang chạy chưa có
  * tính năng album (getAlbums trả []).
  *
- * Điện thoại: một hàng vuốt ngang, lộ nửa thẻ cuối để khách biết còn nữa mà
- * không đẩy bộ sưu tập bên dưới xuống xa. Máy tính: lưới 4 cột.
+ * Mọi màn hình: một hàng kéo ngang (AlbumStrip), lộ một phần thẻ cuối để khách
+ * biết còn nữa mà không đẩy bộ sưu tập bên dưới xuống xa.
  */
 export function AlbumSection({ albums }: { albums: Album[] }) {
   if (albums.length === 0) return null;
@@ -36,13 +36,7 @@ export function AlbumSection({ albums }: { albums: Album[] }) {
         )}
       </div>
 
-      <ul className="no-scrollbar -mx-5 mt-6 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 sm:mx-0 sm:grid sm:snap-none sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4">
-        {items.map((album) => (
-          <li key={album.slug} className="w-[42vw] shrink-0 snap-start sm:w-auto">
-            <AlbumCard album={album} viTri="trang-chu" sizes="(max-width: 640px) 42vw, (max-width: 1024px) 33vw, 25vw" />
-          </li>
-        ))}
-      </ul>
+      <AlbumStrip albums={items} />
     </section>
   );
 }
