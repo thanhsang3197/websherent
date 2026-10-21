@@ -41,9 +41,11 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
         {/*
           Menu ngang chỉ từ lg (1024px). Thêm mục "Album" (17/09/2026) làm menu
           chật: ở ~950px "Trang chủ", "Sản phẩm"… gãy hai dòng, còn ở 768px
-          tràn ngang cả trang. Dưới lg dùng nút ☰ như điện thoại.
+          tràn ngang cả trang. Dưới lg dùng nút ☰ như điện thoại. Thêm "Hạng
+          thành viên" (21/10/2026) thì ở 1024px khoảng cách 20px đẩy nút Zalo
+          lố lề phải ~20px — nên lg chỉ cách 16px.
         */}
-        <nav className="hidden items-center gap-5 lg:flex xl:gap-8" aria-label="Chính">
+        <nav className="hidden items-center gap-4 lg:flex xl:gap-8" aria-label="Chính">
           {nav.map((item) => (
             <Link
               key={item.href}

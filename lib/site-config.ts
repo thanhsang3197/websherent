@@ -129,6 +129,7 @@ export const siteConfig = {
     { label: 'Sản phẩm', href: '/#san-pham' },
     { label: 'Thanh lý', href: '/thanh-ly' },
     { label: 'Feedback', href: '/feedback' },
+    { label: 'Hạng thành viên', href: '/hang-thanh-vien' },
     { label: 'Giới thiệu', href: '/gioi-thieu' },
     { label: 'Hỏi đáp', href: '/cau-hoi-thuong-gap' },
   ],

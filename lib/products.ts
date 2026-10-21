@@ -20,10 +20,12 @@ import {
   fetchAlbumFromInternalApi,
   fetchFeedbackFromInternalApi,
   fetchUuDaiFromInternalApi,
+  fetchHangKhachFromInternalApi,
   isInternalApiConfigured,
 } from './internal-api';
 import type { Feedback } from '../types/feedback';
 import type { UuDai } from '../types/uu-dai';
+import type { ChuongTrinhHang } from '../types/hang-khach';
 import { slugify } from './slug';
 import {
   sortProductsForDisplay,
@@ -378,5 +380,21 @@ export async function getUuDai(): Promise<UuDai[]> {
   } catch (err) {
     console.error('[products] Lỗi đọc ưu đãi — ẩn ưu đãi:', err);
     return [];
+  }
+}
+
+/**
+ * Chương trình hạng thành viên cho trang /hang-thanh-vien. `null` khi chưa nối
+ * app, API lỗi hoặc app chưa có route — trang tự hiện bản "đang cập nhật"
+ * thay vì sập.
+ */
+export async function getHangKhach(): Promise<ChuongTrinhHang | null> {
+  if (!isInternalApiConfigured()) return null;
+
+  try {
+    return await fetchHangKhachFromInternalApi();
+  } catch (err) {
+    console.error('[products] Lỗi đọc hạng thành viên — trang hiện bản đang cập nhật:', err);
+    return null;
   }
 }

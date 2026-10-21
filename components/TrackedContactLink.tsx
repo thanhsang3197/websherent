@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { trackCallClick, trackZaloClick, type ViTri } from '@/lib/analytics';
+import { trackCallClick, trackMessengerClick, trackZaloClick, type ViTri } from '@/lib/analytics';
 
 /**
  * Thẻ <a> liên hệ có ghi nhận sự kiện — dành cho các trang/khối là SERVER
@@ -21,22 +21,28 @@ export function TrackedContactLink({
   ...rest
 }: {
   href: string;
-  /** 'zalo' mở Zalo (tab mới), 'goi' là link tel:. */
-  kieu: 'zalo' | 'goi';
+  /** 'zalo' / 'messenger' mở app chat (tab mới), 'goi' là link tel:. */
+  kieu: 'zalo' | 'messenger' | 'goi';
   viTri: ViTri;
   maSp?: string | null;
   className?: string;
   children: ReactNode;
 } & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'className' | 'children'>) {
-  const laZalo = kieu === 'zalo';
+  const moTabMoi = kieu !== 'goi';
   return (
     <a
       href={href}
       className={className}
       // Link tel: mở app gọi ngay trên máy -> không mở tab mới.
-      target={laZalo ? '_blank' : undefined}
-      rel={laZalo ? 'noopener noreferrer' : undefined}
-      onClick={() => (laZalo ? trackZaloClick(viTri, maSp) : trackCallClick(viTri))}
+      target={moTabMoi ? '_blank' : undefined}
+      rel={moTabMoi ? 'noopener noreferrer' : undefined}
+      onClick={() =>
+        kieu === 'zalo'
+          ? trackZaloClick(viTri, maSp)
+          : kieu === 'messenger'
+            ? trackMessengerClick(viTri, maSp)
+            : trackCallClick(viTri)
+      }
       {...rest}
     >
       {children}

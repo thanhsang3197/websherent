@@ -3,6 +3,7 @@ import type { Product, ProductSale } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
 import type { Album } from '@/types/album';
 import type { UuDai } from '@/types/uu-dai';
+import type { ChuongTrinhHang } from '@/types/hang-khach';
 import { siteConfig } from '@/lib/site-config';
 import { normalizeImageUrl } from '@/lib/format';
 import { buildProductSlug } from '@/lib/slug';
@@ -699,4 +700,71 @@ export async function fetchUuDaiFromInternalApi(): Promise<UuDai[]> {
       hienThanhTren: r.hien_thanh_tren !== false,
       hienKhoi: r.hien_khoi !== false,
     }));
+}
+
+// ---------------------------------------------------------------------------
+// HẠNG THÀNH VIÊN — ngưỡng điểm/lượt và quyền lợi (api-cong-khai.md §2.7)
+// ---------------------------------------------------------------------------
+
+/** Một hạng đúng như `GET /api/cong-khai/hang-khach` trả về. */
+interface HangKhachApi {
+  ma: string;
+  ten: string;
+  thu_tu: number;
+  diem_toi_thieu: number;
+  luot_toi_thieu: number | null;
+  giam_phan_tram: number;
+  free_phu_kien: boolean;
+  quyen_loi_khac: string[] | null;
+  /** Câu dựng sẵn từ ba trường trên — web tự dựng dòng theo bảng nên không dùng. */
+  quyen_loi?: string[];
+}
+
+interface TraVeHangKhachApi {
+  dong_moi_diem: number;
+  hang: HangKhachApi[];
+}
+
+/**
+ * Chương trình hạng thành viên, hạng sắp từ thấp lên cao.
+ *
+ * Nhịp làm mới 1 giờ như ưu đãi: shop sửa ngưỡng ở app (tab Hạng KH) là web
+ * đổi theo trong vòng một giờ mà không cần ai deploy. 404 = bản app đang chạy
+ * chưa có route này -> `null`, trang tự hiện bản "đang cập nhật".
+ */
+export async function fetchHangKhachFromInternalApi(): Promise<ChuongTrinhHang | null> {
+  const apiUrl = process.env.INTERNAL_API_URL;
+  if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
+
+  const res = await fetch(`${apiUrl.replace(/\/$/, '')}/hang-khach`, {
+    headers: { Accept: 'application/json' },
+    next: { revalidate: UU_DAI_REVALIDATE_SECONDS, tags: [TAG_SAN_PHAM] },
+  });
+
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`Internal API trả về mã lỗi ${res.status} (hang-khach)`);
+  }
+
+  const data = (await res.json()) as TraVeHangKhachApi;
+  const rows = Array.isArray(data.hang) ? data.hang : [];
+  const hang = rows
+    .filter((r) => (r.ten ?? '').trim() !== '' && Number.isFinite(r.diem_toi_thieu))
+    .map((r) => ({
+      ma: r.ma,
+      ten: r.ten.trim(),
+      thuTu: r.thu_tu,
+      diemToiThieu: r.diem_toi_thieu,
+      luotToiThieu: typeof r.luot_toi_thieu === 'number' && r.luot_toi_thieu > 0 ? r.luot_toi_thieu : null,
+      giamPhanTram: Number(r.giam_phan_tram) || 0,
+      freePhuKien: r.free_phu_kien === true,
+      quyenLoiKhac: (r.quyen_loi_khac ?? []).map((q) => q.trim()).filter(Boolean),
+    }))
+    .sort((a, b) => a.thuTu - b.thuTu);
+
+  if (hang.length === 0) return null;
+  return {
+    dongMoiDiem: Number(data.dong_moi_diem) > 0 ? Number(data.dong_moi_diem) : 1000,
+    hang,
+  };
 }

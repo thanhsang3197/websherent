@@ -33,3 +33,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# ảnh chụp & báo cáo kiểm tra giao diện (skill design-taste-frontend)
+/.taste-skill/
