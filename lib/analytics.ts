@@ -136,6 +136,17 @@ export function trackSaleOpen(maSp: string, ten: string) {
 }
 
 /**
+ * Khách tra hạng THẬT bằng số điện thoại ở /hang-thanh-vien và nhận được kết
+ * quả. `ket_qua` là tên hạng hiện cho khách (Chưa lên hạng · Bạc · Vàng · Kim Cương).
+ *
+ * ⚠️ KHÔNG BAO GIỜ gửi số điện thoại lên Vercel Analytics — chỉ tên hạng.
+ * Thêm 22/10/2026 — tên phải khớp `SU_KIEN_WEB.traHang` bên app.
+ */
+export function trackTraHang(ketQua: string) {
+  track('Tra hạng', { ket_qua: ketQua });
+}
+
+/**
  * Sự kiện của một link nằm trong SERVER component — dạng dữ liệu thuần để
  * truyền qua ranh giới server → client (không truyền hàm được).
  * Xem `components/LinkCoSuKien.tsx`.

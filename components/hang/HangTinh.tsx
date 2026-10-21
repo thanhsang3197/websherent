@@ -4,6 +4,7 @@ import { useId, useRef, useState, type FormEvent } from 'react';
 import type { HangKhach } from '@/types/hang-khach';
 import { TEN_HANG_MOI, dieuKien, mauHang, tinhHang } from '@/lib/hang-khach';
 import { HangTag } from '@/components/hang/HangTag';
+import { trackTraHang } from '@/lib/analytics';
 
 const so = (n: number) => n.toLocaleString('vi-VN');
 
@@ -57,11 +58,14 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sdt }),
       });
-      const d = (await res.json().catch(() => ({}))) as { ma?: string; loi?: string };
+      const d = (await res.json().catch(() => ({}))) as { ma?: string; ten?: string; loi?: string };
       if (!res.ok || typeof d.ma !== 'string') {
         setLoi(d.loi ?? 'Chưa tra được, bạn thử lại sau ít phút nhé.');
         return;
       }
+      // Chỉ gửi TÊN HẠNG cho thống kê, không gửi số điện thoại. 'Thường' hiện cho
+      // khách là "chưa lên hạng" — ghi đúng chữ đó để bên app đọc dễ hiểu.
+      trackTraHang(d.ma === 'Thường' ? 'Chưa lên hạng' : (dsHang.find((h) => h.ma === d.ma)?.ten ?? d.ten ?? d.ma));
       const chuSo = sdt.replace(/\D/g, '');
       setTraCuu({ ma: d.ma, sdt: chuSo.startsWith('84') ? `0${chuSo.slice(2)}` : chuSo });
       // Điện thoại: thẻ kết quả nằm dưới phần ước tính — đưa nó vào tầm mắt.
