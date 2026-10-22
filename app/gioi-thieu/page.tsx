@@ -41,7 +41,7 @@ const PHIEU: { nhom: string; dong: { viec: string; khi: string }[] }[] = [
     nhom: 'Chọn đồ',
     dong: [
       { viec: 'Xem mẫu trên web', khi: 'lúc nào cũng được' },
-      { viec: 'Nhắn Zalo kèm mã mẫu', khi: 'giữ mẫu, chốt ngày' },
+      { viec: 'Nhắn Messenger kèm mã mẫu', khi: 'giữ mẫu, chốt ngày' },
       { viec: 'Hỏi size nếu chưa chắc', khi: 'trước khi giữ' },
     ],
   },
@@ -177,7 +177,7 @@ export default async function GioiThieuPage() {
                 </p>
                 <p>
                   Ở gần thì ghé Hóc Môn thử đồ vào buổi chiều tối. Ở xa thì chọn mẫu trên web, nhắn
-                  Zalo, tiệm gửi đồ đi khắp các tỉnh.
+                  Messenger, tiệm gửi đồ đi khắp các tỉnh.
                 </p>
               </div>
               <p data-reveal className="mt-10">
@@ -241,7 +241,7 @@ export default async function GioiThieuPage() {
               Thuê đồ thế nào
             </h2>
             <p data-reveal className="mt-6 max-w-[30ch] text-[17px] leading-relaxed text-ink">
-              Không cần tài khoản, không cần đăng ký. Một tin nhắn Zalo là đủ để giữ mẫu.
+              Không cần tài khoản, không cần đăng ký. Một tin nhắn Messenger là đủ để giữ mẫu.
             </p>
           </div>
           <div data-reveal className="min-w-0 lg:col-span-6 lg:col-start-7">
@@ -307,26 +307,18 @@ export default async function GioiThieuPage() {
           >
             Nhắn tiệm giữ mẫu
           </h2>
-          <div data-reveal className="mt-10 grid items-start gap-2 md:grid-cols-3">
+          <div data-reveal className="mt-10 grid items-start gap-2 md:grid-cols-2">
             <div>
               <TrackedContactLink
-                href={siteConfig.zaloUrl}
-                kieu="zalo"
+                href={siteConfig.messengerUrl}
+                kieu="messenger"
                 viTri="gioi-thieu"
                 className="flex min-h-[60px] items-center justify-center bg-surface/15 px-4 text-lg transition hover:bg-surface/25 active:scale-[0.99] md:min-h-[96px]"
               >
-                Zalo {siteConfig.phone.display}
+                Nhắn Messenger
               </TrackedContactLink>
               <p className="mt-3 text-[15px] text-surface/80">Gửi kèm mã mẫu để tiệm xem size giúp bạn.</p>
             </div>
-            <TrackedContactLink
-              href={siteConfig.messengerUrl}
-              kieu="messenger"
-              viTri="gioi-thieu"
-              className="flex min-h-[60px] items-center justify-center bg-surface/15 px-4 text-lg transition hover:bg-surface/25 active:scale-[0.99] md:min-h-[96px]"
-            >
-              Messenger
-            </TrackedContactLink>
             <div>
               <TrackedContactLink
                 href={`tel:${siteConfig.phone.tel}`}

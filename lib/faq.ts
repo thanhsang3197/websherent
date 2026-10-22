@@ -4,7 +4,7 @@ import { siteConfig } from './site-config';
  * Nội dung Câu hỏi thường gặp — dùng cho trang /cau-hoi-thuong-gap VÀ JSON-LD FAQPage.
  *
  * // TODO(chính sách): câu "Nếu trả trễ hẹn hoặc lỡ làm hư đồ thì sao?" mình chưa có số
- * // liệu cụ thể (mức phạt/đền bù) nên để câu trả lời chung, hướng khách nhắn Zalo.
+ * // liệu cụ thể (mức phạt/đền bù) nên để câu trả lời chung, hướng khách nhắn Messenger.
  * // Nếu tiệm có chính sách rõ ràng, điền cụ thể vào đây để khách nắm được ngay.
  */
 export interface FaqItem {
@@ -24,26 +24,25 @@ export const faqItems: FaqItem[] = [
     answer:
       `Bạn có thể chọn thuê 1 ngày (từ 15:00 hôm nhận đến trước 20:00 hôm sau) hoặc 3 ngày ` +
       `(ngày nhận — ngày mặc — ngày trả). Nếu cần thuê thêm ngày, phí phát sinh là 10%/ngày ` +
-      `— bạn chỉ cần báo trước cho ${siteConfig.name} qua Zalo.`,
+      `— bạn chỉ cần báo trước cho ${siteConfig.name} qua Messenger.`,
   },
   {
     question: 'Cách giữ mẫu như thế nào?',
     answer:
       `Rất đơn giản: xem mẫu ưng ý trên website, bấm vào mẫu để lấy mã sản phẩm, rồi nhắn ` +
-      `Zalo ${siteConfig.phone.display} kèm mã đó để giữ mẫu và chốt ngày nhận — trả. ` +
-      `Không cần dùng Instagram hay Facebook để hỏi.`,
+      `Messenger cho ${siteConfig.name} kèm mã đó để giữ mẫu và chốt ngày nhận — trả.`,
   },
   {
     question: 'Có thể đến thử đồ trực tiếp tại cửa hàng không?',
     answer:
       `Có. Bạn ghé trực tiếp tại ${siteConfig.address.full} trong giờ mở cửa ` +
-      `(${siteConfig.openingHours.text}) để thử đồ trước khi quyết định.`,
+      `(${siteConfig.openingHours.opens} – ${siteConfig.openingHours.closes}, cả tuần) để thử đồ trước khi quyết định.`,
   },
   {
     question: 'Ở xa có thuê được không? Có giao hàng không?',
     answer:
       `Có. Ngoài việc ghé cửa hàng, ${siteConfig.name} hỗ trợ cho thuê online và giao hàng ` +
-      `trên phạm vi toàn quốc — chọn mẫu trên web rồi nhắn Zalo để được tư vấn size và cách gửi.`,
+      `trên phạm vi toàn quốc — chọn mẫu trên web rồi nhắn Messenger để được tư vấn size và cách gửi.`,
   },
   {
     question: 'Thanh toán bằng cách nào?',
@@ -52,7 +51,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Nếu trả trễ hẹn hoặc lỡ làm hư đồ thì sao?',
     answer:
-      `Cứ báo ngay cho ${siteConfig.name} qua Zalo càng sớm càng tốt — tiệm sẽ trao đổi ` +
+      `Cứ báo ngay cho ${siteConfig.name} qua Messenger càng sớm càng tốt — tiệm sẽ trao đổi ` +
       `phương án phù hợp với từng trường hợp cụ thể.`,
   },
   {
@@ -63,6 +62,6 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Làm sao biết mẫu còn size mình cần?',
     answer:
-      'Mỗi mẫu ghi rõ các size đang có ngay trên trang chi tiết. Nếu chưa chắc vừa dáng, cứ nhắn Zalo để được tư vấn size trước khi giữ mẫu.',
+      'Mỗi mẫu ghi rõ các size đang có ngay trên trang chi tiết. Nếu chưa chắc vừa dáng, cứ nhắn Messenger để được tư vấn size trước khi giữ mẫu.',
   },
 ];

@@ -483,3 +483,37 @@
     animation: none;
   }
 }
+
+/* ---------- Trang Hỏi đáp ---------- */
+.hd-le {
+  padding-inline: clamp(1rem, 4vw, 4.5rem);
+}
+
+/* Câu đang mở: nền nhấn nhạt một bậc, tràn ra hai bên một chút cho dễ thấy. */
+.hd-cau[open] {
+  background-color: rgb(var(--tint) / 0.45);
+  margin-inline: -0.75rem;
+  padding-inline: 0.75rem;
+}
+
+/* Ảnh chính của khảm mở từ dưới lên một lần, ảnh lắng từ 1.12 về 1. */
+@keyframes hd-man {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes hd-lang {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+.hd-man {
+  animation: hd-man 1.1s cubic-bezier(0.7, 0, 0.2, 1) 0.1s both;
+}
+.hd-man img {
+  animation: hd-lang 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hd-man,
+  .hd-man img {
+    animation: none;
+  }
+}

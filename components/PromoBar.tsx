@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import Link from 'next/link';
-import { kieuLoai } from '@/lib/uu-dai';
 import { trackUuDaiClick } from '@/lib/analytics';
 
 /** Đổi sang chương trình kế tiếp sau ít nhất từng này mili-giây. */
@@ -13,7 +12,7 @@ const TOC_DO_CHAY = 40;
 
 export interface PromoBarItem {
   id: string;
-  /** Mã loại — chọn biểu tượng đứng trước tiêu đề. */
+  /** Mã loại chương trình (VOUCHER, GUI_ANH…). */
   loai: string;
   tieuDe: string;
   loaiTen: string;
@@ -59,6 +58,8 @@ export function PromoBar({ items }: { items: PromoBarItem[] }) {
   // `chiSo` có thể vượt số chương trình khi danh sách ưu đãi đổi.
   const cur = hien[chiSo % soCt];
 
+  const doi = (buoc: number) => setChiSo((i) => (((i % soCt) + buoc) % soCt + soCt) % soCt);
+
   return (
     <div
       role="region"
@@ -70,36 +71,46 @@ export function PromoBar({ items }: { items: PromoBarItem[] }) {
       onBlur={() => setTamDung(false)}
       onTouchStart={() => setTamDung(true)}
     >
-      <div className="container-content flex min-h-9 items-center gap-2 text-[13px] sm:text-sm">
+      <div className="container-content flex min-h-9 items-center gap-1 text-[13px] sm:min-h-10 sm:text-sm">
+        {soCt > 1 && <NutDoi huong="truoc" onClick={() => doi(-1)} />}
+
         <Link
           href={`/uu-dai#${cur.id}`}
           onClick={() => trackUuDaiClick('thanh', cur.tieuDe)}
-          className="flex min-w-0 flex-1 items-center gap-2 py-1.5 hover:underline"
+          className="group mx-auto flex min-w-0 flex-1 items-center justify-center gap-3 py-2 sm:flex-initial"
         >
-          {/* Nhãn loại chỉ hiện từ sm: điện thoại cần chỗ cho tiêu đề hơn. */}
-          <span className="hidden shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide sm:inline">
-            {cur.loaiTen}
-          </span>
-          <ChuChay
-            key={cur.id}
-            choChay={!giamChuyenDong}
-            tamDung={tamDung}
-            onVongChay={setVongChayMs}
-          >
-            {/* Biểu tượng hiện cả trên điện thoại, nơi nhãn chữ bị ẩn. */}
-            <span aria-hidden="true">{kieuLoai(cur.loai).icon} </span>
+          {/* Loại chương trình chỉ hiện từ sm: điện thoại cần chỗ cho tiêu đề hơn. */}
+          {/* Bỏ nhãn khi tiêu đề đã mở đầu bằng chính nó ("Ưu đãi Ưu đãi Hạng…"). */}
+          {!cur.tieuDe.toLowerCase().startsWith(cur.loaiTen.toLowerCase()) && (
+            <span className="hidden shrink-0 text-surface/70 sm:inline">{cur.loaiTen}</span>
+          )}
+          <ChuChay key={cur.id} choChay={!giamChuyenDong} tamDung={tamDung} onVongChay={setVongChayMs}>
             {cur.tieuDe}
           </ChuChay>
-          <span className="shrink-0 font-semibold">Xem →</span>
+          <span className="hidden shrink-0 font-medium underline decoration-surface/40 underline-offset-4 transition group-hover:decoration-surface sm:inline">
+            Xem chi tiết
+          </span>
         </Link>
 
-        {soCt > 1 && (
-          <span className="shrink-0 text-xs font-medium tabular-nums text-surface/80">
-            {(chiSo % soCt) + 1}/{soCt}
-          </span>
-        )}
+        {soCt > 1 && <NutDoi huong="sau" onClick={() => doi(1)} />}
       </div>
     </div>
+  );
+}
+
+/** Nút ‹ › đổi chương trình bằng tay; đủ rộng cho ngón cái dù thanh thấp. */
+function NutDoi({ huong, onClick }: { huong: 'truoc' | 'sau'; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={huong === 'truoc' ? 'Ưu đãi trước' : 'Ưu đãi sau'}
+      className="-mx-2 flex h-9 w-10 shrink-0 items-center justify-center text-surface/75 transition hover:text-surface active:scale-90 sm:h-10"
+    >
+      <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d={huong === 'truoc' ? 'M10 3 5 8l5 5' : 'm6 3 5 5-5 5'} />
+      </svg>
+    </button>
   );
 }
 
