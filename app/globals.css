@@ -366,3 +366,120 @@
 @media (prefers-reduced-motion: reduce) {
   .hang-troi { animation: none; }
 }
+
+/* ---------- Trang Giới thiệu ---------- */
+/* Một cặp lề ngoài cho cả trang. */
+.gt-le {
+  padding-inline: clamp(1rem, 2.4vw, 2.25rem);
+}
+
+/*
+  Điện thoại: gương dính dưới header (~5.25rem) cao gần hết màn hình, cột chữ
+  kéo ngược lên phủ đè. Khối chữ có nền đặc, tràn hết lề; ô cửa trong suốt.
+*/
+.gt-san {
+  width: 100%;
+  height: calc(100svh - 5.25rem - 1.5rem);
+}
+@media (max-width: 767px) {
+  .gt-guong {
+    position: sticky;
+    top: 5.25rem;
+    z-index: 0;
+    height: calc(100svh - 5.25rem);
+    padding-top: 0.75rem;
+  }
+  .gt-chu {
+    position: relative;
+    z-index: 1;
+    margin-top: calc(-1 * (100svh - 5.25rem));
+  }
+  .gt-tam {
+    margin-inline: calc(-1 * clamp(1rem, 2.4vw, 2.25rem));
+    padding-inline: clamp(1rem, 2.4vw, 2.25rem);
+    background-color: rgb(var(--bg));
+  }
+  .gt-cua {
+    height: 62svh;
+  }
+  .gt-cua-dau {
+    height: 34svh;
+  }
+}
+@media (min-width: 768px) {
+  .gt-cua {
+    display: none;
+  }
+}
+@media (min-width: 768px) {
+  .gt-san {
+    height: calc(100svh - 9rem);
+  }
+}
+
+/* Khung mở từ dưới lên một lần lúc vào trang, ảnh lắng từ 1.12 về 1. */
+@keyframes gt-man {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes gt-lang {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+.gt-man {
+  animation: gt-man 1.1s cubic-bezier(0.7, 0, 0.2, 1) 0.1s both;
+}
+.gt-man img {
+  animation: gt-lang 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* Tên tiệm dọc mép dưới cột chữ; thu nhỏ nhẹ khi cuộn qua. */
+.gt-ten {
+  font-size: clamp(3.5rem, 16.5vw, 6rem);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  transform-origin: left bottom;
+}
+@media (min-width: 768px) {
+  .gt-ten {
+    font-size: clamp(3.5rem, 7.6vw, 9.5rem);
+  }
+}
+@supports (animation-timeline: view()) {
+  @keyframes gt-thu {
+    to { scale: 0.93; }
+  }
+  .gt-ten {
+    animation: gt-thu linear both;
+    animation-timeline: view();
+    animation-range: exit 0% exit 100%;
+  }
+}
+
+/* Giờ mở cửa đặt như một con số lớn. */
+.gt-gio {
+  font-size: clamp(3.25rem, 7vw, 7.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+/* Băng ảnh đầm trôi chậm sang trái (danh sách đã lặp hai lần). */
+@keyframes gt-troi {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.gt-bang {
+  animation: gt-troi 70s linear infinite;
+}
+.gt-bang:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-man,
+  .gt-man img,
+  .gt-ten,
+  .gt-bang {
+    animation: none;
+  }
+}
