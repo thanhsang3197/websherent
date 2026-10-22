@@ -30,15 +30,32 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Chia đều các dòng của tiêu đề thay vì để dòng cuối trơ trọi. */
   h1,
   h2,
   h3,
   h4 {
+    text-wrap: balance;
+  }
+
+  /* Tiêu đề lớn: serif. */
+  h1,
+  h2 {
     font-family: var(--font-serif), Georgia, serif;
     font-weight: 500;
-    letter-spacing: -0.01em;
-    /* Chia đều các dòng của tiêu đề thay vì để dòng cuối trơ trọi. */
-    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  /*
+    Tiêu đề nhỏ (tên mẫu, tên chương trình, câu hỏi…): cùng font nội dung, đậm
+    hơn — serif ở cỡ nhỏ trông lạc với phần chữ xung quanh. Cần serif ở h3 lớn
+    thì thêm font-serif vào chỗ đó.
+  */
+  h3,
+  h4 {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.005em;
   }
 
   /*
@@ -516,4 +533,28 @@
   .hd-man img {
     animation: none;
   }
+}
+
+/* ---------- Trang Thanh lý ---------- */
+/* Câu hỏi đang mở: ô chuyển sang màu đất nung, chữ sáng. */
+.tl-o[open] {
+  background-color: rgb(var(--accent-dark));
+  color: rgb(var(--surface));
+}
+.tl-o:not([open]) > summary:hover {
+  background-color: rgb(var(--tint));
+}
+
+/* Ô lớn ở khảm đầu trang: ba ảnh chồng nhau, lần lượt hiện ~6 giây mỗi ảnh. */
+@keyframes tl-doi {
+  0%, 30% { opacity: 1; }
+  36%, 94% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.tl-doi {
+  animation: tl-doi 18s ease-in-out infinite both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl-doi { animation: none; opacity: 0; }
+  .tl-doi:first-child { opacity: 1; }
 }

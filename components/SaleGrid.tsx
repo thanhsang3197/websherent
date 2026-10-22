@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Product } from '@/types/product';
+import { useMemo, useState } from 'react';
+import { CATEGORY_LABELS, type Product } from '@/types/product';
 import { SaleCard } from '@/components/SaleCard';
+import { NEN_O } from '@/lib/thanh-ly';
 import { useLoadMore } from '@/hooks/useLoadMore';
 
 const PAGE_SIZE = 40;
@@ -10,12 +11,12 @@ const PAGE_SIZE = 40;
 type PriceBucket = 'all' | 'lt100' | '100-200' | '200-500' | '500-1000';
 type SortDir = 'asc' | 'desc';
 
-// Dải riêng biệt (không cộng dồn), khớp với countPassRange() ở app/thanh-ly/page.tsx.
+// Dải riêng biệt (không cộng dồn). Mẫu chưa chốt giá (0) chỉ nằm trong "Tất cả".
 const PRICE_BANDS: { id: Exclude<PriceBucket, 'all'>; label: string; test: (p: number) => boolean }[] = [
   { id: 'lt100', label: 'Dưới 100k', test: (p) => p > 0 && p <= 100_000 },
   { id: '100-200', label: '100k – 200k', test: (p) => p > 100_000 && p <= 200_000 },
   { id: '200-500', label: '200k – 500k', test: (p) => p > 200_000 && p <= 500_000 },
-  { id: '500-1000', label: '500k – 1000k', test: (p) => p > 500_000 && p <= 1_000_000 },
+  { id: '500-1000', label: '500k – 1 triệu', test: (p) => p > 500_000 && p <= 1_000_000 },
 ];
 
 function priceBucketTest(bucket: PriceBucket): (p: number) => boolean {
@@ -34,33 +35,33 @@ function norm(s: string): string {
 }
 
 /**
- * Lưới sản phẩm trang thanh lý: tìm theo tên + lọc theo mức giá bán + sắp xếp
+ * Lưới sản phẩm trang thanh lý: tìm theo tên/loại/thương hiệu + lọc theo mức giá bán + sắp xếp
  * giá, có nút "Xem thêm" thay vì render hết cùng lúc.
+ *
+ * Hàng nút mức giá (kèm số mẫu từng mức) dính ngay dưới header khi cuộn, để
+ * trên điện thoại khách đổi mức giá mà không phải cuộn ngược lên đầu.
  */
 export function SaleGrid({ products }: { products: Product[] }) {
   const [q, setQ] = useState('');
   const [priceBucket, setPriceBucket] = useState<PriceBucket>('all');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
-  const [priceMenuOpen, setPriceMenuOpen] = useState(false);
-  const priceMenuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!priceMenuOpen) return;
-    function onClickOutside(e: MouseEvent) {
-      if (!priceMenuRef.current?.contains(e.target as Node)) {
-        setPriceMenuOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
-  }, [priceMenuOpen]);
+  // Mức giá nào không có mẫu thì ẩn nút luôn.
+  const bands = useMemo(
+    () =>
+      PRICE_BANDS.map((b) => ({ ...b, count: products.filter((p) => b.test(p.sale?.price ?? 0)).length })).filter(
+        (b) => b.count > 0,
+      ),
+    [products],
+  );
 
   const filtered = useMemo(() => {
     const nq = norm(q.trim());
     const testPrice = priceBucketTest(priceBucket);
 
     let list = products.filter((p) => {
-      if (nq && !norm(p.name).includes(nq)) return false;
+      // Tìm cả theo loại đồ và thương hiệu: gõ "áo dài" ra mẫu áo dài dù tên là "AD58 Diên Vỹ".
+      if (nq && !norm(`${p.name} ${CATEGORY_LABELS[p.category]} ${p.brand ?? ''}`).includes(nq)) return false;
       if (!testPrice(p.sale?.price ?? 0)) return false;
       return true;
     });
@@ -68,6 +69,8 @@ export function SaleGrid({ products }: { products: Product[] }) {
     list = [...list].sort((a, b) => {
       const pa = a.sale?.price ?? 0;
       const pb = b.sale?.price ?? 0;
+      // Giá 0 ("liên hệ") luôn xuống cuối, dù sắp chiều nào.
+      if (pa === 0 !== (pb === 0)) return pa === 0 ? 1 : -1;
       return sortDir === 'asc' ? pa - pb : pb - pa;
     });
 
@@ -75,12 +78,18 @@ export function SaleGrid({ products }: { products: Product[] }) {
   }, [products, q, priceBucket, sortDir]);
 
   const { visibleItems, hasMore, loadMore } = useLoadMore(filtered, PAGE_SIZE);
+  const conLai = filtered.length - visibleItems.length;
+
+  const nut = (dang: boolean) =>
+    `flex min-h-[44px] shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[15px] transition active:scale-[0.97] ${
+      dang ? 'bg-ink text-surface' : 'bg-tint text-ink hover:bg-accent/20'
+    }`;
 
   return (
     <>
-      <div className="relative z-20 mt-6 rounded-3xl glass-panel p-4 shadow-glass sm:p-5">
+      <div className="max-w-xl">
         <label htmlFor="thanh-ly-tim" className="sr-only">
-          Tìm theo tên mẫu
+          Tìm theo tên mẫu, loại đồ hoặc thương hiệu
         </label>
         <input
           id="thanh-ly-tim"
@@ -88,167 +97,100 @@ export function SaleGrid({ products }: { products: Product[] }) {
           inputMode="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Tìm theo tên mẫu…"
-          className="w-full rounded-full glass-input px-5 py-3 text-sm text-ink placeholder:text-muted focus-visible:outline-none"
+          placeholder="Tìm theo tên mẫu, áo dài, thương hiệu…"
+          className="w-full rounded-full bg-tint/70 px-5 py-3.5 text-base text-ink placeholder:text-ink/55 focus:bg-tint focus-visible:outline-accent"
         />
+      </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+      {/* Hàng lọc dính dưới header (header + thanh ưu đãi cao ~5.25rem trên điện thoại). */}
+      <div className="sticky top-[5.3rem] z-20 -mx-5 mt-4 bg-bg px-5 py-2.5 sm:top-[6.5rem]">
+        <div className="flex items-center gap-3">
           <div
-            className="flex flex-wrap gap-1.5 rounded-2xl glass-pill p-1.5 sm:rounded-full"
             role="group"
             aria-label="Lọc theo mức giá"
+            className="no-scrollbar -mx-5 flex flex-1 gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0"
           >
-            <button
-              type="button"
-              aria-pressed={priceBucket === 'all'}
-              onClick={() => setPriceBucket('all')}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap sm:text-sm ${
-                priceBucket === 'all'
-                  ? 'bg-gradient-to-r from-accent to-accent-dark text-surface shadow-md scale-[1.02]'
-                  : 'text-ink/80 hover:text-accent-dark hover:bg-white/40'
-              }`}
-            >
-              Tất cả
+            <button type="button" aria-pressed={priceBucket === 'all'} onClick={() => setPriceBucket('all')} className={nut(priceBucket === 'all')}>
+              Tất cả <span className="tabular-nums opacity-70">{products.length}</span>
             </button>
-
-            <div className="relative" ref={priceMenuRef}>
+            {bands.map((b) => (
               <button
+                key={b.id}
                 type="button"
-                aria-haspopup="true"
-                aria-expanded={priceMenuOpen}
-                onClick={() => setPriceMenuOpen((v) => !v)}
-                className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap sm:text-sm ${
-                  priceBucket !== 'all'
-                    ? 'bg-gradient-to-r from-accent to-accent-dark text-surface shadow-md scale-[1.02]'
-                    : 'text-ink/80 hover:text-accent-dark hover:bg-white/40'
-                }`}
+                aria-pressed={priceBucket === b.id}
+                onClick={() => setPriceBucket(b.id)}
+                className={nut(priceBucket === b.id)}
               >
-                {priceBucket === 'all'
-                  ? 'Theo mức giá'
-                  : PRICE_BANDS.find((b) => b.id === priceBucket)?.label}
-                <svg
-                  aria-hidden
-                  viewBox="0 0 20 20"
-                  className={`h-3.5 w-3.5 transition-transform ${priceMenuOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 8l5 5 5-5" />
-                </svg>
+                {b.label} <span className="tabular-nums opacity-70">{b.count}</span>
               </button>
-
-              {priceMenuOpen && (
-                <div
-                  role="menu"
-                  className="absolute left-0 top-full z-10 mt-2 w-40 overflow-hidden rounded-2xl glass-panel py-1.5 shadow-glass-lg"
-                >
-                  {PRICE_BANDS.map((b) => {
-                    const active = priceBucket === b.id;
-                    return (
-                      <button
-                        key={b.id}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={active}
-                        onClick={() => {
-                          setPriceBucket(b.id);
-                          setPriceMenuOpen(false);
-                        }}
-                        className={`block w-full px-4 py-2 text-left text-sm transition-colors ${
-                          active
-                            ? 'font-semibold text-accent-dark'
-                            : 'text-ink/80 hover:bg-white/40 hover:text-accent-dark'
-                        }`}
-                      >
-                        {b.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            ))}
           </div>
-
           <button
             type="button"
             onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
-            title={sortDir === 'asc' ? 'Giá: thấp → cao' : 'Giá: cao → thấp'}
             aria-label={
               sortDir === 'asc'
                 ? 'Đang sắp xếp giá thấp đến cao, bấm để đổi sang cao đến thấp'
                 : 'Đang sắp xếp giá cao đến thấp, bấm để đổi sang thấp đến cao'
             }
-            className="ml-auto flex items-center gap-1.5 rounded-full glass-pill px-3 py-2 text-sm font-medium text-ink/80 transition-all hover:text-accent-dark hover:bg-white/40"
+            className="hidden min-h-[44px] shrink-0 items-center gap-1.5 text-[15px] font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-accent-dark sm:flex"
           >
-            {sortDir === 'asc' ? (
-              <svg
-                aria-hidden
-                viewBox="0 0 20 20"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6 14V4M6 4 3 7M6 4l3 3" />
-                <path d="M11 6h6M11 10h4M11 14h2" />
-              </svg>
-            ) : (
-              <svg
-                aria-hidden
-                viewBox="0 0 20 20"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6 6v10M6 16l-3-3M6 16l3-3" />
-                <path d="M11 6h2M11 10h4M11 14h6" />
-              </svg>
-            )}
-            <span className="hidden sm:inline">
-              {sortDir === 'asc' ? 'Giá thấp → cao' : 'Giá cao → thấp'}
-            </span>
+            {sortDir === 'asc' ? 'Giá thấp → cao' : 'Giá cao → thấp'}
           </button>
         </div>
+      </div>
 
-        <p aria-live="polite" className="mt-3 text-sm text-muted">
+      <div className="mt-2 flex items-center justify-between gap-4">
+        <p aria-live="polite" className="text-[15px] text-ink/75">
           {filtered.length === products.length
-            ? `${products.length} mẫu`
+            ? `${products.length} mẫu đang pass`
             : `${filtered.length} / ${products.length} mẫu`}
         </p>
+        <button
+          type="button"
+          onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+          className="min-h-[44px] text-[15px] font-medium text-ink underline decoration-ink/30 underline-offset-4 sm:hidden"
+        >
+          {sortDir === 'asc' ? 'Giá thấp → cao' : 'Giá cao → thấp'}
+        </button>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-10 text-center text-sm text-muted">
-          Không tìm thấy mẫu nào khớp bộ lọc.
-        </p>
+        <div className="mt-8 bg-tint/60 px-5 py-10 text-center">
+          <p className="text-lg text-ink">Không có mẫu nào khớp.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setQ('');
+              setPriceBucket('all');
+            }}
+            className="mt-3 min-h-[44px] text-[15px] font-medium text-ink underline decoration-ink/30 underline-offset-4"
+          >
+            Xem lại tất cả mẫu
+          </button>
+        </div>
       ) : (
-        <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+        <ul className="mt-4 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-4">
           {visibleItems.map((product, i) => (
             <li key={product.id} className="flex">
-              <SaleCard product={product} priority={i < 4} />
+              <SaleCard product={product} priority={i < 4} nen={NEN_O[i % NEN_O.length]} />
             </li>
           ))}
         </ul>
       )}
 
       {hasMore ? (
-        <div className="mt-10 flex justify-center">
-          <button type="button" onClick={loadMore} className="btn btn-outline">
-            Xem thêm sản phẩm
+        <div className="mt-12 flex justify-center">
+          <button
+            type="button"
+            onClick={loadMore}
+            className="min-h-[48px] rounded-full bg-tint px-7 text-[15px] font-medium text-ink transition hover:bg-accent/20 active:scale-[0.97]"
+          >
+            Xem thêm {Math.min(conLai, PAGE_SIZE)} mẫu
           </button>
         </div>
       ) : filtered.length > 0 ? (
-        <p className="mt-10 animate-fade-up text-center text-sm text-muted">
-          Bạn đã xem hết {filtered.length} mẫu
-        </p>
+        <p className="mt-12 text-center text-[15px] text-ink/70">Bạn đã xem hết {filtered.length} mẫu.</p>
       ) : null}
     </>
   );

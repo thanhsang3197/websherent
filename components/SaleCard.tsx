@@ -8,6 +8,7 @@ import { CATEGORY_LABELS } from '@/types/product';
 import { saleLine, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
 import { trackSaleOpen, trackZaloClick } from '@/lib/analytics';
+import { NEN_O } from '@/lib/thanh-ly';
 
 /**
  * Thẻ sản phẩm trên trang THANH LÝ.
@@ -23,10 +24,13 @@ import { trackSaleOpen, trackZaloClick } from '@/lib/analytics';
 export function SaleCard({
   product,
   priority = false,
+  nen = NEN_O[0],
 }: {
   product: Product;
   /** Ưu tiên tải ảnh cho vài thẻ đầu (LCP). */
   priority?: boolean;
+  /** Lớp nền của ô ảnh (một trong NEN_O). */
+  nen?: string;
 }) {
   const [copied, setCopied] = useState(false);
   const sale = product.sale;
@@ -47,70 +51,65 @@ export function SaleCard({
       .writeText(message)
       .then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 3000);
+        setTimeout(() => setCopied(false), 4000);
       })
       // Clipboard bị chặn (http, quyền trình duyệt) thì vẫn mở Zalo bình thường.
       .catch(() => {});
   };
 
+  const phu = [
+    product.category !== 'dam-vay' ? CATEGORY_LABELS[product.category] : null,
+    product.brand,
+    product.sizes.length ? `Size ${product.sizes.join('/')}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
-    <div className="group flex h-full flex-col">
+    <div className="group flex h-full w-full flex-col">
       <Link
         href={`/san-pham/${product.slug}`}
         onClick={() => trackSaleOpen(product.id, product.name)}
-        className="block focus:outline-none"
+        className="block"
       >
-        <div className="arch relative aspect-[3/4] overflow-hidden bg-tint shadow-md ring-1 ring-white/70 transition-all duration-300 group-hover:shadow-glass-hover group-hover:ring-accent/50">
-          {product.image ? (
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              priority={priority}
-              placeholder="blur"
-              blurDataURL={GLASS_BLUR_DATA_URL}
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-tint">
-              <span className="font-serif text-5xl text-accent/45">
-                {siteConfig.name.charAt(0)}
-              </span>
-              <span className="text-[11px] text-muted">Ảnh đang cập nhật</span>
-            </div>
-          )}
-
-          <span className="absolute left-2.5 top-2.5 rounded-full bg-accent-dark px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-surface shadow-sm">
-            Thanh lý
-          </span>
-          {product.category !== 'dam-vay' && (
-            <span className="glass-pill absolute right-2.5 top-2.5 rounded-full px-2.5 py-1 text-[11px] font-semibold text-accent-dark shadow-sm">
-              {CATEGORY_LABELS[product.category]}
-            </span>
-          )}
+        {/* Ô màu phẳng, ảnh đặt giữa như một mẫu trong catalogue. */}
+        <div className={`${nen} p-2.5 transition-colors sm:p-3.5`}>
+          <div className="relative aspect-[3/4] overflow-hidden bg-surface/40">
+            {product.image ? (
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                priority={priority}
+                placeholder="blur"
+                blurDataURL={GLASS_BLUR_DATA_URL}
+                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.04]"
+              />
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-1">
+                <span className="font-serif text-5xl text-ink/25">{siteConfig.name.charAt(0)}</span>
+                <span className="text-[13px] text-ink/60">Ảnh đang cập nhật</span>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="mt-3">
-          <h3 className="line-clamp-2 min-h-[2.75rem] font-serif text-base leading-snug text-ink transition-colors group-hover:text-accent-dark sm:min-h-[3.1rem] sm:text-lg">
+          <h3 className="line-clamp-2 text-base font-medium leading-snug text-ink transition-colors group-hover:text-accent-dark sm:text-lg">
             {product.name}
           </h3>
-          <p className="mt-0.5 line-clamp-1 text-xs text-muted">
-            {[product.brand, product.sizes.length ? product.sizes.join('/') : null]
-              .filter(Boolean)
-              .join(' · ') || ' '}
-          </p>
+          {phu && <p className="mt-0.5 line-clamp-1 text-[13px] text-ink/65 sm:text-sm">{phu}</p>}
 
           {/* Giá và tình trạng dùng CHUNG một cỡ chữ và một font (font nền của
               trang, không phải font serif của tiêu đề) — chủ shop chốt
               13/08/2026: hai dòng phải trông như một đoạn viết tay, không phải
               hai mảng thiết kế khác nhau. */}
-          <p className="mt-2 text-sm font-medium text-accent-dark">
+          <p className="mt-2 text-sm font-semibold text-accent-dark sm:text-[15px]">
             {saleLine(sale.price, product.rentPrice)}
           </p>
-
           {sale.note && (
-            <p className="mt-1 line-clamp-2 text-sm text-muted">
+            <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-accent-dark sm:text-[15px]">
               {saleNoteLine(sale.note)}
             </p>
           )}
@@ -124,15 +123,18 @@ export function SaleCard({
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleZaloClick}
-        className="btn btn-primary w-full !py-2 text-base sm:text-lg"
+        className="flex min-h-[44px] w-full items-center justify-center rounded-full bg-ink px-3 text-[15px] font-medium text-surface transition hover:bg-accent-dark active:scale-[0.97]"
         aria-label={`Nhắn Zalo mua ${product.name} (mã ${product.id})`}
       >
-        {/* Chữ phải ngắn để vừa bề ngang ô trên điện thoại (2 cột, ô chỉ rộng
-            ~108px cho chữ). CẢ HAI trạng thái đều phải vừa — trạng thái sau khi
-            bấm mà dài là nút vỡ đúng lúc khách vừa chạm vào. Tên mẫu + mã SP
-            vẫn nằm trong aria-label cho trình đọc màn hình. */}
-        {copied ? '✓ Đã copy' : 'Nhắn Zalo'}
+        {/* Chữ phải ngắn để vừa bề ngang ô trên điện thoại (2 cột). CẢ HAI
+            trạng thái đều phải vừa — trạng thái sau khi bấm mà dài là nút vỡ
+            đúng lúc khách vừa chạm vào. Tên mẫu + mã SP vẫn nằm trong
+            aria-label cho trình đọc màn hình. */}
+        {copied ? 'Đã chép tin nhắn' : 'Nhắn Zalo mua'}
       </a>
+      <p aria-live="polite" className="mt-1.5 min-h-[1.25rem] text-center text-[13px] text-ink/70">
+        {copied ? 'Dán vào khung chat Zalo nhé' : ''}
+      </p>
     </div>
   );
 }

@@ -21,7 +21,7 @@ import { ACoSuKien } from '@/components/LinkCoSuKien';
  * "Hỗ trợ khách hàng", "Liên kết"). Gom vào một chỗ để các tiêu đề không bị
  * lệch font/cỡ chữ mỗi lần thêm mục mới.
  */
-const footerHeadingClass = 'font-serif text-base font-semibold text-accent-dark sm:text-lg';
+const footerHeadingClass = 'text-base font-semibold text-accent-dark';
 
 /** Nút mạng xã hội dạng viên thuốc nhỏ — 4 nút gọn trong 1–2 hàng trên điện thoại. */
 const chipMxh =

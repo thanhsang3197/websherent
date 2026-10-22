@@ -45,7 +45,7 @@ export default async function AlbumListPage() {
         // Trang này có link riêng (sitemap, khách lưu lại) nên không ẩn được
         // như khối trang chủ — rỗng thì dẫn khách về bộ sưu tập chung.
         <div className="mt-10 rounded-lg border border-hairline bg-tint px-5 py-8 text-center">
-          <p className="font-serif text-lg text-accent-dark">Hiện chưa có album nào</p>
+          <p className="text-lg font-semibold text-accent-dark">Hiện chưa có album nào</p>
           <Link href="/#san-pham" className="btn btn-outline mt-5">
             Xem tất cả mẫu
           </Link>

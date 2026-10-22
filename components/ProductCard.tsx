@@ -54,7 +54,7 @@ export function ProductCard({
         <div className="mt-3">
           {/* Điện thoại: tên 1 dòng (cắt "…" nếu dài), không chừa sẵn dòng 2 —
               đỡ khoảng trống. Từ sm trở lên: 2 dòng, giữ min-h để các thẻ thẳng hàng. */}
-          <h3 className="line-clamp-1 font-serif text-base leading-snug text-ink transition-colors group-hover:text-accent-dark sm:line-clamp-2 sm:min-h-[3.1rem] sm:text-lg">
+          <h3 className="line-clamp-1 text-base font-medium leading-snug text-ink transition-colors group-hover:text-accent-dark sm:line-clamp-2 sm:min-h-[3.1rem] sm:text-lg">
             {product.name}
           </h3>
           <p className="mt-0.5 line-clamp-1 text-xs text-muted">

@@ -31,7 +31,7 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
       <div className="container-content flex min-h-12 items-center justify-between gap-3 py-1.5 sm:min-h-16 sm:py-3">
         <Link
           href="/"
-          className="font-serif text-2xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
+          className="font-logo text-2xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
           aria-label={`${siteConfig.name} — về trang chủ`}
         >
           {siteConfig.name}
