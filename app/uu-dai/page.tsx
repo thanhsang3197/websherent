@@ -51,7 +51,7 @@ export default async function UuDaiPage() {
         // Trang có link riêng (thanh trên cùng, khối trang chủ, sitemap) nên
         // không ẩn được — rỗng thì nói thẳng và đưa khách về bộ sưu tập.
         <div className="mt-10 rounded-lg border border-hairline bg-tint px-5 py-8 text-center">
-          <p className="text-lg font-semibold text-accent-dark">
+          <p className="font-serif text-lg text-accent-dark">
             Hiện tiệm chưa có chương trình ưu đãi nào
           </p>
           <p className="mt-2 text-sm text-muted">

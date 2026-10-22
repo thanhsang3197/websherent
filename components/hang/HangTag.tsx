@@ -36,7 +36,7 @@ export function HangTag({
         }`}
         style={{ borderColor: mau.dam }}
       />
-      <span className={`leading-tight ${lon ? 'font-serif text-5xl' : 'text-xl font-semibold'}`}>{ten}</span>
+      <span className={`font-serif leading-tight ${lon ? 'text-5xl' : 'text-xl'}`}>{ten}</span>
       <span className={`mt-1 font-medium ${lon ? 'text-base' : 'text-[15px]'}`}>{dong}</span>
     </span>
   );

@@ -70,7 +70,7 @@ export function FeedbackCard({
 
       <span className="block space-y-1.5 p-3 sm:p-4">
         {fb.loiKhach && (
-          <span className="line-clamp-3 block text-[15px] leading-snug text-ink">
+          <span className="line-clamp-3 block font-serif text-[15px] italic leading-snug text-ink">
             “{fb.loiKhach}”
           </span>
         )}

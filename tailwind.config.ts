@@ -25,8 +25,7 @@ const config: Config = {
         tint: 'rgb(var(--tint) / <alpha-value>)',
       },
       fontFamily: {
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
-        logo: ['var(--font-logo)', 'Georgia', 'serif'],
+        serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'serif'],
         sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
       },
       borderRadius: {

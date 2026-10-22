@@ -83,7 +83,7 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
                   >
                     {u.loaiTen}
                   </span>
-                  <h3 className="mt-1 line-clamp-2 text-base font-semibold leading-snug text-ink sm:text-lg">
+                  <h3 className="mt-1 line-clamp-2 font-serif text-base leading-snug text-ink sm:text-lg">
                     {u.tieuDe}
                   </h3>
                   <p className="mt-0.5 line-clamp-1 text-xs text-muted sm:text-sm">

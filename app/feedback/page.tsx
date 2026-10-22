@@ -51,7 +51,7 @@ export default async function FeedbackPage() {
 
       {/* Lời mời gửi ảnh — để khách sau mạnh dạn gửi feedback. */}
       <section className="mx-auto mt-6 max-w-xl rounded-2xl border border-hairline bg-tint/70 px-4 py-4 text-center shadow-glass sm:px-8 sm:py-5">
-        <p className="text-base font-semibold text-accent-dark sm:text-xl">
+        <p className="font-serif text-base text-accent-dark sm:text-xl">
           Ảnh của bạn có thể xuất hiện ở đây 💕
         </p>
         <p className="mt-1 text-xs text-muted sm:text-sm">
@@ -68,7 +68,7 @@ export default async function FeedbackPage() {
         // Trang có link riêng (menu, sitemap) nên không ẩn được như khối trang
         // chủ — rỗng thì mời khách là người đầu tiên.
         <div className="mt-10 rounded-lg border border-hairline bg-tint px-5 py-8 text-center">
-          <p className="text-lg font-semibold text-accent-dark">Feedback đang được cập nhật</p>
+          <p className="font-serif text-lg text-accent-dark">Feedback đang được cập nhật</p>
           <Link href="/#san-pham" className="btn btn-outline mt-5">
             Xem tất cả mẫu
           </Link>

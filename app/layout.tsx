@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Newsreader, Playfair_Display, Be_Vietnam_Pro } from 'next/font/google';
+import { Playfair_Display, Be_Vietnam_Pro } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
@@ -12,26 +12,11 @@ import { getAlbums, getUuDai } from '@/lib/products';
 import { Footer } from '@/components/Footer';
 import { StickyContactBar } from '@/components/StickyContactBar';
 
-/*
-  Hệ chữ của cả site (chốt 23/10/2026):
-  - Tiêu đề: Newsreader — serif có trục optical size (tự chỉnh nét theo cỡ
-    chữ) và bộ dấu tiếng Việt gọn. CHỈ dùng cho tiêu đề từ ~24px trở lên.
-  - Còn lại (nội dung, tên mẫu, câu hỏi, nút, tiêu đề nhỏ): Be Vietnam Pro.
-  - Logo chữ SHERENT trên header: Playfair Display, khớp logo / ảnh chia sẻ
-    có sẵn. Chỉ tải bộ latin vì logo chỉ có 7 chữ cái không dấu.
-*/
-const serif = Newsreader({
+// Tiêu đề: serif thanh lịch. Body: Be Vietnam Pro (đủ dấu tiếng Việt).
+const serif = Playfair_Display({
   subsets: ['latin', 'vietnamese'],
-  style: ['normal', 'italic'],
-  axes: ['opsz'],
+  weight: ['500', '600', '700'],
   variable: '--font-serif',
-  display: 'swap',
-});
-
-const logo = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['700'],
-  variable: '--font-logo',
   display: 'swap',
 });
 
@@ -123,7 +108,7 @@ export default async function RootLayout({
     .map((u) => ({ id: u.id, loai: u.loai, tieuDe: u.tieuDe, loaiTen: u.loaiTen }));
 
   return (
-    <html lang="vi" className={`${serif.variable} ${sans.variable} ${logo.variable}`}>
+    <html lang="vi" className={`${serif.variable} ${sans.variable}`}>
       <body className="relative min-h-screen bg-bg text-ink selection:bg-accent/20">
         {/* Nền quầng sáng chuyển động hiệu ứng Liquid Glass */}
         <div className="pointer-events-none fixed inset-0 z-[-1] overflow-hidden" aria-hidden="true">

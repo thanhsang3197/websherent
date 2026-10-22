@@ -90,7 +90,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         {/* Chữ shop muốn hiện đè lên ảnh tự do. null -> không vẽ gì. */}
         {slides[current].caption && (
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-4 pb-4 pt-10">
-            <p className="text-balance text-center text-lg font-medium leading-snug text-white drop-shadow">
+            <p className="text-balance text-center font-serif text-lg leading-snug text-white drop-shadow">
               {slides[current].caption}
             </p>
           </div>
