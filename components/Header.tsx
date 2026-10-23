@@ -1,15 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
-import { trackZaloClick } from '@/lib/analytics';
+import { trackMessengerClick, trackZaloClick } from '@/lib/analytics';
 
 /**
  * Header (dính cùng PromoBar, xem app/layout.tsx), tối giản, mobile-first. Menu mobile mở/đóng bằng nút (có JS nhẹ).
  */
+/** Các mục luôn hiện trên menu desktop, theo thứ tự chủ shop chọn 24/10/2026. */
+const NAV_CHINH: string[] = ['/#san-pham', '/thanh-ly', '/album', '/hang-thanh-vien'];
+
+/** Kiểu chung của hai bảng thả xuống ở menu desktop và từng dòng trong đó. */
+const bangClass =
+  'absolute right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl bg-surface p-1.5 text-sm text-ink shadow-glass-lg ring-1 ring-hairline';
+const dongBangClass = 'block rounded-xl px-3.5 py-2.5 transition-colors hover:bg-tint/50';
+
 export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
   const [open, setOpen] = useState(false);
+  // Bảng thả xuống đang mở ở menu desktop: "Thêm" hoặc "Liên hệ" (một lúc một cái).
+  const [bangMo, setBangMo] = useState<'them' | 'lien-he' | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  // Bảng thả xuống (desktop) đóng khi bấm ra ngoài hoặc nhấn Esc.
+  useEffect(() => {
+    if (!bangMo) return;
+    const dongBamNgoai = (e: MouseEvent) => {
+      if (!navRef.current?.contains(e.target as Node)) setBangMo(null);
+    };
+    const dongEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setBangMo(null);
+    };
+    document.addEventListener('mousedown', dongBamNgoai);
+    document.addEventListener('keydown', dongEsc);
+    return () => {
+      document.removeEventListener('mousedown', dongBamNgoai);
+      document.removeEventListener('keydown', dongEsc);
+    };
+  }, [bangMo]);
 
   // "Album" chen ngay sau "Sản phẩm", CHỈ khi đang có album: bản app chưa có
   // tính năng album hoặc shop tắt hết thì menu không dẫn tới trang trống.
@@ -20,6 +48,13 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
         item.href === '/#san-pham' ? [item, { label: 'Album', href: '/album' }] : [item],
       )
     : siteConfig.nav;
+
+  // Menu desktop (24/10/2026): 8 mục + nút liên hệ tràn ở 1024px, nên chỉ để
+  // ngoài các mục chủ shop chọn, đúng thứ tự chủ shop đưa; phần còn lại vào
+  // bảng "Thêm". "Trang chủ" bỏ ở desktop — bấm logo là về trang chủ. Menu ☰
+  // điện thoại vẫn đủ cả.
+  const navChinh = NAV_CHINH.flatMap((href) => nav.filter((item) => item.href === href));
+  const navThem = nav.filter((item) => item.href !== '/' && !NAV_CHINH.includes(item.href));
 
   return (
     <header className="glass-header">
@@ -37,16 +72,13 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
           {siteConfig.name}
         </Link>
 
-        {/* Nav desktop */}
         {/*
-          Menu ngang chỉ từ lg (1024px). Thêm mục "Album" (17/09/2026) làm menu
-          chật: ở ~950px "Trang chủ", "Sản phẩm"… gãy hai dòng, còn ở 768px
-          tràn ngang cả trang. Dưới lg dùng nút ☰ như điện thoại. Thêm "Hạng
-          thành viên" (21/10/2026) thì ở 1024px khoảng cách 20px đẩy nút Zalo
-          lố lề phải ~20px — nên lg chỉ cách 16px.
+          Nav desktop — chỉ từ lg (1024px), dưới đó dùng nút ☰ như điện thoại.
+          Logo · 4 mục chính · "Thêm ▾" · nút "Liên hệ ▾". Hai bảng thả xuống
+          dùng chung một kiểu, mở cái này thì cái kia đóng.
         */}
-        <nav className="hidden items-center gap-4 lg:flex xl:gap-8" aria-label="Chính">
-          {nav.map((item) => (
+        <nav ref={navRef} className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="Chính">
+          {navChinh.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -55,15 +87,87 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
               {item.label}
             </Link>
           ))}
-          <a
-            href={siteConfig.zaloUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackZaloClick('header')}
-            className="btn btn-primary whitespace-nowrap !px-4 !py-2 text-sm shadow-md"
-          >
-            Nhắn Zalo
-          </a>
+
+          {navThem.length > 0 && (
+            <div className="relative">
+              <button
+                type="button"
+                aria-expanded={bangMo === 'them'}
+                aria-controls="nav-them"
+                onClick={() => setBangMo((v) => (v === 'them' ? null : 'them'))}
+                className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-ink/80 transition-colors hover:text-accent"
+              >
+                Thêm
+                <span aria-hidden="true" className={`text-[10px] transition-transform ${bangMo === 'them' ? 'rotate-180' : ''}`}>
+                  ▼
+                </span>
+              </button>
+              {bangMo === 'them' && (
+                <ul id="nav-them" className={`${bangClass} w-52`}>
+                  {navThem.map((item) => (
+                    <li key={item.href}>
+                      <Link href={item.href} onClick={() => setBangMo(null)} className={`${dongBangClass} font-medium`}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {/*
+            Tách vai như menu điện thoại: tư vấn qua Messenger, Zalo hotline
+            nhận phản ánh, góp ý — gom vào MỘT nút để menu không tràn.
+          */}
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={bangMo === 'lien-he'}
+              aria-controls="lien-he-desktop"
+              onClick={() => setBangMo((v) => (v === 'lien-he' ? null : 'lien-he'))}
+              className="btn btn-primary whitespace-nowrap !px-4 !py-2 text-sm shadow-md"
+            >
+              Liên hệ
+              <span aria-hidden="true" className={`ml-1 text-[10px] transition-transform ${bangMo === 'lien-he' ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
+            </button>
+            {bangMo === 'lien-he' && (
+              <ul id="lien-he-desktop" className={`${bangClass} w-72`}>
+                <li>
+                  <a
+                    href={siteConfig.messengerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      trackMessengerClick('header');
+                      setBangMo(null);
+                    }}
+                    className={dongBangClass}
+                  >
+                    <span className="block font-medium">Tư vấn qua Messenger</span>
+                    <span className="block text-xs text-muted">Hỏi mẫu, size, lịch thuê</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={siteConfig.zaloUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      trackZaloClick('header');
+                      setBangMo(null);
+                    }}
+                    className={dongBangClass}
+                  >
+                    <span className="block font-medium">Hotline · Zalo {siteConfig.phone.display}</span>
+                    <span className="block text-xs text-muted">Tiếp nhận phản ánh, góp ý</span>
+                  </a>
+                </li>
+              </ul>
+            )}
+          </div>
         </nav>
 
         {/* Toggle mobile */}
@@ -100,18 +204,36 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
                 </Link>
               </li>
             ))}
-            <li className="py-3">
+            {/*
+              Hai kênh tách vai (chủ shop 23/10/2026): tư vấn chọn đồ qua
+              Messenger; Zalo hotline dành cho phản ánh, góp ý — ghi rõ ngay
+              trên nút để khách không nhắn nhầm chỗ.
+            */}
+            <li className="flex flex-col gap-2.5 py-3">
+              <a
+                href={siteConfig.messengerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary w-full"
+                onClick={() => {
+                  trackMessengerClick('header');
+                  setOpen(false);
+                }}
+              >
+                Tư vấn qua Messenger
+              </a>
               <a
                 href={siteConfig.zaloUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-primary w-full"
+                className="btn btn-outline w-full !flex-col !gap-0 leading-tight"
                 onClick={() => {
                   trackZaloClick('header');
                   setOpen(false);
                 }}
               >
-                Nhắn Zalo {siteConfig.phone.display}
+                <span>Hotline · Zalo {siteConfig.phone.display}</span>
+                <span className="mt-0.5 text-xs font-normal opacity-80">Tiếp nhận phản ánh, góp ý</span>
               </a>
             </li>
           </ul>
