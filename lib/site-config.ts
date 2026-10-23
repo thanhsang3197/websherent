@@ -43,8 +43,8 @@ export const siteConfig = {
 
   /** Liên hệ. */
   phone: {
-    /** Hiển thị đẹp. */
-    display: '0982 476 969',
+    /** Hiển thị đẹp — nhóm 3-3-4 cho dễ nhớ đuôi "6969" (chủ shop 24/10/2026). */
+    display: '098 247 6969',
     /** Dạng bấm gọi (tel:). */
     tel: `+84${PHONE_RAW.slice(1)}`,
     /** Số gốc. */
