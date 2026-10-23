@@ -7,25 +7,26 @@ import { ACoSuKien } from '@/components/LinkCoSuKien';
 /**
  * Footer — hiển thị thông tin liên hệ dạng text (tốt cho SEO & GEO).
  *
- * Bố cục 3 cột theo mẫu chủ shop gửi 16/08/2026:
- *   1. Về SHERENT       — mô tả tiệm + liên hệ kèm icon
- *   2. Hỗ trợ khách hàng — giờ mở cửa, khu vực phục vụ
- *   3. Liên kết          — danh sách trang, dạng gạch đầu dòng
+ * Thiết kế lại 23/10/2026 cho GỌN (chủ shop: đủ thông tin như cũ, giữ màu
+ * nền, không thêm chữ SHERENT cỡ lớn). Từ 3 cột cao ~750px thành 4 cột thấp:
+ *   1. Tên tiệm + mô tả + mạng xã hội
+ *   2. Liên hệ        — địa chỉ, 2 số (gọi + Zalo), Zalo thanh lý
+ *   3. Giờ mở cửa     — giờ, khu vực phục vụ
+ *   4. Khám phá       — danh sách trang
+ * Bỏ viền mảnh và hiệu ứng kính mờ: các mảng tách nhau bằng một bậc màu nền.
  *
- * Mẫu gốc còn 2 khối "Phương thức thanh toán" và "Phương thức vận chuyển" bằng
- * logo hãng — chủ shop chốt BỎ, nên không đưa vào (cũng tránh dùng logo thương
- * hiệu bên thứ ba mà tiệm không có quyền).
+ * Mẫu gốc 16/08/2026 còn 2 khối "Phương thức thanh toán" và "Phương thức vận
+ * chuyển" bằng logo hãng — chủ shop chốt BỎ (cũng tránh dùng logo thương hiệu
+ * bên thứ ba mà tiệm không có quyền).
  */
 /**
- * Style DÙNG CHUNG cho mọi tiêu đề trong footer ("Về SHERENT", "Theo dõi tiệm",
- * "Hỗ trợ khách hàng", "Liên kết"). Gom vào một chỗ để các tiêu đề không bị
- * lệch font/cỡ chữ mỗi lần thêm mục mới.
+ * Style DÙNG CHUNG cho mọi tiêu đề cột trong footer. Gom vào một chỗ để các
+ * tiêu đề không bị lệch font/cỡ chữ mỗi lần thêm mục mới.
  */
-const footerHeadingClass = 'font-serif text-base font-semibold text-accent-dark sm:text-lg';
+const footerHeadingClass = 'font-serif text-base font-semibold text-accent-dark';
 
-/** Nút mạng xã hội dạng viên thuốc nhỏ — 4 nút gọn trong 1–2 hàng trên điện thoại. */
-const chipMxh =
-  'flex items-center gap-1.5 rounded-full border border-accent/25 bg-white/50 px-2.5 py-1.5 transition-colors hover:border-accent sm:px-3 hover:text-accent';
+/** Link mạng xã hội: icon + chữ, không khung — 4 link nằm gọn một hàng. */
+const linkMxh = 'inline-flex items-center gap-1.5 transition-colors hover:text-accent';
 
 /** Một số điện thoại = một dòng: bấm số để gọi, bấm chip "Zalo" để nhắn. */
 function DongSo({
@@ -51,7 +52,7 @@ function DongSo({
         >
           {so}
         </TrackedContactLink>
-        <span className="text-xs text-muted">({ghiChu})</span>
+        <span className="text-xs text-muted">{ghiChu}</span>
         <TrackedContactLink
           href={zalo}
           kieu="zalo"
@@ -69,24 +70,85 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-10 border-t sm:mt-20 border-white/60 bg-surface/75 backdrop-blur-xl">
-      <div className="container-content grid gap-7 py-8 sm:grid-cols-2 sm:gap-10 sm:py-12 lg:grid-cols-3">
-        {/* Cột 1 — Về tiệm + liên hệ */}
-        <div>
-          <h2 className={footerHeadingClass}>
-            Về <Brand />
+    <footer className="mt-10 bg-surface sm:mt-20">
+      <div className="container-content grid grid-cols-2 gap-x-6 gap-y-6 py-8 text-sm text-ink sm:py-12 md:grid-cols-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:gap-x-12">
+        {/* Cột 1 — Tên tiệm, mô tả, mạng xã hội */}
+        <div className="col-span-2 md:col-span-3 lg:col-span-1">
+          <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink">
+            <Brand />
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-ink sm:mt-3 sm:max-w-xs">
-            <Brand /> là tiệm cho thuê váy, đầm dự tiệc thiết kế, áo dài &amp;
-            pháp phục tại {siteConfig.address.district}, {siteConfig.address.city}.
+          <p className="mt-2 max-w-xs leading-relaxed">
+            Cho thuê váy, đầm dự tiệc thiết kế, áo dài &amp; pháp phục tại{' '}
+            {siteConfig.address.district}, {siteConfig.address.city}.
           </p>
 
-          {/*
-            Liên hệ gọn (chủ shop 15/10/2026): trước đây mỗi số in hai lần — một
-            dòng "gọi", một dòng "Zalo" — nên trên điện thoại thành 5–6 dòng rối
-            mắt. Giờ MỘT dòng mỗi số: bấm số để gọi, bấm chip "Zalo" để nhắn.
-          */}
-          <ul className="mt-4 space-y-2.5 text-sm text-ink sm:mt-5 sm:space-y-3">
+          {/* Mạng xã hội. Tiệm có HAI Instagram (váy thiết kế / áo dài) nên
+              phải kèm nhãn chữ — để trơ 2 icon Instagram giống hệt nhau thì
+              khách không biết đâu là đâu. */}
+          <h3 className="sr-only">Theo dõi tiệm</h3>
+          <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
+            <li>
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram váy' }}
+                href={siteConfig.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Sherent — váy, đầm thiết kế"
+                className={linkMxh}
+              >
+                <InstagramIcon />
+                Váy thiết kế
+              </ACoSuKien>
+            </li>
+            <li>
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram áo dài' }}
+                href={siteConfig.instagramUrl2}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Sherent — áo dài"
+                className={linkMxh}
+              >
+                <InstagramIcon />
+                Áo dài
+              </ACoSuKien>
+            </li>
+            <li>
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Facebook' }}
+                href={siteConfig.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook Sherent"
+                className={linkMxh}
+              >
+                <FacebookIcon />
+                Facebook
+              </ACoSuKien>
+            </li>
+            <li>
+              <ACoSuKien
+                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'TikTok' }}
+                href={siteConfig.tiktokUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok Sherent"
+                className={linkMxh}
+              >
+                <TiktokIcon />
+                TikTok
+              </ACoSuKien>
+            </li>
+          </ul>
+        </div>
+
+        {/*
+          Cột 2 — Liên hệ. MỘT dòng mỗi số (chủ shop 15/10/2026): bấm số để
+          gọi, bấm chip "Zalo" để nhắn — trước đây mỗi số in hai lần, rối mắt.
+        */}
+        <div className="col-span-2 sm:col-span-1 lg:col-span-1">
+          <h2 className={footerHeadingClass}>Liên hệ</h2>
+          <ul className="mt-3 space-y-2.5">
             <li className="flex gap-2.5">
               <PinIcon />
               <a
@@ -125,99 +187,31 @@ export function Footer() {
               </span>
             </li>
           </ul>
-
-          {/* Mạng xã hội. Tiệm có HAI Instagram (váy thiết kế / áo dài) nên
-              phải kèm nhãn chữ — để trơ 2 icon Instagram giống hệt nhau thì
-              khách không biết đâu là đâu. */}
-          <h3 className={`mt-5 sm:mt-6 ${footerHeadingClass}`}>Theo dõi tiệm</h3>
-          <ul className="mt-2.5 flex flex-wrap gap-1.5 text-[13px] text-ink sm:mt-3 sm:gap-2">
-            <li>
-              <ACoSuKien
-                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram váy' }}
-                href={siteConfig.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram Sherent — váy, đầm thiết kế"
-                className={chipMxh}
-              >
-                <InstagramIcon />
-                Váy thiết kế
-              </ACoSuKien>
-            </li>
-            <li>
-              <ACoSuKien
-                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Instagram áo dài' }}
-                href={siteConfig.instagramUrl2}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram Sherent — áo dài"
-                className={chipMxh}
-              >
-                <InstagramIcon />
-                Áo dài
-              </ACoSuKien>
-            </li>
-            <li>
-              <ACoSuKien
-                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'Facebook' }}
-                href={siteConfig.facebookUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook Sherent"
-                className={chipMxh}
-              >
-                <FacebookIcon />
-                Facebook
-              </ACoSuKien>
-            </li>
-            <li>
-              <ACoSuKien
-                suKien={{ loai: 'mxh', viTri: 'footer', kenh: 'TikTok' }}
-                href={siteConfig.tiktokUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok Sherent"
-                className={chipMxh}
-              >
-                <TiktokIcon />
-                TikTok
-              </ACoSuKien>
-            </li>
-          </ul>
         </div>
 
-        {/* Cột 2 — Hỗ trợ khách hàng */}
-        <div>
-          <h2 className={footerHeadingClass}>
-            Hỗ trợ khách hàng
-          </h2>
-          <ul className="mt-3 space-y-2.5 text-sm text-ink sm:mt-4 sm:space-y-3">
+        {/* Cột 3 — Giờ mở cửa & khu vực */}
+        <div className="col-span-2 sm:col-span-1 lg:col-span-1">
+          <h2 className={footerHeadingClass}>Giờ mở cửa</h2>
+          <ul className="mt-3 space-y-2.5">
             <li className="flex gap-2.5">
               <ClockIcon />
-              <span>Giờ mở cửa: {siteConfig.openingHours.text}</span>
+              <span className="lg:whitespace-nowrap">{siteConfig.openingHours.text}</span>
             </li>
             <li className="flex gap-2.5">
               <MapIcon />
-              <span>
-                Khu vực phục vụ: {siteConfig.areaServed.join(' · ')}
-              </span>
+              <span className="lg:whitespace-nowrap">Phục vụ: {siteConfig.areaServed.join(' · ')}</span>
             </li>
           </ul>
         </div>
 
-        {/* Cột 3 — Liên kết */}
-        <div>
-          <h2 className={footerHeadingClass}>
-            Liên kết
-          </h2>
+        {/* Cột 4 — Liên kết */}
+        <div className="col-span-2 md:col-span-1 lg:col-span-1">
+          <h2 className={footerHeadingClass}>Khám phá</h2>
           <nav aria-label="Chân trang">
-            <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:mt-4 sm:block sm:list-disc sm:space-y-2 sm:pl-5 sm:marker:text-accent">
+            <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 lg:grid-cols-1">
               {siteConfig.nav.map((item) => (
                 <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-ink transition-colors hover:text-accent"
-                  >
+                  <Link href={item.href} className="transition-colors hover:text-accent">
                     {item.label}
                   </Link>
                 </li>
@@ -227,8 +221,8 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/60 bg-surface/50">
-        <div className="container-content py-4 text-xs text-ink sm:py-5">
+      <div className="bg-tint/40">
+        <div className="container-content py-4 text-xs text-ink">
           © {year} <Brand />. Cho thuê đầm, váy &amp; áo dài —{' '}
           {siteConfig.address.district}, {siteConfig.address.city}.
         </div>

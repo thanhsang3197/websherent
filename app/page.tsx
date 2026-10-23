@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Product } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
 import {
@@ -102,6 +103,11 @@ export default async function HomePage() {
   const saleCount = salePrices.length;
   const pricedSales = salePrices.filter((price) => price > 0); // 0 = chưa chốt giá
   const minSalePrice = pricedSales.length ? Math.min(...pricedSales) : 0;
+  // Ảnh mẫu kèm khối Thanh lý: ưu tiên mẫu rẻ nhất có ảnh, tối đa 3.
+  const saleThumbs = products
+    .filter((p) => p.sale && p.image)
+    .sort((a, b) => (a.sale?.price || Infinity) - (b.sale?.price || Infinity))
+    .slice(0, 3);
 
   const heroSlides = buildHeroSlides(products, heroTuApp);
 
@@ -154,31 +160,63 @@ export default async function HomePage() {
       */}
       {saleCount > 0 && (
         <section className="container-content pb-16">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink">
-              Thanh lý
-            </p>
-            <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
-              Sản phẩm thanh lý
-            </h2>
-            <p className="mt-4 leading-relaxed text-ink">
-              {/* Câu chữ chủ shop viết 16/09/2026 — giá "chỉ từ" tự lấy theo dữ liệu. */}
-              Danh sách sản phẩm thanh lý ở link phía dưới, bấm vào để xem mẫu
-              thanh lý
+          {/*
+            Cả khối là một link lớn (23/10/2026): khung màu đất nung nhạt, giá
+            "chỉ từ" in to, kèm ảnh vài mẫu đang pass để khách thấy ngay là có
+            hàng thật — chữ trơn như trước khách cuộn qua không để ý.
+          */}
+          <Link
+            href="/thanh-ly"
+            className="group grid items-center gap-6 overflow-hidden rounded-2xl border border-accent/25 bg-accent/[0.07] p-5 transition-shadow hover:shadow-glass-hover sm:p-8 md:grid-cols-[1fr_auto] md:gap-10"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
+                Thanh lý · {saleCount} mẫu
+              </p>
+              <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
+                Sản phẩm thanh lý
+              </h2>
               {minSalePrice > 0 && (
-                <>
-                  {' '}chỉ từ{' '}
-                  <strong>{minSalePrice.toLocaleString('vi-VN')}&nbsp;đ</strong>
-                </>
+                <p className="mt-3 text-ink">
+                  chỉ từ{' '}
+                  <strong className="text-3xl font-bold tracking-tight text-accent-dark sm:text-4xl">
+                    {minSalePrice.toLocaleString('vi-VN')}&nbsp;đ
+                  </strong>
+                </p>
               )}
-            </p>
-            <Link
-              href="/thanh-ly"
-              className="mt-5 inline-block text-sm font-medium text-accent-dark underline-offset-4 hover:underline"
-            >
-              Xem các mẫu đang thanh lý →
-            </Link>
-          </div>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/80">
+                Mẫu tiệm pass lại, mua đứt mang về. Bấm để xem toàn bộ danh sách.
+              </p>
+              <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-accent-dark px-5 py-2.5 text-sm font-medium text-white transition-colors group-hover:bg-accent">
+                Xem các mẫu đang thanh lý
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </div>
+
+            {saleThumbs.length > 0 && (
+              <div className="flex gap-2.5 sm:gap-3">
+                {saleThumbs.map((p) => (
+                  <div
+                    key={p.id}
+                    className="relative aspect-[3/4] w-[30%] overflow-hidden rounded-xl bg-surface/60 md:w-24 min-[900px]:w-32 xl:w-36"
+                  >
+                    <Image
+                      src={p.image!}
+                      alt={p.name}
+                      fill
+                      sizes="(max-width: 640px) 30vw, 9rem"
+                      className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.04]"
+                    />
+                    {(p.sale?.price ?? 0) > 0 && (
+                      <span className="absolute bottom-1.5 left-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-accent-dark">
+                        {p.sale!.price.toLocaleString('vi-VN')}&nbsp;đ
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Link>
         </section>
       )}
     </>
