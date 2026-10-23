@@ -13,6 +13,36 @@ import { ACoSuKien } from '@/components/LinkCoSuKien';
 // trong app thì /api/lam-moi làm trang dựng lại ngay.
 export const revalidate = 3600;
 
+/**
+ * Chữ shop gõ trong app nhắc tới trang nào trên web thì tự thành link
+ * (chủ shop 24/10/2026: "Xem thêm ở mục Hạng Thành viên" bấm được). Khớp
+ * không phân biệt hoa thường; shop không phải dán URL vào thể lệ.
+ */
+const LINK_TU_DONG: { cum: RegExp; href: string }[] = [
+  { cum: /hạng thành viên/i, href: '/hang-thanh-vien' },
+];
+const LINK_TU_DONG_RE = new RegExp(
+  `(${LINK_TU_DONG.map((l) => l.cum.source).join('|')})`,
+  'gi',
+);
+
+function ChuCoLink({ text }: { text: string }) {
+  return text.split(LINK_TU_DONG_RE).map((doan, i) => {
+    const link = i % 2 === 1 ? LINK_TU_DONG.find((l) => l.cum.test(doan)) : undefined;
+    return link ? (
+      <Link
+        key={i}
+        href={link.href}
+        className="font-medium text-accent-dark underline underline-offset-4 hover:text-accent"
+      >
+        {doan}
+      </Link>
+    ) : (
+      doan
+    );
+  });
+}
+
 // Layout tự thêm "· Sherent" vào cuối (title.template) nên không ghi tên tiệm ở đây.
 const TITLE = 'Ưu đãi & thể lệ';
 const DESCRIPTION =
@@ -108,7 +138,9 @@ export default async function UuDaiPage() {
                         Thể lệ
                       </h3>
                       {/* Xuống dòng shop gõ trong app được giữ nguyên. */}
-                      <p className="mt-2 whitespace-pre-line leading-relaxed text-ink">{u.theLe}</p>
+                      <p className="mt-2 whitespace-pre-line leading-relaxed text-ink">
+                        <ChuCoLink text={u.theLe} />
+                      </p>
                     </div>
                   )}
                 </div>
