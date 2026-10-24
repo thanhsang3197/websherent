@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { siteConfig, SITE_URL, mapsDirectionsUrl } from '@/lib/site-config';
 import { faqJsonLd, breadcrumbJsonLd } from '@/lib/schema';
 import { faqItems, type FaqItem } from '@/lib/faq';
-import { getNewArrivals, getProducts } from '@/lib/products';
+import { getNewArrivals, getRentalProducts } from '@/lib/products';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 import type { Product, ProductCategory } from '@/types/product';
 import { JsonLd } from '@/components/JsonLd';
@@ -107,7 +107,7 @@ const lienKet =
   'font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-accent-dark';
 
 export default async function FaqPage() {
-  const [moiVe, tatCa] = await Promise.all([getNewArrivals(12), getProducts()]);
+  const [moiVe, tatCa] = await Promise.all([getNewArrivals(12), getRentalProducts()]);
   const nguon = [...moiVe, ...tatCa];
   const bo = new Set<string>();
   const anhKhamPha = chonAnh(nguon, ['dam-vay'], 6, bo);

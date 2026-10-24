@@ -4,6 +4,7 @@ import type { Product } from '@/types/product';
 import type { HeroSlide } from '@/types/hero';
 import {
   getProducts,
+  getRentalProducts,
   getHeroSlides,
   getNewArrivals,
   getAlbums,
@@ -90,8 +91,11 @@ function buildHeroSlides(
 export default async function HomePage() {
   // Gọi song song: hero và catalogue không phụ thuộc nhau, gọi nối tiếp là bắt
   // khách chờ thêm một vòng mạng vô ích.
-  const [products, heroTuApp, moiVe, albums, feedback, uuDai] = await Promise.all([
+  // `products` = đầy đủ (dùng cho khối Thanh lý), `thue` = danh mục cho thuê,
+  // đã bỏ mẫu shop để "Chỉ hiện ở trang thanh lý".
+  const [products, thue, heroTuApp, moiVe, albums, feedback, uuDai] = await Promise.all([
     getProducts(),
+    getRentalProducts(),
     getHeroSlides(heroConfig.maxSlides),
     getNewArrivals(SO_MAU_MOI_VE),
     getAlbums(),
@@ -109,7 +113,7 @@ export default async function HomePage() {
     .sort((a, b) => (a.sale?.price || Infinity) - (b.sale?.price || Infinity))
     .slice(0, 3);
 
-  const heroSlides = buildHeroSlides(products, heroTuApp);
+  const heroSlides = buildHeroSlides(thue, heroTuApp);
 
   return (
     <>
@@ -145,7 +149,7 @@ export default async function HomePage() {
           </h2>
         </header>
 
-        <ProductExplorer products={products} />
+        <ProductExplorer products={thue} />
       </section>
 
       {/* Ảnh khách mặc đồ (api-cong-khai.md §2.5) — dưới bộ sưu tập, trên mục

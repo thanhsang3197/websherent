@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getHangKhach, getNewArrivals, getProducts } from '@/lib/products';
+import { getHangKhach, getNewArrivals, getRentalProducts } from '@/lib/products';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { TEN_HANG_MOI, dieuKien, dongQuyenLoi, mauHang, type DongQuyenLoi } from '@/lib/hang-khach';
@@ -64,7 +64,7 @@ function tomTatQuyenLoi(h: HangKhach): string {
 }
 
 export default async function HangThanhVienPage() {
-  const [ct, moiVe, tatCa] = await Promise.all([getHangKhach(), getNewArrivals(12), getProducts()]);
+  const [ct, moiVe, tatCa] = await Promise.all([getHangKhach(), getNewArrivals(12), getRentalProducts()]);
   const anh = chonAnh([...moiVe, ...tatCa], 9);
   const a = (i: number) => anh[i % Math.max(anh.length, 1)] ?? null;
 

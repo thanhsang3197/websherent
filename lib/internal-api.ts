@@ -110,6 +110,13 @@ interface SanPhamApi {
    * API trước migration 20261015090000 -> lùi về `moi_ve_thu_tu`.
    */
   moi?: boolean | null;
+
+  /**
+   * true = mẫu CHỈ hiện ở trang thanh lý, bỏ khỏi trang cho thuê (app
+   * 25/10/2026). Mẫu "không hiện web" thì API không trả hẳn. Optional vì app
+   * trước migration 20261025090000 chưa có.
+   */
+  chi_thanh_ly?: boolean | null;
 }
 
 interface TraVeApi {
@@ -216,6 +223,7 @@ function mapSanPham(item: SanPhamApi): Product {
         ? item.moi
         : typeof item.moi_ve_thu_tu === 'number',
     hot: item.hot === true,
+    chiThanhLy: item.chi_thanh_ly === true,
   };
 }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProducts, getProductBySlug } from '@/lib/products';
+import { getRentalProducts, getProductBySlug } from '@/lib/products';
 
 /**
  * Route Handler (PHÍA SERVER). Giấu Google Sheets API key: client chỉ gọi endpoint này.
@@ -31,6 +31,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ product });
   }
 
-  const products = await getProducts();
+  const products = await getRentalProducts();
   return NextResponse.json({ count: products.length, products });
 }

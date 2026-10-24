@@ -1,4 +1,4 @@
-import { getProducts, countByCategory } from '@/lib/products';
+import { getRentalProducts, countByCategory } from '@/lib/products';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { faqItems } from '@/lib/faq';
 
@@ -14,7 +14,7 @@ import { faqItems } from '@/lib/faq';
 export const revalidate = 604800;
 
 export async function GET() {
-  const products = await getProducts();
+  const products = await getRentalProducts();
   const counts = countByCategory(products);
 
   const lines = [

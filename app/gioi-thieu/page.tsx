@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { siteConfig, SITE_URL, mapsDirectionsUrl } from '@/lib/site-config';
-import { getNewArrivals, getProducts } from '@/lib/products';
+import { getNewArrivals, getRentalProducts } from '@/lib/products';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { breadcrumbJsonLd } from '@/lib/schema';
 import type { Product, ProductCategory } from '@/types/product';
@@ -73,7 +73,7 @@ const CAT_PHIEU = `polygon(0 0, 100% 0, ${Array.from({ length: RANG * 2 + 1 }, (
 const lienKetSang = 'underline decoration-surface/40 underline-offset-4 transition hover:decoration-surface';
 
 export default async function GioiThieuPage() {
-  const [moiVe, tatCa] = await Promise.all([getNewArrivals(12), getProducts()]);
+  const [moiVe, tatCa] = await Promise.all([getNewArrivals(12), getRentalProducts()]);
   const nguon = [...moiVe, ...tatCa];
   const daDung = new Set<string>();
   const anhGuong = chonAnh(nguon, ['dam-vay'], 3, daDung);

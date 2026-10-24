@@ -42,29 +42,51 @@ function prepare(products: Product[]): Product[] {
 }
 
 /**
- * Lấy toàn bộ sản phẩm (đã sort: có ảnh lên đầu, rồi theo tên).
+ * Đọc catalogue THÔ (chưa gộp size) rồi đưa qua `xuLy`.
  * Ưu tiên WebApp Nội Bộ -> Google Sheets -> Fallback mock-data.
  */
-export function getProducts(): Promise<Product[]> | Product[] {
+function docCatalogue(
+  xuLy: (tho: Product[]) => Product[],
+): Promise<Product[]> | Product[] {
   if (isInternalApiConfigured()) {
     return fetchProductsFromInternalApi()
-      .then((fromApi) => (fromApi.length > 0 ? prepare(fromApi) : prepare(mockProducts)))
+      .then((fromApi) => (fromApi.length > 0 ? xuLy(fromApi) : xuLy(mockProducts)))
       .catch((err) => {
         console.error('[products] Lỗi đọc WebApp Nội Bộ — dùng mock-data:', err);
-        return prepare(mockProducts);
+        return xuLy(mockProducts);
       });
   }
 
   if (isSheetsConfigured()) {
     return fetchProductsFromSheet()
-      .then((fromSheet) => (fromSheet.length > 0 ? prepare(fromSheet) : prepare(mockProducts)))
+      .then((fromSheet) => (fromSheet.length > 0 ? xuLy(fromSheet) : xuLy(mockProducts)))
       .catch((err) => {
         console.error('[products] Lỗi đọc Google Sheets — dùng mock-data:', err);
-        return prepare(mockProducts);
+        return xuLy(mockProducts);
       });
   }
 
-  return prepare(mockProducts);
+  return xuLy(mockProducts);
+}
+
+/**
+ * TOÀN BỘ sản phẩm website có (đã gộp size, đã sort) — GỒM cả mẫu chỉ-thanh-lý.
+ * Dùng cho trang thanh lý, trang chi tiết, sitemap. Trang CHO THUÊ thì dùng
+ * `getRentalProducts()`.
+ */
+export function getProducts(): Promise<Product[]> | Product[] {
+  return docCatalogue(prepare);
+}
+
+/**
+ * Danh mục CHO THUÊ: bỏ mẫu shop để "Chỉ hiện ở trang thanh lý" (app 25/10/2026).
+ *
+ * Lọc TRƯỚC khi gộp size, không lọc sau: một mẫu có size S chỉ-thanh-lý còn
+ * size M vẫn cho thuê thì thẻ cho thuê chỉ được ghi size M. Gọi API hai lần là
+ * vô hại — `fetch` của Next dùng chung cache theo URL.
+ */
+export async function getRentalProducts(): Promise<Product[]> {
+  return docCatalogue((tho) => prepare(tho.filter((p) => !p.chiThanhLy)));
 }
 
 /**
@@ -184,7 +206,13 @@ export async function getSaleProducts(): Promise<Product[]> {
 /** Tìm 1 sản phẩm theo slug. null nếu không có. */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const products = await getProducts();
-  return products.find((p) => p.slug === slug) ?? null;
+  const thay = products.find((p) => p.slug === slug);
+  if (thay) return thay;
+  // Mẫu nhiều size mà size NHỎ NHẤT chỉ-thanh-lý: danh mục cho thuê gộp ra
+  // slug của size kế tiếp, khác slug trong danh sách đầy đủ. Không tìm thêm ở
+  // đây thì thẻ cho thuê bấm vào là 404.
+  const thue = await getRentalProducts();
+  return thue.find((p) => p.slug === slug) ?? null;
 }
 
 /**
@@ -202,7 +230,8 @@ export async function getRelatedProducts(
   product: Product,
   limit = 4,
 ): Promise<Product[]> {
-  const all = await getProducts();
+  // Gợi ý là để khách THUÊ tiếp, nên không đưa mẫu chỉ-thanh-lý vào.
+  const all = await getRentalProducts();
   const withImage = all.filter((p) => p.id !== product.id && p.image);
   const sameCategory = withImage.filter((p) => p.category === product.category);
   const candidates = sameCategory.length > 0 ? sameCategory : withImage;
@@ -231,8 +260,9 @@ export async function getRelatedProducts(
 
 /** Danh sách slug cho generateStaticParams (SSG mọi trang chi tiết). */
 export async function getAllProductSlugs(): Promise<string[]> {
-  const products = await getProducts();
-  return products.map((p) => p.slug);
+  const [products, thue] = await Promise.all([getProducts(), getRentalProducts()]);
+  // Gộp cả slug của danh mục cho thuê — xem getProductBySlug.
+  return Array.from(new Set([...products, ...thue].map((p) => p.slug)));
 }
 
 /** Đếm số sản phẩm theo loại (dùng cho nội dung/summary). */
@@ -293,7 +323,9 @@ export async function getAlbum(slug: string): Promise<AlbumChiTiet | null> {
 
   const [data, catalogue] = await Promise.all([
     fetchAlbumFromInternalApi(slug),
-    getProducts(),
+    // Danh mục CHO THUÊ: app đã bỏ mẫu chỉ-thanh-lý khỏi album, và đối chiếu
+    // với danh sách đầy đủ thì thẻ album có thể ghi cả size chỉ-thanh-lý.
+    getRentalProducts(),
   ]);
   if (!data) return null;
 

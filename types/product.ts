@@ -96,6 +96,13 @@ export interface Product {
    * mẫu chọn tay). Web chỉ nhận true/false — không có số lượt thuê.
    */
   hot?: boolean;
+  /**
+   * true = shop để mẫu này CHỈ hiện ở trang thanh lý: có ở /thanh-ly và có
+   * trang chi tiết, nhưng KHÔNG nằm trong danh mục cho thuê, gợi ý mẫu tương
+   * tự… Mọi chỗ của trang cho thuê dùng `getRentalProducts()`.
+   * Optional vì Google Sheets và mock-data không có.
+   */
+  chiThanhLy?: boolean;
   /*
    * Không có trường `status`: cột "Trạng Thái" trong Sheet chỉ dùng để LỌC ở
    * lib/mapping.ts (mẫu "Đã thanh lý" bị bỏ hẳn), không hiển thị cho khách —
