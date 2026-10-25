@@ -6,7 +6,7 @@ import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { formatVndD, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { TrackedContactLink } from '@/components/TrackedContactLink';
 import { SaleGrid } from '@/components/SaleGrid';
-import { NEN_O } from '@/lib/thanh-ly';
+import { KhamThanhLy } from '@/components/KhamThanhLy';
 import { RevealRoot } from '@/components/hang/RevealRoot';
 import type { Product } from '@/types/product';
 
@@ -88,6 +88,7 @@ export default async function ThanhLyPage() {
   const giaThapNhat = coGia.length ? Math.min(...coGia.map((p) => p.sale!.price)) : 0;
   const khamPha = mauCoAnh(products, 5);
   const anhCuoi = mauCoAnh([...products].reverse(), 1)[0] ?? khamPha[0];
+  const anhKham = mauCoAnh(products, Infinity).map((p) => p.image as string);
 
   if (products.length === 0) return <ChuaCoMau />;
 
@@ -148,45 +149,10 @@ export default async function ThanhLyPage() {
           </div>
         </div>
 
-        {/* Khảm 5 mẫu rẻ nhất, mỗi mẫu một ô màu; ô lớn đổi ảnh chậm. Chỉ máy tính. */}
-        {khamPha.length >= 4 && (
+        {/* Khảm 5 mẫu bốc ngẫu nhiên mỗi lượt xem, mỗi mẫu một ô màu; ô lớn đổi ảnh chậm. Chỉ máy tính. */}
+        {anhKham.length >= 4 && (
           <div aria-hidden="true" className="hidden lg:col-span-6 lg:block">
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className={`${NEN_O[0]} col-span-2 row-span-2 p-4`}>
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  {khamPha.slice(0, 3).map((p, i) => (
-                    <Image
-                      key={p.id}
-                      src={p.image as string}
-                      alt=""
-                      fill
-                      priority={i === 0}
-                      placeholder="blur"
-                      blurDataURL={GLASS_BLUR_DATA_URL}
-                      sizes="30vw"
-                      className="tl-doi object-cover"
-                      // Độ trễ âm: ảnh i hiện ở giây 6i–6i+6 của mỗi vòng 18 giây.
-                      style={{ animationDelay: `-${(18 - i * 6) % 18}s` }}
-                    />
-                  ))}
-                </div>
-              </div>
-              {khamPha.slice(3, 5).map((p, i) => (
-                <div key={p.id} className={`${NEN_O[i + 1]} p-2.5`}>
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <Image
-                      src={p.image as string}
-                      alt=""
-                      fill
-                      placeholder="blur"
-                      blurDataURL={GLASS_BLUR_DATA_URL}
-                      sizes="15vw"
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <KhamThanhLy anh={anhKham} />
           </div>
         )}
       </section>
