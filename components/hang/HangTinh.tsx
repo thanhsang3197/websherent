@@ -45,6 +45,9 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
   const [dangTra, setDangTra] = useState(false);
   const [loi, setLoi] = useState<string | null>(null);
   const [traCuu, setTraCuu] = useState<TraCuu | null>(null);
+  // Đếm số lần tra thành công: dùng làm `key` để hiệu ứng ở thẻ kết quả chạy
+  // lại mỗi lần tra, kể cả tra lại đúng số cũ. 0 = chưa tra, không hiệu ứng.
+  const [lanTra, setLanTra] = useState(0);
   const the = useRef<HTMLDivElement>(null);
 
   const traHang = async (e: FormEvent) => {
@@ -68,6 +71,7 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
       trackTraHang(d.ma === 'Thường' ? 'Chưa lên hạng' : (dsHang.find((h) => h.ma === d.ma)?.ten ?? d.ten ?? d.ma));
       const chuSo = sdt.replace(/\D/g, '');
       setTraCuu({ ma: d.ma, sdt: chuSo.startsWith('84') ? `0${chuSo.slice(2)}` : chuSo });
+      setLanTra((n) => n + 1);
       // Điện thoại: thẻ kết quả nằm dưới phần ước tính — đưa nó vào tầm mắt.
       requestAnimationFrame(() => the.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
     } catch {
@@ -140,7 +144,10 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
               autoComplete="tel"
               placeholder="0987 654 321"
               value={sdt}
-              onChange={(e) => setSdt(e.target.value)}
+              onChange={(e) => {
+                setSdt(e.target.value);
+                setTraCuu(null);
+              }}
               maxLength={20}
               aria-invalid={loi ? true : undefined}
               aria-describedby={loi ? `${idSdt}-loi` : undefined}
@@ -149,9 +156,12 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
             <button
               type="submit"
               disabled={dangTra || sdt.replace(/\D/g, '').length < 9}
-              className="shrink-0 rounded-full bg-ink px-6 py-3.5 text-[15px] font-medium text-surface transition hover:bg-accent-dark active:scale-[0.97] disabled:opacity-50"
+              className={`shrink-0 rounded-full px-6 py-3.5 text-[15px] font-medium text-surface transition hover:bg-accent-dark active:scale-[0.97] disabled:opacity-50 ${
+                traCuu ? 'bg-accent-dark' : 'bg-ink'
+              }`}
             >
-              {dangTra ? 'Đang tra…' : 'Tra hạng'}
+              {/* Có kết quả tra thì nút báo "Đã tra" tới khi khách sửa số hoặc chuyển sang ước tính. */}
+              {dangTra ? 'Đang tra…' : traCuu ? 'Đã tra ✓' : 'Tra hạng'}
             </button>
           </div>
           {loi && (
@@ -216,19 +226,24 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
 
       <div
         ref={the}
-        className="scroll-mb-24 flex flex-col items-center gap-6 rounded-2xl px-6 py-10 text-center transition-colors duration-300 sm:flex-row sm:text-left md:col-span-6 md:col-start-7 lg:col-span-6 lg:col-start-7 lg:px-10"
+        className="relative scroll-mb-24 flex flex-col items-center gap-6 rounded-2xl px-6 py-10 text-center transition-colors duration-300 sm:flex-row sm:text-left md:col-span-6 md:col-start-7 lg:col-span-6 lg:col-start-7 lg:px-10"
         style={{ backgroundColor: `${mau.nen}99` }}
         data-reveal
         aria-live="polite"
       >
-        <HangTag
-          lon
-          ten={hangThe?.ten ?? 'Mới'}
-          dong={hangThe ? `Giảm ${hangThe.giamPhanTram}%` : 'Đang tích điểm'}
-          mau={mau}
-          className="shrink-0 -rotate-3"
-        />
-        <div>
+        {traCuu && (
+          <span key={`loe-${lanTra}`} aria-hidden="true" className="hang-loe pointer-events-none absolute inset-0 rounded-2xl" />
+        )}
+        <span key={`the-${traCuu ? lanTra : 0}`} className={`shrink-0 ${traCuu ? 'hang-du' : ''}`}>
+          <HangTag
+            lon
+            ten={hangThe?.ten ?? 'Mới'}
+            dong={hangThe ? `Giảm ${hangThe.giamPhanTram}%` : 'Đang tích điểm'}
+            mau={mau}
+            className="-rotate-3"
+          />
+        </span>
+        <div key={`chu-${traCuu ? lanTra : 0}`} className={traCuu ? 'hang-troi-len' : ''}>
           <p className="font-serif text-2xl leading-snug text-ink">{tieuDeThe}</p>
           <p className="mt-3 text-[17px] leading-relaxed text-ink">{noiDungThe}</p>
           <p className="mt-3 text-base text-muted">{ghiChuThe}</p>

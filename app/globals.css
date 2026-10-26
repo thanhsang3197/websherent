@@ -355,6 +355,43 @@
   transform: scale(1.12);
 }
 
+/* Tra hạng xong (components/hang/HangTinh.tsx): khung kết quả loé viền một
+   nhịp, thẻ hạng đung đưa như nhãn treo vừa lật, chữ trồi lên — để khách thấy
+   ngay ô bên phải vừa trả lời mình. Mỗi lần tra component đổi `key` để chạy lại. */
+@keyframes hang-loe {
+  0% { box-shadow: inset 0 0 0 0 rgb(var(--accent) / 0); }
+  25% { box-shadow: inset 0 0 0 3px rgb(var(--accent) / 0.9); }
+  100% { box-shadow: inset 0 0 0 3px rgb(var(--accent) / 0); }
+}
+.hang-loe {
+  animation: hang-loe 1600ms ease-out both;
+}
+@keyframes hang-du {
+  0% { transform: rotate(-16deg) scale(0.92); opacity: 0.4; }
+  35% { transform: rotate(8deg) scale(1.03); opacity: 1; }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(2deg); }
+  100% { transform: rotate(0); }
+}
+.hang-du {
+  transform-origin: 50% 0;
+  animation: hang-du 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hang-troi-len {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.hang-troi-len {
+  animation: hang-troi-len 600ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hang-du,
+  .hang-troi-len {
+    animation: hang-troi-len 300ms ease both;
+    transform: none;
+  }
+}
+
 /* Ảnh đầm trong ô "Lên hạng thế nào" trôi rất chậm — hình ảnh động duy nhất của trang. */
 @keyframes hang-troi {
   from { transform: scale(1.04) translateY(0); }
