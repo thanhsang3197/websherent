@@ -269,6 +269,15 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         const k = `${maTD(p)}|${loai(p)}`;
         moiNhat.set(k, Math.max(moiNhat.get(k) ?? 0, soMa(p)));
       }
+      // Nhóm H, VH, Q đứng ngay trên nhóm D (chủ shop 04/11/2026), giữa ba
+      // nhóm vẫn theo mẫu mới nhất.
+      const nhomD = moiNhat.get('0|d');
+      if (nhomD != null) {
+        for (const l of ['h', 'vh', 'q']) {
+          const v = moiNhat.get(`0|${l}`);
+          if (v != null && v < nhomD) moiNhat.set(`0|${l}`, nhomD + v / 1000);
+        }
+      }
       const nhom = (p: Product) => moiNhat.get(`${maTD(p)}|${loai(p)}`) ?? 0;
       return [...list].sort(
         (a, b) =>
