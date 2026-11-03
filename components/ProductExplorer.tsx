@@ -269,15 +269,15 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         const k = `${maTD(p)}|${loai(p)}`;
         moiNhat.set(k, Math.max(moiNhat.get(k) ?? 0, soMa(p)));
       }
-      // Nhóm H, VH, Q đứng ngay trên nhóm D (chủ shop 04/11/2026), giữa ba
-      // nhóm vẫn theo mẫu mới nhất.
+      // Chủ shop 04/11/2026: nhóm VH rồi H đứng trên cùng; nhóm Q đứng ngay
+      // trên nhóm D.
       const nhomD = moiNhat.get('0|d');
-      if (nhomD != null) {
-        for (const l of ['h', 'vh', 'q']) {
-          const v = moiNhat.get(`0|${l}`);
-          if (v != null && v < nhomD) moiNhat.set(`0|${l}`, nhomD + v / 1000);
-        }
-      }
+      const q = moiNhat.get('0|q');
+      if (nhomD != null && q != null && q < nhomD) moiNhat.set('0|q', nhomD + q / 1000);
+      const caoNhat = Math.max(0, ...Array.from(moiNhat.values()));
+      ['h', 'vh'].forEach((l, i) => {
+        if (moiNhat.has(`0|${l}`)) moiNhat.set(`0|${l}`, caoNhat + 1 + i);
+      });
       const nhom = (p: Product) => moiNhat.get(`${maTD(p)}|${loai(p)}`) ?? 0;
       return [...list].sort(
         (a, b) =>
