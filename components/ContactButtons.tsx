@@ -20,8 +20,11 @@ export function ContactButtons({
   viTri,
   maSp,
   compact = false,
+  chiMessenger = false,
 }: {
   className?: string;
+  /** Chỉ hiện nút Messenger, bỏ nút Zalo (trang chi tiết — chủ shop 04/11/2026). */
+  chiMessenger?: boolean;
   /** Bản nhỏ gọn (nút thấp, chữ nhỏ) — cho khối phụ như lời mời gửi ảnh. */
   compact?: boolean;
   zaloLabel?: string;
@@ -76,23 +79,25 @@ export function ContactButtons({
   return (
     <>
       <div
-        className={`grid w-full ${compact ? 'max-w-xs' : 'max-w-md'} grid-cols-2 gap-2 [container-type:inline-size] ${className}`}
+        className={`grid w-full ${compact || chiMessenger ? 'max-w-xs' : 'max-w-md'} ${chiMessenger ? 'grid-cols-1' : 'grid-cols-2'} gap-2 [container-type:inline-size] ${className}`}
       >
-        <a
-          href={siteConfig.zaloUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={handleZaloClick}
-          className={`btn btn-primary ${sizeClass}`}
-          aria-label={
-            contextLabel
-              ? `Nhắn Zalo cho ${siteConfig.name} về ${contextLabel}`
-              : `Nhắn Zalo cho ${siteConfig.name}`
-          }
-        >
-          <ChatIcon />
-          {zaloLabel}
-        </a>
+        {!chiMessenger && (
+          <a
+            href={siteConfig.zaloUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleZaloClick}
+            className={`btn btn-primary ${sizeClass}`}
+            aria-label={
+              contextLabel
+                ? `Nhắn Zalo cho ${siteConfig.name} về ${contextLabel}`
+                : `Nhắn Zalo cho ${siteConfig.name}`
+            }
+          >
+            <ChatIcon />
+            {zaloLabel}
+          </a>
+        )}
         <a
           href={siteConfig.messengerUrl}
           target="_blank"

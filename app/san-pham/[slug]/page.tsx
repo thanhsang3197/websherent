@@ -249,7 +249,7 @@ export default async function ProductPage({
 
           <ContactButtons
             className="mt-6"
-            zaloLabel="Đặt lịch Zalo"
+            chiMessenger
             contextLabel={`${product.name} (mã ${product.id})`}
             viTri="chi-tiet"
             maSp={product.id}
