@@ -13,10 +13,11 @@ export interface Filters {
   sort: SortOption;
 }
 
-const CATEGORIES: { id: CategoryFilter; label: string }[] = [
+/** `hoaMai`: gắn bông hoa mai nhỏ ở góc nút, gợi khách nghĩ tới chụp ảnh Tết. */
+const CATEGORIES: { id: CategoryFilter; label: string; hoaMai?: boolean }[] = [
   { id: 'all', label: 'Tất cả' },
   { id: 'dam-vay', label: 'Đầm & Váy' },
-  { id: 'ao-dai', label: 'Áo dài' },
+  { id: 'ao-dai', label: 'Áo dài', hoaMai: true },
   { id: 'phap-phuc', label: 'Pháp phục' },
   { id: 'gam', label: 'Gấm' },
   { id: 'phu-kien', label: 'Phụ kiện' },
@@ -152,7 +153,11 @@ export function ProductFilters({
                     : 'text-ink/80 hover:bg-white/40 hover:text-accent-dark'
                 }`}
               >
-                {c.label}
+                {/* Nút giãn rộng trên máy tính: neo hoa vào CHỮ, không vào mép nút. */}
+                <span className="relative">
+                  {c.label}
+                  {c.hoaMai && <HoaMai />}
+                </span>
               </button>
             );
           })}
@@ -310,6 +315,49 @@ function SelectField({
         <path d="m5 7.5 5 5 5-5" />
       </svg>
     </div>
+  );
+}
+
+/** Bông mai vàng 5 cánh kèm một nụ, đặt chéo góc trên bên phải nút. */
+function HoaMai() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 32 32"
+      className="pointer-events-none absolute -right-5 -top-3 h-5 w-5 rotate-12 drop-shadow-[0_1px_1.5px_rgba(150,90,0,0.35)] sm:-right-6 sm:-top-3.5 sm:h-6 sm:w-6"
+    >
+      <defs>
+        <radialGradient id="hoa-mai-canh" cx="50%" cy="85%" r="85%">
+          <stop offset="0%" stopColor="#F59E0B" />
+          <stop offset="55%" stopColor="#FCD34D" />
+          <stop offset="100%" stopColor="#FEF08A" />
+        </radialGradient>
+      </defs>
+      {/* nụ */}
+      <path d="M26 25.5c-1.6-.4-2.4-2.2-1.6-3.6.8-1.4 2.9-1.6 3.9-.3.9 1.3.2 3.5-2.3 3.9Z" fill="#FCD34D" />
+      <path d="M23.4 23.2 20.5 20" stroke="#8B5A2B" strokeWidth="1.1" strokeLinecap="round" />
+      {/* 5 cánh */}
+      <g transform="translate(14 14)">
+        {[0, 72, 144, 216, 288].map((goc) => (
+          <path
+            key={goc}
+            transform={`rotate(${goc})`}
+            d="M0 0C-4.2-2.2-5.2-7.6-2.6-10.6-1.4-11.9.0-11.4 0-10.2.0-11.4 1.4-11.9 2.6-10.6 5.2-7.6 4.2-2.2 0 0Z"
+            fill="url(#hoa-mai-canh)"
+            stroke="#EAB308"
+            strokeWidth="0.5"
+          />
+        ))}
+        {/* nhị */}
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((goc) => (
+          <g key={goc} transform={`rotate(${goc})`}>
+            <path d="M0 0V-4.4" stroke="#C2410C" strokeWidth="0.6" strokeLinecap="round" />
+            <circle cy="-4.8" r="0.7" fill="#9A3412" />
+          </g>
+        ))}
+        <circle r="1.7" fill="#EA580C" />
+      </g>
+    </svg>
   );
 }
 
