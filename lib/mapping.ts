@@ -102,6 +102,15 @@ export function sortProductsForDisplay(products: Product[]): Product[] {
   });
 }
 
+/**
+ * Nhóm của một phụ kiện = chữ đầu tên mẫu, bỏ phần số: "VH01" -> "vh",
+ * "Kẹp 03" -> "kẹp". Dùng để xếp mẫu cùng loại liền nhau ở mục Phụ kiện và để
+ * khối gợi ý ở trang áo dài trỏ thẳng tới đúng nhóm (`?nhom=`).
+ */
+export function nhomPhuKien(p: Pick<Product, 'name'>): string {
+  return p.name.trim().replace(/\s*\d.*$/, '').toLowerCase();
+}
+
 // ----- Gộp mẫu nhiều size thành 1 sản phẩm -----
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'Freesize'];

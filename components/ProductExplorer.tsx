@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { CATEGORY_LABELS, type Product, type ProductCategory } from '@/types/product';
 import { listRentPrice } from '@/lib/format';
 import { fitSize } from '@/lib/brands';
+import { nhomPhuKien } from '@/lib/mapping';
 import { trackEmptySearch, trackFilterUse } from '@/lib/analytics';
 import { ProductGrid } from '@/components/ProductGrid';
 import {
@@ -147,6 +148,9 @@ function sortSizes(sizes: string[]): string[] {
  */
 export function ProductExplorer({ products }: { products: Product[] }) {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  // `?nhom=c` (từ khối gợi ý phụ kiện ở trang áo dài): cuộn tới mẫu đầu tiên
+  // của nhóm đó trong mục Phụ kiện.
+  const [nhomCanToi, setNhomCanToi] = useState<string | null>(null);
 
   // Facet từ dữ liệu thật.
   const brands = useMemo(
@@ -197,6 +201,8 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       next.sort = sort as SortOption;
     }
     setFilters(next);
+    const nhom = sp.get('nhom');
+    if (nhom && next.category === 'phu-kien') setNhomCanToi(nhom.toLowerCase());
   }, []);
 
   // Ghi bộ lọc hiện tại vào URL.
@@ -262,7 +268,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       const soMa = (p: Product) => Number(p.id.match(/\d+/)?.[0] ?? 0);
       const maTD = (p: Product) =>
         /^[TD]/i.test(p.id) || /^(choàng|kính)/i.test(p.name.trim()) ? 1 : 0;
-      const loai = (p: Product) => p.name.trim().replace(/\s*\d.*$/, '').toLowerCase();
+      const loai = nhomPhuKien;
       const soTen = (p: Product) => Number(p.name.match(/\d+/)?.[0] ?? 0);
       const moiNhat = new Map<string, number>();
       for (const p of list) {
@@ -291,6 +297,31 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     }
     return list;
   }, [products, filters]);
+
+  const viTriNhom = useMemo(
+    () =>
+      nhomCanToi && filters.category === 'phu-kien'
+        ? filtered.findIndex((p) => nhomPhuKien(p) === nhomCanToi)
+        : -1,
+    [filtered, nhomCanToi, filters.category],
+  );
+
+  // Cuộn tới mẫu đầu nhóm, chừa chỗ cho thanh menu + dải ưu đãi dính ở trên.
+  // Chỉ cuộn MỘT lần; `nhomCanToi` vẫn giữ để lưới không thu về 40 mẫu đầu
+  // (mẫu đích có thể nằm sâu hơn thế).
+  const daCuonToiNhom = useRef(false);
+  useEffect(() => {
+    if (viTriNhom < 0 || daCuonToiNhom.current) return;
+    const ma = filtered[viTriNhom].id;
+    const id = requestAnimationFrame(() => {
+      const el = document.querySelector(`[data-ma="${CSS.escape(ma)}"]`);
+      if (!el) return;
+      daCuonToiNhom.current = true;
+      const top = el.getBoundingClientRect().top + window.scrollY - 140;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [viTriNhom, filtered]);
 
   const onChange = useCallback((patch: Partial<Filters>) => {
     /*
@@ -375,7 +406,11 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         </Link>
       )}
       <div className="mt-8">
-        <ProductGrid products={filtered} priorityCount={4} />
+        <ProductGrid
+          products={filtered}
+          priorityCount={4}
+          minVisible={viTriNhom >= 0 ? viTriNhom + 8 : 0}
+        />
       </div>
     </div>
   );

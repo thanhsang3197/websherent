@@ -7,16 +7,19 @@ import { useEffect, useState } from 'react';
  * gọi loadMore() lộ thêm `pageSize` mục. Reset về `pageSize` khi mảng gốc
  * đổi (do lọc/sort) để tránh lộ nhầm số lượng cũ.
  */
-export function useLoadMore<T>(items: T[], pageSize: number) {
+export function useLoadMore<T>(items: T[], pageSize: number, minCount = 0) {
   const [count, setCount] = useState(pageSize);
 
   useEffect(() => {
     setCount(pageSize);
   }, [items, pageSize]);
 
-  const visibleItems = items.slice(0, count);
-  const hasMore = count < items.length;
-  const loadMore = () => setCount((c) => c + pageSize);
+  // `minCount`: buộc lộ sẵn tới mục đó (vd khách được dẫn thẳng tới một nhóm
+  // phụ kiện nằm sâu dưới danh sách).
+  const shown = Math.max(count, minCount);
+  const visibleItems = items.slice(0, shown);
+  const hasMore = shown < items.length;
+  const loadMore = () => setCount(shown + pageSize);
 
   return { visibleItems, hasMore, loadMore };
 }

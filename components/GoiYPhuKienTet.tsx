@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
+import { nhomPhuKien } from '@/lib/mapping';
 
 /**
  * Nhóm phụ kiện gợi ý đi kèm áo dài chụp Tết, đúng thứ tự chủ shop đặt
@@ -11,23 +12,19 @@ const NHOM_GOI_Y = ['vh', 'h', 'k', 'c', 'q', 'guốc', 'kẹp', 'trâm'];
 
 const LINK_PHU_KIEN = '/?loai=phu-kien#san-pham';
 
-function loai(p: Product): string {
-  return p.name.trim().replace(/\s*\d.*$/, '').toLowerCase();
-}
-
 function soTen(p: Product): number {
   return Number(p.name.match(/\d+/)?.[0] ?? 0);
 }
 
 /**
  * Khối nhỏ dưới nút liên hệ ở trang áo dài: mỗi nhóm phụ kiện một ảnh đại diện
- * (mẫu số nhỏ nhất có ảnh). Bấm ảnh nào cũng sang mục Phụ kiện để khách xem
- * toàn bộ mẫu — mục đích là dẫn khách qua đó, không phải bán từng món ở đây.
+ * (mẫu số nhỏ nhất có ảnh). Bấm ảnh là sang mục Phụ kiện, cuộn sẵn tới đúng
+ * nhóm đó (`?nhom=`) — khách vẫn ở danh sách đầy đủ, xem tiếp các nhóm khác.
  */
 export function GoiYPhuKienTet({ products }: { products: Product[] }) {
   const daiDien = NHOM_GOI_Y.map((nhom) =>
     products
-      .filter((p) => p.category === 'phu-kien' && p.image && loai(p) === nhom)
+      .filter((p) => p.category === 'phu-kien' && p.image && nhomPhuKien(p) === nhom)
       .sort((a, b) => soTen(a) - soTen(b))[0],
   ).filter((p): p is Product => Boolean(p));
 
@@ -48,8 +45,8 @@ export function GoiYPhuKienTet({ products }: { products: Product[] }) {
         {daiDien.map((p) => (
           <li key={p.id}>
             <Link
-              href={LINK_PHU_KIEN}
-              aria-label={`Xem phụ kiện, ví dụ ${p.name}`}
+              href={`/?loai=phu-kien&nhom=${encodeURIComponent(nhomPhuKien(p))}#san-pham`}
+              aria-label={`Xem phụ kiện nhóm ${p.name.replace(/\s*\d.*$/, '')}`}
               className="group relative block aspect-square overflow-hidden rounded-xl bg-tint shadow-sm ring-1 ring-white/70 transition-all hover:shadow-md hover:ring-accent/50"
             >
               <Image

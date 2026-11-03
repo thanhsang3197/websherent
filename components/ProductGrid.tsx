@@ -13,12 +13,15 @@ const PAGE_SIZE = 40;
 export function ProductGrid({
   products,
   priorityCount = 0,
+  minVisible = 0,
 }: {
   products: Product[];
   /** Số card đầu ưu tiên tải ảnh (LCP). */
   priorityCount?: number;
+  /** Số mẫu tối thiểu phải hiện sẵn, không cần bấm "Xem thêm". */
+  minVisible?: number;
 }) {
-  const { visibleItems, hasMore, loadMore } = useLoadMore(products, PAGE_SIZE);
+  const { visibleItems, hasMore, loadMore } = useLoadMore(products, PAGE_SIZE, minVisible);
 
   if (products.length === 0) {
     return (
@@ -32,7 +35,7 @@ export function ProductGrid({
     <>
       <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
         {visibleItems.map((product, i) => (
-          <li key={product.id}>
+          <li key={product.id} data-ma={product.id}>
             <ProductCard
               product={product}
               priority={i < priorityCount}
