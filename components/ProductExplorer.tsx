@@ -120,6 +120,12 @@ function laTuThanhLy(query: string): boolean {
   return TU_THANH_LY.some((t) => query === t || query.startsWith(`${t} `));
 }
 
+/**
+ * Phụ kiện nhập sau nhưng muốn đứng cạnh mẫu cùng bộ, thay cho số trong mã khi
+ * xếp mục Phụ kiện. D07 (PK190) nằm ngay sau D06 (PK052) — chủ shop 04/11/2026.
+ */
+const VI_TRI_PHU_KIEN: Record<string, number> = { PK190: 51.5 };
+
 /** Các chữ đầu mã phụ kiện ứng với từ khoá (đã norm), vd "tui xach" -> ["T"]. */
 function maTheoTuKhoa(query: string): string[] {
   const chu = query.split(/\s+/).filter(Boolean);
@@ -257,7 +263,8 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     // làm thứ tự thêm vào — mã càng lớn càng mới. Mẫu chưa có ảnh vẫn xếp cuối,
     // mẫu mã T…/D… (không theo dãy PK) và mẫu choàng xếp sau.
     if (filters.category === 'phu-kien') {
-      const soMa = (p: Product) => Number(p.id.match(/\d+/)?.[0] ?? 0);
+      const soMa = (p: Product) =>
+        VI_TRI_PHU_KIEN[p.id] ?? Number(p.id.match(/\d+/)?.[0] ?? 0);
       const maTD = (p: Product) =>
         /^[TD]/i.test(p.id) || /^choàng/i.test(p.name.trim()) ? 1 : 0;
       return [...list].sort(
