@@ -6,6 +6,7 @@ import {
   getAllProductSlugs,
   getRelatedProducts,
   getFeedback,
+  getRentalProducts,
 } from '@/lib/products';
 import { CATEGORY_LABELS } from '@/types/product';
 import { formatVnd, saleLine, saleNoteLine } from '@/lib/format';
@@ -17,6 +18,7 @@ import { ProductGallery } from '@/components/ProductGallery';
 import { TieuDeMotDong } from '@/components/TieuDeMotDong';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FeedbackGallery } from '@/components/FeedbackGallery';
+import { GoiYPhuKienTet } from '@/components/GoiYPhuKienTet';
 import { resolveProductVideo } from '@/lib/video';
 
 // ─── Vì sao 604.800 giây (7 ngày) chứ không phải 6 giờ ────────────────────
@@ -100,10 +102,12 @@ export default async function ProductPage({
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
-  const [related, video, feedback] = await Promise.all([
+  const [related, video, feedback, catalogue] = await Promise.all([
     getRelatedProducts(product, 8),
     resolveProductVideo(product.video),
     getFeedback(),
+    // Chỉ trang áo dài cần (khối gợi ý phụ kiện Tết); cùng cache với catalogue.
+    product.category === 'ao-dai' ? getRentalProducts() : Promise.resolve([]),
   ]);
   // Khách đã mặc ĐÚNG mẫu này — `getFeedback` đã quy mã size về mẫu đại diện.
   const daMac = feedback.filter((f) => f.mau?.slug === product.slug);
@@ -254,6 +258,8 @@ export default async function ProductPage({
             viTri="chi-tiet"
             maSp={product.id}
           />
+
+          {product.category === 'ao-dai' && <GoiYPhuKienTet products={catalogue} />}
 
           {/* Trước đây chỗ này là ô "kiểm tra lịch trống", rồi thành câu nhắc
               "Muốn biết mẫu này còn trống ngày bạn cần? Nhắn Zalo…". Cả hai đã
