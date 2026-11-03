@@ -355,6 +355,31 @@
   transform: scale(1.12);
 }
 
+/* Nút "Áo dài" (components/ProductFilters.tsx): vài cánh mai rơi nhẹ từ bông
+   hoa ở góc, lệch nhịp nhau để không thành một đợt đều tăm tắp. */
+@keyframes mai-roi {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  12% { opacity: 1; }
+  50% { transform: translate(4px, 14px) rotate(140deg); }
+  85% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(0, 30px) rotate(300deg); }
+}
+.mai-roi {
+  position: absolute;
+  width: 5px;
+  height: 6px;
+  border-radius: 60% 60% 50% 50% / 70% 70% 40% 40%;
+  background: linear-gradient(160deg, #fef08a, #fbbf24);
+  pointer-events: none;
+  opacity: 0;
+  animation: mai-roi 5.5s ease-in infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mai-roi {
+    display: none;
+  }
+}
+
 /* Tra hạng xong (components/hang/HangTinh.tsx): khung kết quả loé viền một
    nhịp, thẻ hạng đung đưa như nhãn treo vừa lật, chữ trồi lên — để khách thấy
    ngay ô bên phải vừa trả lời mình. Mỗi lần tra component đổi `key` để chạy lại. */

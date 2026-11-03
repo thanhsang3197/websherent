@@ -13,7 +13,10 @@ export interface Filters {
   sort: SortOption;
 }
 
-/** `hoaMai`: gắn bông hoa mai nhỏ ở góc nút, gợi khách nghĩ tới chụp ảnh Tết. */
+/**
+ * `hoaMai`: gắn bông mai (góc phải, có cánh rơi) và bao lì xì (góc trái) quanh
+ * chữ, gợi khách nghĩ tới chụp ảnh Tết.
+ */
 const CATEGORIES: { id: CategoryFilter; label: string; hoaMai?: boolean }[] = [
   { id: 'all', label: 'Tất cả' },
   { id: 'dam-vay', label: 'Đầm & Váy' },
@@ -156,7 +159,13 @@ export function ProductFilters({
                 {/* Nút giãn rộng trên máy tính: neo hoa vào CHỮ, không vào mép nút. */}
                 <span className="relative">
                   {c.label}
-                  {c.hoaMai && <HoaMai />}
+                  {c.hoaMai && (
+                    <>
+                      <BaoLiXi />
+                      <HoaMai />
+                      <CanhMaiRoi />
+                    </>
+                  )}
                 </span>
               </button>
             );
@@ -357,6 +366,50 @@ function HoaMai() {
         ))}
         <circle r="1.7" fill="#EA580C" />
       </g>
+    </svg>
+  );
+}
+
+/** Vài cánh mai rơi từ bông hoa xuống, lệch nhịp (keyframes `mai-roi`). */
+const CANH_ROI = [
+  { left: 'calc(100% + 6px)', delay: '0s', duration: '5.5s' },
+  { left: 'calc(100% + 12px)', delay: '1.9s', duration: '6.2s' },
+  { left: 'calc(100% + 3px)', delay: '3.6s', duration: '5s' },
+];
+
+function CanhMaiRoi() {
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute inset-0">
+      {CANH_ROI.map((c) => (
+        <span
+          key={c.delay}
+          className="mai-roi"
+          style={{ left: c.left, top: '-2px', animationDelay: c.delay, animationDuration: c.duration }}
+        />
+      ))}
+    </span>
+  );
+}
+
+/** Bao lì xì đỏ viền vàng, đặt chéo góc trên bên trái chữ. */
+function BaoLiXi() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 30"
+      className="pointer-events-none absolute -left-4 -top-2.5 h-[18px] w-[14px] -rotate-12 drop-shadow-[0_1px_1.5px_rgba(120,20,20,0.35)] sm:-left-5 sm:-top-3 sm:h-[22px] sm:w-[18px]"
+    >
+      <defs>
+        <linearGradient id="li-xi-do" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#EF4444" />
+          <stop offset="100%" stopColor="#B91C1C" />
+        </linearGradient>
+      </defs>
+      <rect x="1" y="1" width="22" height="28" rx="2.5" fill="url(#li-xi-do)" stroke="#FBBF24" strokeWidth="1.2" />
+      <path d="M1.6 3.5 12 12.5 22.4 3.5" fill="none" stroke="#FBBF24" strokeWidth="1.2" strokeLinejoin="round" />
+      <circle cx="12" cy="13" r="3.6" fill="#FBBF24" />
+      <circle cx="12" cy="13" r="2" fill="none" stroke="#B91C1C" strokeWidth="0.8" />
+      <path d="M6 22.5h12M7.5 25h9" stroke="#FCD34D" strokeWidth="0.9" strokeLinecap="round" opacity="0.8" />
     </svg>
   );
 }
