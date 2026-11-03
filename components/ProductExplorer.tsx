@@ -255,13 +255,13 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     // Mục Phụ kiện: mẫu mới thêm lên đầu (chủ shop 04/11/2026). API trả theo mã
     // tăng dần (PK012, PK023, PK03…) và không có ngày nhập, nên lấy số trong mã
     // làm thứ tự thêm vào — mã càng lớn càng mới. Mẫu chưa có ảnh vẫn xếp cuối,
-    // mẫu mã T…/D… (không theo dãy PK) và mẫu choàng xếp sau.
+    // mẫu mã T…/D… (không theo dãy PK), mẫu choàng và mẫu kính xếp sau.
     // Mẫu cùng loại (cùng chữ đầu tên: VH, H, D, Kẹp…) đứng liền nhau, số tăng
     // dần (VH01, VH02…); loại nào có mẫu mới nhất thì cả loại đó lên trước.
     if (filters.category === 'phu-kien') {
       const soMa = (p: Product) => Number(p.id.match(/\d+/)?.[0] ?? 0);
       const maTD = (p: Product) =>
-        /^[TD]/i.test(p.id) || /^choàng/i.test(p.name.trim()) ? 1 : 0;
+        /^[TD]/i.test(p.id) || /^(choàng|kính)/i.test(p.name.trim()) ? 1 : 0;
       const loai = (p: Product) => p.name.trim().replace(/\s*\d.*$/, '').toLowerCase();
       const soTen = (p: Product) => Number(p.name.match(/\d+/)?.[0] ?? 0);
       const moiNhat = new Map<string, number>();
