@@ -252,6 +252,21 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     if (filters.sort === 'name-asc') {
       return [...list].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
     }
+    // Mục Phụ kiện: mẫu mới thêm lên đầu (chủ shop 04/11/2026). API trả theo mã
+    // tăng dần (PK012, PK023, PK03…) và không có ngày nhập, nên lấy số trong mã
+    // làm thứ tự thêm vào — mã càng lớn càng mới. Mẫu chưa có ảnh vẫn xếp cuối,
+    // mẫu mã T…/D… (không theo dãy PK) và mẫu choàng xếp sau.
+    if (filters.category === 'phu-kien') {
+      const soMa = (p: Product) => Number(p.id.match(/\d+/)?.[0] ?? 0);
+      const maTD = (p: Product) =>
+        /^[TD]/i.test(p.id) || /^choàng/i.test(p.name.trim()) ? 1 : 0;
+      return [...list].sort(
+        (a, b) =>
+          (a.image ? 0 : 1) - (b.image ? 0 : 1) ||
+          maTD(a) - maTD(b) ||
+          soMa(b) - soMa(a),
+      );
+    }
     return list;
   }, [products, filters]);
 
