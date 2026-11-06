@@ -18,7 +18,7 @@ import { ProductGallery } from '@/components/ProductGallery';
 import { TieuDeMotDong } from '@/components/TieuDeMotDong';
 import { ProductCarousel } from '@/components/ProductCarousel';
 import { FeedbackGallery } from '@/components/FeedbackGallery';
-import { GoiYPhuKienTet } from '@/components/GoiYPhuKienTet';
+import { GoiYPhuKien, coGoiYPhuKien } from '@/components/GoiYPhuKien';
 import { resolveProductVideo } from '@/lib/video';
 
 // ─── Vì sao 604.800 giây (7 ngày) chứ không phải 6 giờ ────────────────────
@@ -106,8 +106,8 @@ export default async function ProductPage({
     getRelatedProducts(product, 8),
     resolveProductVideo(product.video),
     getFeedback(),
-    // Chỉ trang áo dài cần (khối gợi ý phụ kiện Tết); cùng cache với catalogue.
-    product.category === 'ao-dai' ? getRentalProducts() : Promise.resolve([]),
+    // Chỉ trang có khối gợi ý phụ kiện mới cần; cùng cache với catalogue.
+    coGoiYPhuKien(product.category) ? getRentalProducts() : Promise.resolve([]),
   ]);
   // Khách đã mặc ĐÚNG mẫu này — `getFeedback` đã quy mã size về mẫu đại diện.
   const daMac = feedback.filter((f) => f.mau?.slug === product.slug);
@@ -259,7 +259,7 @@ export default async function ProductPage({
             maSp={product.id}
           />
 
-          {product.category === 'ao-dai' && <GoiYPhuKienTet products={catalogue} />}
+          <GoiYPhuKien category={product.category} products={catalogue} />
 
           {/* Trước đây chỗ này là ô "kiểm tra lịch trống", rồi thành câu nhắc
               "Muốn biết mẫu này còn trống ngày bạn cần? Nhắn Zalo…". Cả hai đã

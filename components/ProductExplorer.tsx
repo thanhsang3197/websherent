@@ -148,7 +148,7 @@ function sortSizes(sizes: string[]): string[] {
  */
 export function ProductExplorer({ products }: { products: Product[] }) {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  // `?nhom=c` (từ khối gợi ý phụ kiện ở trang áo dài): cuộn tới mẫu đầu tiên
+  // `?nhom=c` (từ khối gợi ý phụ kiện ở trang chi tiết): cuộn tới mẫu đầu tiên
   // của nhóm đó trong mục Phụ kiện.
   const [nhomCanToi, setNhomCanToi] = useState<string | null>(null);
 
