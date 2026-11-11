@@ -8,12 +8,13 @@ import { nhomPhuKien } from '@/lib/mapping';
  * chữ đầu tên mẫu (VH01 -> "vh", "Choàng tà dài 01" -> "choàng tà dài"), cùng
  * cách gom nhóm với mục Phụ kiện ở trang chủ.
  *
- * - Áo dài: chủ shop đặt 04/11/2026 (đồ cài tóc, quạt, guốc cho ảnh Tết).
+ * - Áo dài: chủ shop đặt 04/11/2026 (đồ cài tóc, quạt, guốc cho ảnh Tết);
+ *   11/11/2026 thêm Nón ở vị trí thứ 2 và Dù (mẫu tên "Ô trắng") ở vị trí thứ 5.
  * - Đầm váy: chủ shop yêu cầu 06/11/2026 là KHÁC áo dài, nên dùng túi (T),
  *   dây chuyền (D), choàng và kính.
  * - Pháp phục: chủ shop yêu cầu 06/11/2026 là GIỐNG áo dài.
  */
-const NHOM_AO_DAI = ['vh', 'h', 'k', 'c', 'q', 'guốc', 'kẹp', 'trâm'];
+const NHOM_AO_DAI = ['vh', 'nón', 'h', 'k', 'ô trắng', 'c', 'q', 'guốc', 'kẹp', 'trâm'];
 
 const GOI_Y: Partial<Record<ProductCategory, { tieuDe: string; nhom: string[] }>> = {
   'ao-dai': { tieuDe: 'Phụ kiện áo dài chụp Tết', nhom: NHOM_AO_DAI },
@@ -81,7 +82,9 @@ export function GoiYPhuKien({
           Xem tất cả →
         </Link>
       </div>
-      <ul className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
+      <ul
+        className={`mt-3 grid gap-2 ${daiDien.length > 8 ? 'grid-cols-5' : 'grid-cols-4 sm:grid-cols-8'}`}
+      >
         {daiDien.map((p) => (
           <li key={p.id}>
             <Link
