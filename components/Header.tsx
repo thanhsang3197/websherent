@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
 import { trackMessengerClick, trackZaloClick } from '@/lib/analytics';
+import { useTuiDo } from '@/lib/tui-do';
 
 /**
  * Header (dính cùng PromoBar, xem app/layout.tsx), tối giản, mobile-first. Menu mobile mở/đóng bằng nút (có JS nhẹ).
@@ -21,6 +22,7 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
   // Bảng thả xuống đang mở ở menu desktop: "Thêm" hoặc "Liên hệ" (một lúc một cái).
   const [bangMo, setBangMo] = useState<'them' | 'lien-he' | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const tui = useTuiDo();
 
   // Bảng thả xuống (desktop) đóng khi bấm ra ngoài hoặc nhấn Esc.
   useEffect(() => {
@@ -66,7 +68,7 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
       <div className="container-content flex min-h-12 items-center justify-between gap-3 py-1.5 sm:min-h-16 sm:py-3">
         <Link
           href="/"
-          className="font-serif text-2xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
+          className="font-logo text-2xl font-bold uppercase leading-none tracking-wide text-ink sm:text-4xl"
           aria-label={`${siteConfig.name} — về trang chủ`}
         >
           {siteConfig.name}
@@ -115,6 +117,24 @@ export function Header({ coAlbum = false }: { coAlbum?: boolean }) {
               )}
             </div>
           )}
+
+          {/* Túi đồ muốn thuê (13/11/2026). Điện thoại dùng thanh dưới đáy. */}
+          <Link
+            href="/tui-do"
+            data-dich-tui
+            aria-label={`Túi đồ muốn thuê, ${tui.length} mẫu`}
+            className="relative flex h-10 w-10 items-center justify-center rounded-full text-ink/80 transition-colors hover:bg-tint/60 hover:text-accent"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 8h14l-1.2 12H6.2z" />
+              <path d="M9 8a3 3 0 0 1 6 0" />
+            </svg>
+            {tui.length > 0 && (
+              <span key={tui.length} className="huy-hieu-nay absolute -right-0.5 top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-extrabold text-white">
+                {tui.length}
+              </span>
+            )}
+          </Link>
 
           {/*
             Tách vai như menu điện thoại: tư vấn qua Messenger, Zalo hotline

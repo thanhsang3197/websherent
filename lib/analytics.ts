@@ -32,7 +32,10 @@ export type ViTri =
   | 'hoi-dap'
   | 'feedback'
   | 'uu-dai'
-  | 'hang-thanh-vien';
+  | 'hang-thanh-vien'
+  | 'trang-chu'
+  | 'thanh-duoi'
+  | 'tui-do';
 
 /** Dùng khi cú bấm không gắn với mẫu nào (header, footer, nút nổi...). */
 const KHONG_CO_MA = '—';

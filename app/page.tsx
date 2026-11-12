@@ -117,7 +117,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero slides={heroSlides} />
+      {/* Phương án A (13/11/2026): ảnh lớn + 2 nút + "Bạn đi dịp gì?" (album). */}
+      <Hero slides={heroSlides} albums={albums} soFeedback={feedback.length} />
 
       {/*
         Ưu đãi shop đăng bên app (api-cong-khai.md §2.6) — ngay dưới hero để khách
@@ -212,7 +213,7 @@ export default async function HomePage() {
                       className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.04]"
                     />
                     {(p.sale?.price ?? 0) > 0 && (
-                      <span className="absolute bottom-1.5 left-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-accent-dark">
+                      <span className="absolute bottom-1.5 left-1.5 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-accent-dark">
                         {p.sale!.price.toLocaleString('vi-VN')}&nbsp;đ
                       </span>
                     )}

@@ -1,13 +1,16 @@
-import Image from 'next/image';
+import { AnhHienDan } from '@/components/AnhHienDan';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
 import { formatVnd, GLASS_BLUR_DATA_URL, listRentPrice } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
 import { NhanNoiBat } from '@/components/NhanNoiBat';
+import { NutTui } from '@/components/NutTui';
+import { monTuSanPham } from '@/lib/tui-do-mon';
 
 /**
  * Thẻ sản phẩm trong lưới. Ảnh khung vòm; mẫu chưa có ảnh -> placeholder thanh lịch.
- * (Nút ❤ yêu thích trên góc ảnh đã bỏ cùng cả tính năng Yêu thích, 02/10/2026.)
+ * Nút ♡ góc ảnh = thêm vào "Túi đồ muốn thuê" (13/11/2026; nút Yêu thích cũ
+ * đã bỏ 02/10/2026 — đây là tính năng mới, gửi được cả danh sách cho tiệm).
  */
 export function ProductCard({
   product,
@@ -28,7 +31,7 @@ export function ProductCard({
       >
         <div className="arch relative aspect-[3/4] overflow-hidden bg-tint shadow-md ring-1 ring-white/70 transition-all duration-300 group-hover:shadow-glass-hover group-hover:ring-accent/50 group-focus-visible:ring-2 group-focus-visible:ring-accent">
           {product.image ? (
-            <Image
+            <AnhHienDan
               src={product.image}
               alt={product.name}
               fill
@@ -52,9 +55,11 @@ export function ProductCard({
         </div>
 
         <div className="mt-3">
-          {/* Điện thoại: tên 1 dòng (cắt "…" nếu dài), không chừa sẵn dòng 2 —
-              đỡ khoảng trống. Từ sm trở lên: 2 dòng, giữ min-h để các thẻ thẳng hàng. */}
-          <h3 className="line-clamp-1 font-serif text-base leading-snug text-ink transition-colors group-hover:text-accent-dark sm:line-clamp-2 sm:min-h-[3.1rem] sm:text-lg">
+          {/* Tên tối đa 2 dòng ở mọi màn hình (13/11/2026): trước đây điện
+              thoại chỉ 1 dòng nên tên áo dài kiểu "AD25 Tịch Nhiên Hồng Ruốc"
+              bị cắt mất màu — đúng phần khách cần đọc. Từ sm trở lên giữ min-h
+              để các thẻ thẳng hàng. */}
+          <h3 className="line-clamp-2 font-serif text-base leading-snug text-ink transition-colors group-hover:text-accent-dark sm:min-h-[3.1rem] sm:text-lg">
             {product.name}
           </h3>
           <p className="mt-0.5 line-clamp-1 text-xs text-muted">
@@ -78,9 +83,15 @@ export function ProductCard({
             Chỉ thu nhỏ riêng "/ 3 ngày" thì không cứu được: ở 375px còn thiếu
             26px, mà cả cụm đó ở text-xs mới rộng chừng 46px.
           */}
-          <p className="mt-2 whitespace-nowrap text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
-            Phí thuê:{' '}
-            <span className="font-semibold text-accent-dark">
+          {/*
+            13/11/2026 — rà cỡ chữ: điện thoại trước đây co giá xuống 10–11,6px
+            (dưới mức dễ đọc). Nay điện thoại bỏ chữ "Phí thuê:" (con số màu
+            hồng đứng đầu đã đủ nghĩa), để SỐ to 15px và chú thích tối thiểu
+            12px vẫn vừa ô hẹp nhất (máy 320px, ô ~134px). Từ sm giữ nguyên.
+          */}
+          <p className="mt-1.5 whitespace-nowrap text-xs text-muted sm:mt-2 sm:text-sm">
+            <span className="hidden sm:inline">Phí thuê: </span>
+            <span className="text-[15px] font-bold text-accent-dark sm:text-sm sm:font-semibold">
               {formatVnd(rent.price)}
             </span>
             {/*
@@ -88,7 +99,7 @@ export function ProductCard({
               Dùng `em` chứ không phải cỡ tuyệt đối: nó tự co theo clamp() của
               dòng cha, khỏi phải viết thêm một clamp thứ hai cho khớp.
             */}
-            <span className="text-[0.85em] text-muted"> / {rent.days} ngày</span>
+            <span className="text-muted sm:text-xs"> / {rent.days} ngày</span>
           </p>
           {/*
             Phí cọc: 0 = Sheet/app chưa điền, KHÔNG phải "cọc 0đ". `formatVnd`
@@ -96,7 +107,7 @@ export function ProductCard({
             Liên hệ" thì vô nghĩa, nên ẩn hẳn dòng này thay vì hiện chữ đó.
           */}
           {product.depositPrice > 0 && (
-            <p className="mt-0.5 text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
+            <p className="mt-0.5 whitespace-nowrap text-xs text-muted sm:text-sm">
               Phí cọc:{' '}
               <span className="font-semibold text-ink">
                 {formatVnd(product.depositPrice)}
@@ -109,7 +120,7 @@ export function ProductCard({
             không hiện "0đ" hay "Liên hệ" — cả hai đều nói sai với khách.
           */}
           {product.tagPrice != null && (
-            <p className="mt-0.5 text-[clamp(10px,3.1vw,12px)] text-muted sm:text-sm">
+            <p className="mt-0.5 whitespace-nowrap text-xs text-muted sm:text-sm">
               Giá tag:{' '}
               <span className="font-semibold text-ink">
                 {formatVnd(product.tagPrice)}
@@ -119,6 +130,11 @@ export function ProductCard({
         </div>
       </Link>
 
+      {/* Lớp phủ cùng khung ảnh 3:4 — chỉ nút ♡ nhận bấm, phần còn lại để
+          cú bấm rơi xuống link bên dưới. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 aspect-[3/4]">
+        <NutTui mon={monTuSanPham(product)} className="pointer-events-auto absolute bottom-2 right-2" />
+      </div>
     </div>
   );
 }

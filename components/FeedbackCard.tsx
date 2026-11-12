@@ -74,7 +74,7 @@ export function FeedbackCard({
             “{fb.loiKhach}”
           </span>
         )}
-        <span className="block truncate text-sm font-semibold text-accent-dark">{ten}</span>
+        <span className="line-clamp-2 block text-sm font-semibold leading-snug text-accent-dark">{ten}</span>
         {phu && <span className="block text-xs text-muted">{phu}</span>}
       </span>
     </button>

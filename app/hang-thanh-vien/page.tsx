@@ -192,7 +192,7 @@ export default async function HangThanhVienPage() {
         <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <h1
             id="hang-tieu-de"
-            className="font-serif text-[2.5rem] leading-[1.05] tracking-[-0.02em] text-ink sm:text-[clamp(2.75rem,4.4vw,4rem)]"
+            className="font-serif text-[2.5rem] leading-[1.15] tracking-[-0.02em] text-ink sm:text-[clamp(2.75rem,4.4vw,4rem)]"
           >
             Hạng thành viên {siteConfig.name}
           </h1>

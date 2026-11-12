@@ -131,7 +131,7 @@ export default async function FaqPage() {
       <section className="grid md:min-h-[calc(100svh-6.5rem)] md:grid-cols-2">
         <div className="hd-le flex flex-col justify-between gap-10 pb-10 pt-8 md:pb-14 md:pt-16">
           <div>
-            <h1 className="font-serif text-[clamp(2.4rem,10.5vw,3rem)] font-medium leading-[1.02] tracking-[-0.03em] text-ink md:max-w-[9ch] md:text-[clamp(52px,6.4vw,108px)] md:leading-[0.98]">
+            <h1 className="font-serif text-[clamp(2.4rem,10.5vw,3rem)] leading-[1.15] tracking-[-0.02em] text-ink md:max-w-[9ch] md:text-[clamp(52px,6.4vw,108px)] md:leading-[1.12]">
               Hỏi đáp khi thuê đồ
             </h1>
             <p className="mt-5 max-w-[38ch] text-[17px] leading-relaxed text-ink md:text-lg">

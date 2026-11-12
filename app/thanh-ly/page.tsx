@@ -99,7 +99,7 @@ export default async function ThanhLyPage() {
       {/* Đầu trang: tiêu đề, giá thấp nhất, quà tặng; máy tính có khảm ảnh bên phải. */}
       <section className="container-content grid gap-10 pb-10 pt-8 sm:pt-12 lg:grid-cols-12 lg:gap-x-6 lg:pb-16">
         <div className="lg:col-span-6">
-          <h1 className="font-serif text-[clamp(2.5rem,11vw,3.25rem)] font-medium leading-[1] tracking-[-0.03em] text-ink lg:text-[clamp(52px,5.6vw,88px)]">
+          <h1 className="font-serif text-[clamp(2.5rem,11vw,3.25rem)] leading-[1.15] tracking-[-0.02em] text-ink lg:text-[clamp(52px,5.6vw,88px)]">
             Thanh lý đầm, áo dài
           </h1>
           <p className="mt-5 max-w-[40ch] text-[17px] leading-relaxed text-ink">
@@ -234,7 +234,7 @@ export default async function ThanhLyPage() {
 function ChuaCoMau() {
   return (
     <section className="container-content py-16 sm:py-24">
-      <h1 className="font-serif text-[clamp(2.5rem,11vw,3.25rem)] font-medium leading-[1] tracking-[-0.03em] text-ink lg:text-6xl">
+      <h1 className="font-serif text-[clamp(2.5rem,11vw,3.25rem)] leading-[1.15] tracking-[-0.02em] text-ink lg:text-6xl">
         Thanh lý đầm, áo dài
       </h1>
       <p className="mt-5 max-w-[44ch] text-[17px] leading-relaxed text-ink">

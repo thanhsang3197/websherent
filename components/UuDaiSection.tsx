@@ -79,11 +79,11 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
 
                 <div className="min-w-0 flex-1">
                   <span
-                    className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${kieu.badge}`}
+                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${kieu.badge}`}
                   >
                     {u.loaiTen}
                   </span>
-                  <h3 className="mt-1 line-clamp-2 font-serif text-base leading-snug text-ink sm:text-lg">
+                  <h3 className="mt-1 line-clamp-3 font-serif text-base leading-snug text-ink sm:text-lg">
                     {u.tieuDe}
                   </h3>
                   <p className="mt-0.5 line-clamp-1 text-xs text-muted sm:text-sm">

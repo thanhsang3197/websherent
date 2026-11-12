@@ -74,7 +74,7 @@ export function ContactButtons({
   */
   const sizeClass = compact
     ? 'min-w-0 gap-1 whitespace-nowrap px-2 py-2 text-xs shadow-md [&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:shrink-0'
-    : 'min-w-0 gap-1.5 whitespace-nowrap px-2 text-[clamp(10.5px,calc(5.6cqi-5px),15.2px)] [&>svg]:shrink-0';
+    : 'min-w-0 gap-1.5 px-2 text-center text-[clamp(12px,calc(5.6cqi-5px),15.2px)] leading-tight [&>svg]:shrink-0';
 
   return (
     <>
@@ -117,7 +117,7 @@ export function ContactButtons({
 
       {/* Toast thông báo */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-accent-dark px-5 py-2.5 text-xs font-medium text-surface shadow-lg transition-all animate-in fade-in slide-in-from-bottom-2 sm:text-sm">
+        <div className="fixed bottom-24 md:bottom-6 left-1/2 z-50 rounded-full bg-accent-dark px-5 py-2.5 text-xs font-medium text-surface shadow-lg toast-vao sm:text-sm">
           ✨ {toastMessage}
         </div>
       )}

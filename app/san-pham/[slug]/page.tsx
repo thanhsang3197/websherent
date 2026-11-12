@@ -9,11 +9,12 @@ import {
   getRentalProducts,
 } from '@/lib/products';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd, saleLine, saleNoteLine } from '@/lib/format';
+import { formatVnd, saleLines, saleNoteLine } from '@/lib/format';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
-import { ContactButtons } from '@/components/ContactButtons';
+import { KhoiDatMau } from '@/components/KhoiDatMau';
+import { monTuSanPham } from '@/lib/tui-do-mon';
 import { ProductGallery } from '@/components/ProductGallery';
 import { TieuDeMotDong } from '@/components/TieuDeMotDong';
 import { ProductCarousel } from '@/components/ProductCarousel';
@@ -234,9 +235,11 @@ export default async function ProductPage({
                 Mẫu này đang pass
               </p>
               {/* Cùng câu chữ, cùng cỡ chữ với thẻ ở trang /thanh-ly. */}
-              <p className="mt-1.5 text-sm font-medium text-accent-dark">
-                {saleLine(product.sale.price, product.rentPrice)}
-              </p>
+              <div className="mt-1.5 space-y-0.5 text-sm font-medium text-accent-dark">
+                {saleLines(product.sale.price, product.rentPrice).map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
               {product.sale.note && (
                 <p className="mt-1 text-sm text-muted">
                   {saleNoteLine(product.sale.note)}
@@ -251,13 +254,9 @@ export default async function ProductPage({
             </div>
           )}
 
-          <ContactButtons
-            className="mt-6"
-            chiMessenger
-            contextLabel={`${product.name} (mã ${product.id})`}
-            viTri="chi-tiet"
-            maSp={product.id}
-          />
+          {/* Thêm vào túi + Nhắn giữ mẫu (khách tự chọn Zalo / Messenger /
+              Gọi) — thay nút "chỉ Messenger" cũ, chủ shop chốt 13/11/2026. */}
+          <KhoiDatMau mon={monTuSanPham(product)} />
 
           <GoiYPhuKien category={product.category} products={catalogue} />
 

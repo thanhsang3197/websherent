@@ -26,7 +26,7 @@ export default function manifest(): MetadataRoute.Manifest {
     /** Nền màn hình chờ lúc mở app — đúng màu nền web (--bg trong globals.css). */
     background_color: '#FAF7F3',
     /** Trùng `viewport.themeColor` ở app/layout.tsx — đổi thì đổi cả hai. */
-    theme_color: '#F6F1EA',
+    theme_color: '#FFF7F3',
     lang: 'vi',
     categories: ['shopping', 'lifestyle'],
     icons: [

@@ -132,7 +132,7 @@ export default async function GioiThieuPage() {
                 </a>
               </div>
             </div>
-            <h1 className="gt-ten order-first mb-5 font-serif font-medium uppercase text-ink md:order-none md:mb-0 md:mt-10">
+            <h1 className="gt-ten order-first mb-5 font-logo font-medium uppercase text-ink md:order-none md:mb-0 md:mt-10">
               <span className="sr-only">{siteConfig.name}, cho thuê đầm, váy và áo dài</span>
               <span aria-hidden="true">{siteConfig.name}</span>
             </h1>
@@ -236,7 +236,7 @@ export default async function GioiThieuPage() {
             <h2
               id="gt-cach"
               data-reveal
-              className="font-serif text-[2.5rem] leading-[1.05] tracking-[-0.02em] text-ink lg:text-[clamp(40px,4.4vw,68px)]"
+              className="font-serif text-[2.5rem] leading-[1.15] tracking-[-0.02em] text-ink lg:text-[clamp(40px,4.4vw,68px)]"
             >
               Thuê đồ thế nào
             </h2>
@@ -303,7 +303,7 @@ export default async function GioiThieuPage() {
           <h2
             id="gt-lien-he"
             data-reveal
-            className="font-serif text-[2.5rem] leading-[1.05] tracking-[-0.02em] lg:text-[clamp(36px,4vw,60px)]"
+            className="font-serif text-[2.5rem] leading-[1.15] tracking-[-0.02em] lg:text-[clamp(36px,4vw,60px)]"
           >
             Nhắn tiệm giữ mẫu
           </h2>

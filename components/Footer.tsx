@@ -74,7 +74,7 @@ export function Footer() {
       <div className="container-content grid grid-cols-2 gap-x-6 gap-y-6 py-8 text-sm text-ink sm:py-12 md:grid-cols-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:gap-x-12">
         {/* Cột 1 — Tên tiệm, mô tả, mạng xã hội */}
         <div className="col-span-2 md:col-span-3 lg:col-span-1">
-          <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink">
+          <h2 className="font-logo text-2xl font-semibold tracking-tight text-ink">
             <Brand />
           </h2>
           <p className="mt-2 max-w-xs leading-relaxed">

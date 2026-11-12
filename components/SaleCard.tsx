@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
-import { saleLine, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
+import { saleLine, saleLines, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
 import { trackSaleOpen, trackZaloClick } from '@/lib/analytics';
 import { NEN_O } from '@/lib/thanh-ly';
@@ -99,15 +99,20 @@ export function SaleCard({
           <h3 className="line-clamp-2 text-base font-medium leading-snug text-ink transition-colors group-hover:text-accent-dark sm:text-lg">
             {product.name}
           </h3>
-          {phu && <p className="mt-0.5 line-clamp-1 text-[13px] text-ink/65 sm:text-sm">{phu}</p>}
+          {phu && <p className="mt-0.5 line-clamp-2 text-[13px] text-ink/65 sm:text-sm">{phu}</p>}
 
           {/* Giá và tình trạng dùng CHUNG một cỡ chữ và một font (font nền của
               trang, không phải font serif của tiêu đề) — chủ shop chốt
               13/08/2026: hai dòng phải trông như một đoạn viết tay, không phải
               hai mảng thiết kế khác nhau. */}
-          <p className="mt-2 text-sm font-semibold text-accent-dark sm:text-[15px]">
-            {saleLine(sale.price, product.rentPrice)}
-          </p>
+          {saleLines(sale.price, product.rentPrice).map((line, i) => (
+            <p
+              key={line}
+              className={`${i === 0 ? 'mt-2' : 'mt-0.5'} text-sm font-semibold text-accent-dark sm:text-[15px]`}
+            >
+              {line}
+            </p>
+          ))}
           {sale.note && (
             <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-accent-dark sm:text-[15px]">
               {saleNoteLine(sale.note)}

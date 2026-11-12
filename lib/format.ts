@@ -63,9 +63,18 @@ export function listRentPrice(product: {
  *  - không có giá thuê  -> "Pass 200.000đ."
  */
 export function saleLine(salePrice: number, rentPrice: number): string {
+  return `${saleLines(salePrice, rentPrice).join(' - ')}.`;
+}
+
+/**
+ * Cùng nội dung với `saleLine` nhưng tách thành từng dòng để hiển thị trên
+ * trang (dòng Pass và dòng Thuê đứng riêng — chủ shop chốt 08/11/2026).
+ * Tin nhắn Zalo vẫn dùng `saleLine` một dòng.
+ */
+export function saleLines(salePrice: number, rentPrice: number): string[] {
   const pass = salePrice > 0 ? `Pass ${formatVndD(salePrice)}` : 'Pass giá liên hệ';
-  if (!(rentPrice > 0)) return `${pass}.`;
-  return `${pass} - Thuê ${formatVndD(rentPrice)}/3 ngày.`;
+  if (!(rentPrice > 0)) return [pass];
+  return [pass, `Thuê ${formatVndD(rentPrice)}/3 ngày`];
 }
 
 /** Dòng tình trạng mẫu, luôn cùng một khuôn: "Tình trạng : 99%". */

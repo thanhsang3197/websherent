@@ -10,9 +10,11 @@ import { TheoDoiChepSo } from '@/components/TheoDoiChepSo';
 import { Header } from '@/components/Header';
 import { getAlbums, getUuDai } from '@/lib/products';
 import { Footer } from '@/components/Footer';
-import { StickyContactBar } from '@/components/StickyContactBar';
+import { ThanhDuoi } from '@/components/ThanhDuoi';
+import { LienHeSheet } from '@/components/LienHeSheet';
+import { ThongBao } from '@/components/ThongBao';
 
-// Tiêu đề: serif thanh lịch. Body: Be Vietnam Pro (đủ dấu tiếng Việt).
+// Tiêu đề + logo: Playfair Display. Nội dung: Be Vietnam Pro (đủ dấu tiếng Việt).
 const serif = Playfair_Display({
   subsets: ['latin', 'vietnamese'],
   weight: ['500', '600', '700'],
@@ -22,7 +24,7 @@ const serif = Playfair_Display({
 
 const sans = Be_Vietnam_Pro({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-sans',
   display: 'swap',
 });
@@ -88,7 +90,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#F6F1EA',
+  themeColor: '#FFF7F3',
   colorScheme: 'light',
 };
 
@@ -109,12 +111,16 @@ export default async function RootLayout({
 
   return (
     <html lang="vi" className={`${serif.variable} ${sans.variable}`}>
-      <body className="relative min-h-screen bg-bg text-ink selection:bg-accent/20">
-        {/* Nền quầng sáng chuyển động hiệu ứng Liquid Glass */}
+      <body className="relative min-h-screen bg-bg pb-[calc(64px+env(safe-area-inset-bottom))] text-ink selection:bg-accent/20 md:pb-0">
+        {/*
+          Nền quầng sáng Liquid Glass. Điện thoại (13/11/2026): chỉ 1 quầng
+          ĐỨNG YÊN — 3 khối blur 100px+ chạy liên tục làm giật khi cuộn trên máy
+          tầm trung. Từ md trở lên giữ đủ 3 quầng chuyển động như cũ.
+        */}
         <div className="pointer-events-none fixed inset-0 z-[-1] overflow-hidden" aria-hidden="true">
-          <div className="absolute -left-20 -top-20 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-accent/12 to-amber-200/15 blur-[100px] animate-fluid-blob" />
-          <div className="absolute -right-20 top-1/3 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-rose-300/10 to-accent/10 blur-[120px] animate-fluid-blob-slow" />
-          <div className="absolute bottom-10 left-1/4 h-[550px] w-[550px] rounded-full bg-gradient-to-tr from-amber-300/10 to-accent/8 blur-[110px] animate-fluid-blob" />
+          <div className="absolute -left-20 -top-20 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-accent/12 to-amber-200/15 blur-[100px] md:animate-fluid-blob" />
+          <div className="absolute -right-20 top-1/3 hidden h-[600px] w-[600px] rounded-full bg-gradient-to-br from-rose-300/10 to-accent/10 blur-[120px] md:block md:animate-fluid-blob-slow" />
+          <div className="absolute bottom-10 left-1/4 hidden h-[550px] w-[550px] rounded-full bg-gradient-to-tr from-amber-300/10 to-accent/8 blur-[110px] md:block md:animate-fluid-blob" />
         </div>
 
         {/* JSON-LD LocalBusiness — hiện trên mọi trang cho SEO & GEO. */}
@@ -132,7 +138,10 @@ export default async function RootLayout({
         </div>
         <main id="noi-dung">{children}</main>
         <Footer />
-        <StickyContactBar />
+        {/* Điện thoại: thanh điều hướng dưới đáy (thay nút Zalo nổi cũ, 13/11/2026). */}
+        <ThanhDuoi />
+        <LienHeSheet />
+        <ThongBao />
         <Analytics />
         <TheoDoiChepSo />
       </body>

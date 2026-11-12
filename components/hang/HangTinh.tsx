@@ -131,7 +131,7 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
 
   return (
     <div className="grid items-center gap-10 md:grid-cols-12 md:gap-6">
-      <div className="md:col-span-6 lg:col-span-5" data-reveal>
+      <div className="min-w-0 md:col-span-6 lg:col-span-5" data-reveal>
         <form onSubmit={traHang} noValidate>
           <label htmlFor={idSdt} className="text-[17px] font-medium text-ink">
             Số điện thoại bạn dùng khi thuê
@@ -173,11 +173,11 @@ export function HangTinh({ dsHang, dongMoiDiem }: { dsHang: HangKhach[]; dongMoi
 
         <h3 className="mt-12 font-sans text-[17px] font-medium text-ink">Hoặc ước tính theo số đã thuê</h3>
         <div className="mt-6">
-          <div className="flex items-baseline justify-between gap-x-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <label htmlFor={idPhi} className="text-[17px] font-medium text-ink">
               Phí thuê đã trả
             </label>
-            <span className="whitespace-nowrap font-serif text-4xl tabular-nums text-ink sm:text-5xl">{so(phi)} đ</span>
+            <span className="whitespace-nowrap font-serif text-3xl tabular-nums text-ink sm:text-5xl">{so(phi)} đ</span>
           </div>
           <input
             id={idPhi}

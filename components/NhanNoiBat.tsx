@@ -31,15 +31,15 @@ export function NhanNoiBat({ hot, isNew }: { hot?: boolean; isNew?: boolean }) {
   return (
     <div
       ref={ref}
-      className="pointer-events-none absolute bottom-2 left-2 flex gap-1 sm:bottom-2.5 sm:left-2.5"
+      className="pointer-events-none absolute bottom-2 left-2 flex flex-col items-start gap-1 sm:bottom-2.5 sm:left-2.5 lg:flex-row"
     >
       {hot && (
-        <span className="nhan-lap-lanh rounded-full bg-gradient-to-r from-[#c2412d] to-[#e8774a] px-2 py-0.5 text-[10px] font-bold tracking-wider text-white shadow-md sm:text-[11px]">
+        <span className="nhan-lap-lanh rounded-full bg-gradient-to-r from-[#c2412d] to-[#e8774a] px-2 py-0.5 text-[11px] font-bold tracking-wide text-white shadow-md sm:text-xs">
           🔥 HOT
         </span>
       )}
       {isNew && (
-        <span className="nhan-lap-lanh rounded-full bg-gradient-to-r from-accent to-accent-dark px-2 py-0.5 text-[10px] font-bold tracking-wider text-surface shadow-md sm:text-[11px]">
+        <span className="nhan-lap-lanh rounded-full bg-gradient-to-r from-accent to-accent-dark px-2 py-0.5 text-[11px] font-bold tracking-wide text-surface shadow-md sm:text-xs">
           ✨ NEW
         </span>
       )}

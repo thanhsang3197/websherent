@@ -3,18 +3,19 @@
 @tailwind utilities;
 
 /*
-  Palette "Kem & Đất nung" (terracotta). Định nghĩa dạng RGB triplet để Tailwind
+  Palette "Hồng mâm xôi" (11/2026 — chủ shop muốn trẻ, năng động hơn; trước
+  đây là "Kem & Đất nung" terracotta). Định nghĩa dạng RGB triplet để Tailwind
   dùng được opacity modifier (bg-accent/10, text-ink/70...). Xem tailwind.config.ts.
 */
 :root {
-  --bg: 250 247 243; /* #FAF7F3 kem nhạt */
-  --surface: 252 250 246; /* #FCFAF6 nền thẻ */
-  --accent: 176 106 79; /* #B06A4F đất nung */
-  --accent-dark: 149 87 63; /* #95573F đất nung đậm (hover) */
-  --ink: 42 38 34; /* #2A2622 chữ chính */
-  --muted: 111 103 94; /* #6F675E chữ phụ */
-  --hairline: 228 218 206; /* #E4DACE đường kẻ mảnh */
-  --tint: 232 213 199; /* #E8D5C7 nền nhấn nhạt */
+  --bg: 255 247 243; /* #FFF7F3 kem hồng nhạt */
+  --surface: 255 252 250; /* #FFFCFA nền thẻ */
+  --accent: 201 42 98; /* #C92A62 hồng mâm xôi */
+  --accent-dark: 158 31 76; /* #9E1F4C mâm xôi đậm (hover) */
+  --ink: 30 26 27; /* #1E1A1B chữ chính */
+  --muted: 94 83 87; /* #5E5357 chữ phụ */
+  --hairline: 237 226 229; /* #EDE2E5 đường kẻ mảnh */
+  --tint: 252 228 236; /* #FCE4EC nền nhấn nhạt */
 }
 
 @layer base {
@@ -86,7 +87,7 @@
     backdrop-filter: blur(14px) saturate(160%);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 10px 30px 0 rgba(176, 106, 79, 0.08);
+    box-shadow: 0 10px 30px 0 rgba(201, 42, 98, 0.08);
   }
 
   .glass-panel {
@@ -114,7 +115,7 @@
   .glass-input:focus {
     background: rgba(255, 255, 255, 0.9);
     border-color: rgb(var(--accent));
-    box-shadow: 0 0 0 3px rgba(176, 106, 79, 0.15);
+    box-shadow: 0 0 0 3px rgba(201, 42, 98, 0.15);
   }
 
   .glass-pill {
@@ -154,7 +155,7 @@
     gap: 0.5rem;
     border-radius: 9999px;
     padding: 0.75rem 1.6rem;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 0.95rem;
     line-height: 1.2;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -164,18 +165,18 @@
     background: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-dark)) 100%);
     color: rgb(var(--surface));
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 20px -4px rgba(176, 106, 79, 0.4);
+    box-shadow: 0 8px 20px -4px rgba(201, 42, 98, 0.4);
   }
   .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px -4px rgba(176, 106, 79, 0.5);
+    box-shadow: 0 12px 24px -4px rgba(201, 42, 98, 0.5);
   }
 
   .btn-outline {
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(176, 106, 79, 0.4);
+    border: 1px solid rgba(201, 42, 98, 0.4);
     color: rgb(var(--accent-dark));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   }
@@ -602,4 +603,96 @@
 @media (prefers-reduced-motion: reduce) {
   .tl-doi { animation: none; opacity: 0; }
   .tl-doi:first-child { opacity: 1; }
+}
+
+/* ============================================================
+   CHUYỂN ĐỘNG TƯƠNG TÁC (13/11/2026) — mục 1–6 đề xuất UI/UX.
+   Chỉ dùng transform/opacity (máy chạy nhẹ), mỗi cái ≤ ~400ms.
+   ============================================================ */
+
+/* Bỏ ô xanh nháy khi chạm trên điện thoại — đã có hiệu ứng co nút thay. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 5. Nút co nhẹ khi nhấn, đồng bộ toàn trang. `.nhan-co` cho nút không phải .btn. */
+.nhan-co {
+  transition: transform 150ms ease, color 150ms ease, background-color 150ms ease;
+}
+.btn:active,
+.nhan-co:active {
+  transform: scale(0.97);
+  transition-duration: 80ms;
+}
+
+/* 3. Tim nảy khi thêm vào túi. */
+@keyframes tim-nay {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.35); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.tim-nay {
+  animation: tim-nay 420ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+/* 3. Huy hiệu số món nhảy khi đổi. */
+@keyframes huy-hieu-nay {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+.huy-hieu-nay {
+  animation: huy-hieu-nay 380ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+
+/* Thông báo nhỏ (toast) trồi lên từ dưới. */
+@keyframes toast-vao {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.toast-vao {
+  animation: toast-vao 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* 4. Bảng "Nhắn tiệm qua": nền mờ dần, bảng trượt lên từ đáy. */
+@keyframes nen-mo-vao { from { opacity: 0; } to { opacity: 1; } }
+@keyframes nen-mo-ra { from { opacity: 1; } to { opacity: 0; } }
+@keyframes bang-truot-len { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes bang-truot-xuong { from { transform: translateY(var(--keo, 0px)); } to { transform: translateY(100%); } }
+@keyframes bang-hien { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes bang-an { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.96); } }
+.nen-mo-vao { animation: nen-mo-vao 220ms ease-out both; }
+.nen-mo-ra { animation: nen-mo-ra 200ms ease-in both; }
+.bang-vao { animation: bang-truot-len 300ms cubic-bezier(0.2, 0.9, 0.25, 1) both; }
+.bang-ra { animation: bang-truot-xuong 220ms ease-in both; }
+@media (min-width: 640px) {
+  .bang-vao { animation-name: bang-hien; animation-duration: 220ms; }
+  .bang-ra { animation-name: bang-an; animation-duration: 180ms; }
+}
+
+/* 6. Pháo nhỏ khi túi đủ mốc ưu đãi: mỗi chấm bay theo --dx/--dy. */
+@keyframes phao-no {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4); }
+}
+.phao-no {
+  animation: phao-no 900ms cubic-bezier(0.15, 0.7, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tim-nay,
+  .huy-hieu-nay,
+  .toast-vao,
+  .nen-mo-vao,
+  .nen-mo-ra,
+  .bang-vao,
+  .bang-ra,
+  .phao-no {
+    animation-duration: 1ms !important;
+  }
+  .btn:active,
+  .nhan-co:active {
+    transform: none;
+  }
 }

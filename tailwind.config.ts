@@ -25,8 +25,26 @@ const config: Config = {
         tint: 'rgb(var(--tint) / <alpha-value>)',
       },
       fontFamily: {
+        // Tiêu đề: Playfair Display. (13/11/2026 có thử đổi sang Be Vietnam Pro
+        // cho trẻ hơn, chủ shop không thích -> giữ Playfair.) `font-logo` cùng
+        // font, dành riêng cho chữ SHERENT.
         serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'serif'],
+        logo: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'serif'],
         sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      /*
+        Thang cỡ chữ lớn với KHOẢNG DÒNG đủ cho dấu tiếng Việt chồng (Ổ, Ữ, Ặ…)
+        khi tiêu đề xuống dòng (13/11/2026). Mặc định Tailwind để 5xl–9xl ở
+        line-height 1 — hợp chữ Latin, nhưng với Be Vietnam Pro đậm thì dấu
+        dòng dưới gần chạm chân chữ dòng trên.
+      */
+      fontSize: {
+        '4xl': ['2.25rem', { lineHeight: '1.2' }],
+        '5xl': ['3rem', { lineHeight: '1.15' }],
+        '6xl': ['3.75rem', { lineHeight: '1.15' }],
+        '7xl': ['4.5rem', { lineHeight: '1.12' }],
+        '8xl': ['6rem', { lineHeight: '1.1' }],
+        '9xl': ['8rem', { lineHeight: '1.1' }],
       },
       borderRadius: {
         arch: '45% 45% 6px 6px / 30% 30% 4px 4px',
@@ -35,10 +53,10 @@ const config: Config = {
         content: '72rem',
       },
       boxShadow: {
-        glass: '0 8px 32px 0 rgba(176, 106, 79, 0.08)',
-        'glass-hover': '0 12px 40px 0 rgba(176, 106, 79, 0.16)',
+        glass: '0 8px 32px 0 rgba(201, 42, 98, 0.08)',
+        'glass-hover': '0 12px 40px 0 rgba(201, 42, 98, 0.16)',
         'glass-lg': '0 20px 50px 0 rgba(42, 38, 34, 0.12)',
-        'glass-glow': '0 0 25px 0 rgba(176, 106, 79, 0.3)',
+        'glass-glow': '0 0 25px 0 rgba(201, 42, 98, 0.3)',
       },
       keyframes: {
         'fade-up': {

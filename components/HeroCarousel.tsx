@@ -10,7 +10,8 @@ import { GLASS_BLUR_DATA_URL } from '@/lib/format';
 const INTERVAL_MS = 5000; // đổi ảnh mỗi 5 giây
 const ANIM_MS = 700; // thời lượng hiệu ứng trượt
 
-const SIZES = '(max-width: 640px) 256px, (max-width: 1024px) 288px, 384px';
+// Khung hero phương án A (13/11/2026): gần full bề ngang trên điện thoại.
+const SIZES = '(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px';
 
 /**
  * Slideshow hero: tự đổi mỗi 5s, hiệu ứng trượt phải→trái.
