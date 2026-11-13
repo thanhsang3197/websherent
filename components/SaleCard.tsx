@@ -2,60 +2,47 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import type { Product } from '@/types/product';
 import { CATEGORY_LABELS } from '@/types/product';
-import { saleLine, saleLines, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
+import { formatVndD, saleLines, saleNoteLine, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
-import { trackSaleOpen, trackZaloClick } from '@/lib/analytics';
+import { trackSaleOpen } from '@/lib/analytics';
 import { NEN_O } from '@/lib/thanh-ly';
+import { giaFlash, PHAN_TRAM_FLASH } from '@/lib/flash-sale';
+import { monMuaTuSanPham } from '@/lib/gio-mua-mon';
+import { boKhoiGio, themVaoGio, useGioMua } from '@/lib/gio-mua';
+import { bayVaoTui, thongBao } from '@/lib/hieu-ung';
 
 /**
  * Thẻ sản phẩm trên trang THANH LÝ.
  *
- * Khác `ProductCard` ở chỗ nhân vật chính là GIÁ BÁN, còn phí thuê chỉ là mốc
- * so sánh; và mỗi thẻ có nút Zalo riêng kèm sẵn mã mẫu (khách hay nhắn "cái đầm
- * hồng hồng" rồi cả hai bên đoán nhau).
+ * Nhân vật chính là GIÁ BÁN (phí thuê chỉ là mốc so sánh). Nút chính là "Thêm
+ * vào giỏ" (chủ shop chốt 14/11/2026): khách gom nhiều mẫu rồi gửi một tin nhắn
+ * cho tiệm ở giỏ mua — components/GioMuaThanhLy.tsx — thay cho nút "Nhắn Zalo
+ * mua" từng mẫu trước đây.
  *
- * Là client component vì nút Zalo copy nội dung tin nhắn vào clipboard — cùng
- * cách làm với `components/ContactButtons.tsx` (zalo.me không nhận sẵn nội dung
- * tin nhắn qua URL, nên copy rồi để khách dán là đường duy nhất).
+ * `flash`: mẫu đang trong flash sale 48 giờ (lib/flash-sale.ts) -> nhãn −10% và
+ * giá đã giảm, giá pass gốc gạch ngang.
  */
 export function SaleCard({
   product,
   priority = false,
   nen = NEN_O[0],
+  flash = false,
 }: {
   product: Product;
   /** Ưu tiên tải ảnh cho vài thẻ đầu (LCP). */
   priority?: boolean;
   /** Lớp nền của ô ảnh (một trong NEN_O). */
   nen?: string;
+  flash?: boolean;
 }) {
-  const [copied, setCopied] = useState(false);
+  const gio = useGioMua();
   const sale = product.sale;
   if (!sale) return null;
 
-  const message =
-    `Hi ${siteConfig.name}, mình muốn MUA mẫu thanh lý: ` +
-    `${product.name} (mã ${product.id})` +
-    `${product.sizes.length ? ` - size ${product.sizes.join('/')}` : ''}` +
-    // Cùng câu chữ với thẻ sản phẩm, để tin nhắn khách gửi khớp đúng thứ họ
-    // đang nhìn thấy trên màn hình.
-    ` - ${saleLine(sale.price, product.rentPrice)}`;
-
-  const handleZaloClick = () => {
-    trackZaloClick('thanh-ly', product.id);
-    if (typeof navigator === 'undefined' || !navigator.clipboard) return;
-    navigator.clipboard
-      .writeText(message)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 4000);
-      })
-      // Clipboard bị chặn (http, quyền trình duyệt) thì vẫn mở Zalo bình thường.
-      .catch(() => {});
-  };
+  const trongGio = gio.mon.some((m) => m.id === product.id);
+  const coFlash = flash && sale.price > 0;
 
   const phu = [
     product.category !== 'dam-vay' ? CATEGORY_LABELS[product.category] : null,
@@ -65,6 +52,19 @@ export function SaleCard({
     .filter(Boolean)
     .join(' · ');
 
+  const [dongPass, ...dongKhac] = saleLines(coFlash ? giaFlash(sale.price) : sale.price, product.rentPrice);
+
+  const bam = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (trongGio) {
+      boKhoiGio(product.id);
+      thongBao({ noiDung: `Đã bỏ ${product.name} khỏi giỏ` });
+      return;
+    }
+    themVaoGio(monMuaTuSanPham(product));
+    bayVaoTui(e.currentTarget, '[data-dich-gio]');
+    thongBao({ noiDung: `Đã thêm ${product.name} vào giỏ mua` });
+  };
+
   return (
     <div className="group flex h-full w-full flex-col">
       <Link
@@ -73,7 +73,7 @@ export function SaleCard({
         className="block"
       >
         {/* Ô màu phẳng, ảnh đặt giữa như một mẫu trong catalogue. */}
-        <div className={`${nen} p-2.5 transition-colors sm:p-3.5`}>
+        <div className={`${nen} relative p-2.5 transition-colors sm:p-3.5`}>
           <div className="relative aspect-[3/4] overflow-hidden bg-surface/40">
             {product.image ? (
               <Image
@@ -92,6 +92,12 @@ export function SaleCard({
                 <span className="text-[13px] text-ink/60">Ảnh đang cập nhật</span>
               </div>
             )}
+
+            {coFlash && (
+              <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[12px] font-bold text-white shadow-md sm:text-[13px]">
+                <IconSet /> −{PHAN_TRAM_FLASH}%
+              </span>
+            )}
           </div>
         </div>
 
@@ -103,13 +109,16 @@ export function SaleCard({
 
           {/* Giá và tình trạng dùng CHUNG một cỡ chữ và một font (font nền của
               trang, không phải font serif của tiêu đề) — chủ shop chốt
-              13/08/2026: hai dòng phải trông như một đoạn viết tay, không phải
-              hai mảng thiết kế khác nhau. */}
-          {saleLines(sale.price, product.rentPrice).map((line, i) => (
-            <p
-              key={line}
-              className={`${i === 0 ? 'mt-2' : 'mt-0.5'} text-sm font-semibold text-accent-dark sm:text-[15px]`}
-            >
+              13/08/2026: các dòng phải trông như một đoạn viết tay. Flash sale
+              chỉ thêm giá gốc gạch ngang cùng dòng, không đổi khuôn chữ. */}
+          <p className="mt-2 text-sm font-semibold text-accent-dark sm:text-[15px]">
+            {dongPass}
+            {coFlash && (
+              <s className="ml-1.5 font-normal text-ink/45">{formatVndD(sale.price)}</s>
+            )}
+          </p>
+          {dongKhac.map((line) => (
+            <p key={line} className="mt-0.5 text-sm font-semibold text-accent-dark sm:text-[15px]">
               {line}
             </p>
           ))}
@@ -123,23 +132,38 @@ export function SaleCard({
 
       <div className="mt-3 flex-1" />
 
-      <a
-        href={siteConfig.zaloUrl3}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={handleZaloClick}
-        className="flex min-h-[44px] w-full items-center justify-center rounded-full bg-ink px-3 text-[15px] font-medium text-surface transition hover:bg-accent-dark active:scale-[0.97]"
-        aria-label={`Nhắn Zalo mua ${product.name} (mã ${product.id})`}
+      <button
+        type="button"
+        onClick={bam}
+        aria-pressed={trongGio}
+        aria-label={trongGio ? `Bỏ ${product.name} khỏi giỏ mua` : `Thêm ${product.name} (mã ${product.id}) vào giỏ mua`}
+        className={`flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-full px-3 text-[15px] font-medium transition active:scale-[0.97] ${
+          trongGio
+            ? 'bg-accent/15 text-accent-dark hover:bg-accent/25'
+            : 'bg-ink text-surface hover:bg-accent-dark'
+        }`}
       >
-        {/* Chữ phải ngắn để vừa bề ngang ô trên điện thoại (2 cột). CẢ HAI
-            trạng thái đều phải vừa — trạng thái sau khi bấm mà dài là nút vỡ
-            đúng lúc khách vừa chạm vào. Tên mẫu + mã SP vẫn nằm trong
-            aria-label cho trình đọc màn hình. */}
-        {copied ? 'Đã chép tin nhắn' : 'Nhắn Zalo mua'}
-      </a>
-      <p aria-live="polite" className="mt-1.5 min-h-[1.25rem] text-center text-[13px] text-ink/70">
-        {copied ? 'Dán vào khung chat Zalo nhé' : ''}
-      </p>
+        {/* Chữ ngắn để vừa ô 2 cột trên điện thoại ở CẢ HAI trạng thái. */}
+        {trongGio ? (
+          <>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12.5l4.5 4.5L19 7.5" />
+            </svg>
+            Đã trong giỏ
+          </>
+        ) : (
+          'Thêm vào giỏ'
+        )}
+      </button>
     </div>
+  );
+}
+
+/** Tia sét nhỏ cho nhãn flash sale. */
+export function IconSet({ size = 12 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M13.5 2 4 14h7l-1.5 8L20 10h-7z" />
+    </svg>
   );
 }

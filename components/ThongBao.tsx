@@ -30,7 +30,7 @@ export function ThongBao() {
   }, []);
 
   return (
-    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] z-[65] md:bottom-6">
+    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(76px+var(--day-noi,0px)+env(safe-area-inset-bottom))] z-[65] md:bottom-[calc(24px+var(--day-noi,0px))]">
       {tb && (
         <div
           key={tb.key}

@@ -6,7 +6,10 @@ import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { formatVndD, GLASS_BLUR_DATA_URL } from '@/lib/format';
 import { TrackedContactLink } from '@/components/TrackedContactLink';
 import { SaleGrid } from '@/components/SaleGrid';
-import { KhamThanhLy } from '@/components/KhamThanhLy';
+import { FlashSaleThanhLy } from '@/components/FlashSaleThanhLy';
+import { GioMuaThanhLy, IconQua } from '@/components/GioMuaThanhLy';
+import { QUA_TANG } from '@/lib/gio-mua-mon';
+import { PHAN_TRAM_FLASH, SO_MAU_FLASH } from '@/lib/flash-sale';
 import { RevealRoot } from '@/components/hang/RevealRoot';
 import type { Product } from '@/types/product';
 
@@ -32,22 +35,22 @@ export const metadata: Metadata = {
   },
 };
 
-/**
- * Chương trình tặng mẫu khi mua thanh lý — chủ shop đặt, chưa có bên app nên
- * ghi cứng ở đây. Đổi / tắt chương trình thì sửa (hoặc để rỗng) mảng này.
- */
-const QUA_TANG = [
-  { don: '300k', tang: '50k' },
-  { don: '500k', tang: '100k' },
-];
+const k = (n: number) => `${n / 1000}k`;
 
 /** Hỏi nhanh cách mua — câu chữ lấy từ phần giới thiệu cũ chủ shop đã viết. */
 const HOI_DAP: { hoi: string; dap: string }[] = [
   {
     hoi: 'Mua mẫu thanh lý thế nào?',
     dap:
-      `Bấm "Nhắn Zalo mua" ở mẫu bạn thích: tin nhắn có sẵn tên, mã và giá được chép lại, bạn chỉ cần dán vào Zalo ` +
-      `${siteConfig.phone3.display}. Tiệm gửi thêm ảnh thật và giữ mẫu cho bạn.`,
+      `Bấm "Thêm vào giỏ" ở các mẫu bạn thích, rồi mở giỏ mua ở đáy màn hình và bấm "Gửi đơn cho tiệm". ` +
+      `Chọn Zalo, Messenger hoặc gọi: tin nhắn có sẵn tên, mã, giá từng mẫu được chép lại, bạn chỉ cần dán vào khung chat. ` +
+      `Tiệm gửi thêm ảnh thật và giữ mẫu cho bạn.`,
+  },
+  {
+    hoi: 'Flash sale là gì?',
+    dap:
+      `Cứ mỗi 48 giờ tiệm chọn ngẫu nhiên ${SO_MAU_FLASH} mẫu và giảm thêm ${PHAN_TRAM_FLASH}% so với giá pass. ` +
+      `Hết giờ là đổi sang bộ mẫu khác, nên thấy mẫu ưng trong flash sale thì chốt sớm nhé.`,
   },
   {
     hoi: 'Thanh toán và nhận đồ ra sao?',
@@ -67,8 +70,8 @@ const HOI_DAP: { hoi: string; dap: string }[] = [
         {
           hoi: 'Quà tặng tính thế nào?',
           dap:
-            QUA_TANG.map((q) => `Đơn từ ${q.don} được tặng 1 mẫu giá ${q.tang}`).join(', ') +
-            '. Chương trình áp dụng cho tới khi hết sản phẩm.',
+            QUA_TANG.map((q) => `Đơn từ ${k(q.don)} được tặng 1 mẫu giá ${k(q.tang)}`).join(', ') +
+            '. Đủ mốc thì giỏ mua hiện các mẫu quà để bạn tự chọn. Chương trình áp dụng cho tới khi hết sản phẩm.',
         },
       ]
     : []),
@@ -86,9 +89,7 @@ export default async function ThanhLyPage() {
   const products = await getSaleProducts();
   const coGia = products.filter((p) => (p.sale?.price ?? 0) > 0);
   const giaThapNhat = coGia.length ? Math.min(...coGia.map((p) => p.sale!.price)) : 0;
-  const khamPha = mauCoAnh(products, 5);
-  const anhCuoi = mauCoAnh([...products].reverse(), 1)[0] ?? khamPha[0];
-  const anhKham = mauCoAnh(products, Infinity).map((p) => p.image as string);
+  const anhCuoi = mauCoAnh([...products].reverse(), 1)[0] ?? mauCoAnh(products, 1)[0];
 
   if (products.length === 0) return <ChuaCoMau />;
 
@@ -96,71 +97,48 @@ export default async function ThanhLyPage() {
     <>
       <RevealRoot />
 
-      {/* Đầu trang: tiêu đề, giá thấp nhất, quà tặng; máy tính có khảm ảnh bên phải. */}
-      <section className="container-content grid gap-10 pb-10 pt-8 sm:pt-12 lg:grid-cols-12 lg:gap-x-6 lg:pb-16">
-        <div className="lg:col-span-6">
-          <h1 className="font-serif text-[clamp(2.5rem,11vw,3.25rem)] leading-[1.15] tracking-[-0.02em] text-ink lg:text-[clamp(52px,5.6vw,88px)]">
-            Thanh lý đầm, áo dài
-          </h1>
-          <p className="mt-5 max-w-[40ch] text-[17px] leading-relaxed text-ink">
-            Mẫu tiệm từng cho thuê, nay pass lại với giá bán đứt. Mẫu vẫn cho thuê song song nên ai chốt trước
-            lấy trước.
-          </p>
-
-          <p className="mt-7 flex flex-wrap items-baseline gap-x-5 gap-y-2 text-[17px] text-ink sm:gap-x-8">
-            <span>
-              <span className="font-serif text-[2rem] leading-none tabular-nums sm:text-[2.5rem]">{products.length}</span> mẫu đang pass
-            </span>
-            {giaThapNhat > 0 && (
-              <span>
-                giá từ{' '}
-                <span className="font-serif text-[2rem] leading-none tabular-nums text-accent-dark sm:text-[2.5rem]">
-                  {formatVndD(giaThapNhat)}
-                </span>
-              </span>
-            )}
-          </p>
-
-          {QUA_TANG.length > 0 && (
-            <div className="mt-8 bg-accent-dark px-5 py-5 text-surface sm:px-6">
-              <h2 className="font-serif text-2xl leading-tight">Mua càng nhiều, tặng thêm mẫu</h2>
-              <ul className="mt-3 space-y-1.5 text-[17px]">
-                {QUA_TANG.map((q) => (
-                  <li key={q.don} className="flex flex-wrap items-baseline justify-between gap-x-4">
-                    <span>Đơn từ {q.don}</span>
-                    <span className="font-semibold">tặng 1 mẫu giá {q.tang}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-3 text-[15px] text-surface/85">Áp dụng cho tới khi hết sản phẩm.</p>
-            </div>
+      {/* Đầu trang GỌN (chủ shop chốt 14/11/2026): khách mở trang là thấy mẫu
+          ngay, không phải cuộn qua một màn hình chữ. */}
+      <section className="container-content pb-6 pt-6 sm:pb-8 sm:pt-10">
+        <h1 className="font-serif text-[clamp(2rem,9vw,2.75rem)] leading-[1.1] tracking-[-0.02em] text-ink lg:text-[clamp(48px,4.6vw,68px)]">
+          Thanh lý đầm, áo dài
+        </h1>
+        <p className="mt-3 max-w-[52ch] text-[16px] leading-relaxed text-ink sm:text-[17px]">
+          <strong className="font-semibold">{products.length} mẫu</strong>
+          {giaThapNhat > 0 && (
+            <>
+              {' '}
+              giá chỉ từ <strong className="font-semibold text-accent-dark">{formatVndD(giaThapNhat)}</strong>
+            </>
           )}
+          . Mua đứt, mỗi mẫu một chiếc — ai chốt trước lấy trước.
+        </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
-            <a href="#danh-sach" className={nutDen}>
-              Xem {products.length} mẫu
-            </a>
-            <a
-              href="#cach-mua"
-              className="text-[15px] font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-accent-dark"
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          {QUA_TANG.map((q) => (
+            <span
+              key={q.don}
+              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-accent/10 px-3.5 text-[14px] text-ink"
             >
-              Cách mua
-            </a>
-          </div>
+              <IconQua size={16} />
+              Đơn {k(q.don)} <span className="font-semibold text-accent-dark">tặng mẫu {k(q.tang)}</span>
+            </span>
+          ))}
+          <a
+            href="#cach-mua"
+            className="ml-1 inline-flex min-h-[36px] items-center text-[14px] font-medium text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-accent-dark"
+          >
+            Cách mua
+          </a>
         </div>
-
-        {/* Khảm 5 mẫu bốc ngẫu nhiên mỗi lượt xem, mỗi mẫu một ô màu; ô lớn đổi ảnh chậm. Chỉ máy tính. */}
-        {anhKham.length >= 4 && (
-          <div aria-hidden="true" className="hidden lg:col-span-6 lg:block">
-            <KhamThanhLy anh={anhKham} />
-          </div>
-        )}
       </section>
 
+      <FlashSaleThanhLy products={products} />
+
       {/* Catalogue. */}
-      <section id="danh-sach" aria-labelledby="tl-danh-sach" className="container-content scroll-mt-24 pb-24 pt-6 sm:pb-32">
-        <h2 id="tl-danh-sach" className="sr-only">
-          Các mẫu đang pass
+      <section id="danh-sach" aria-labelledby="tl-danh-sach" className="container-content scroll-mt-24 pb-24 pt-8 sm:pb-32 sm:pt-12">
+        <h2 id="tl-danh-sach" className="mb-4 font-serif text-[1.75rem] leading-tight text-ink sm:text-[2.25rem]">
+          Tất cả mẫu đang pass
         </h2>
         <SaleGrid products={products} />
       </section>
@@ -226,6 +204,8 @@ export default async function ThanhLyPage() {
           )}
         </div>
       </section>
+
+      <GioMuaThanhLy products={products} />
     </>
   );
 }

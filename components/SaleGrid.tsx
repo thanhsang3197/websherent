@@ -5,6 +5,7 @@ import { CATEGORY_LABELS, type Product } from '@/types/product';
 import { SaleCard } from '@/components/SaleCard';
 import { NEN_O } from '@/lib/thanh-ly';
 import { useLoadMore } from '@/hooks/useLoadMore';
+import { useMauFlash } from '@/lib/use-flash-sale';
 
 const PAGE_SIZE = 40;
 
@@ -45,6 +46,7 @@ export function SaleGrid({ products }: { products: Product[] }) {
   const [q, setQ] = useState('');
   const [priceBucket, setPriceBucket] = useState<PriceBucket>('all');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const { ids: flash } = useMauFlash(products);
 
   // Mức giá nào không có mẫu thì ẩn nút luôn.
   const bands = useMemo(
@@ -173,7 +175,7 @@ export function SaleGrid({ products }: { products: Product[] }) {
         <ul className="mt-4 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-4">
           {visibleItems.map((product, i) => (
             <li key={product.id} className="flex">
-              <SaleCard product={product} priority={i < 4} nen={NEN_O[i % NEN_O.length]} />
+              <SaleCard product={product} priority={i < 4} nen={NEN_O[i % NEN_O.length]} flash={flash.has(product.id)} />
             </li>
           ))}
         </ul>

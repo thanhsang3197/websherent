@@ -27,17 +27,18 @@ function giamChuyenDong() {
 }
 
 /** Biểu tượng túi đang thực sự hiện trên màn hình (có kích thước > 0). */
-function dichDen(): HTMLElement | null {
-  const ds = Array.from(document.querySelectorAll<HTMLElement>('[data-dich-tui]'));
+function dichDen(chon: string): HTMLElement | null {
+  const ds = Array.from(document.querySelectorAll<HTMLElement>(chon));
   return ds.find((el) => {
     const r = el.getBoundingClientRect();
     return r.width > 0 && r.height > 0;
   }) ?? null;
 }
 
-export function bayVaoTui(tu: HTMLElement) {
+/** `chon`: bộ chọn của đích bay tới — mặc định biểu tượng Túi đồ; giỏ mua thanh lý dùng '[data-dich-gio]'. */
+export function bayVaoTui(tu: HTMLElement, chon = '[data-dich-tui]') {
   if (giamChuyenDong()) return;
-  const den = dichDen();
+  const den = dichDen(chon);
   if (!den) return;
   const a = tu.getBoundingClientRect();
   const b = den.getBoundingClientRect();

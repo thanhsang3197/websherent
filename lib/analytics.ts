@@ -35,7 +35,8 @@ export type ViTri =
   | 'hang-thanh-vien'
   | 'trang-chu'
   | 'thanh-duoi'
-  | 'tui-do';
+  | 'tui-do'
+  | 'gio-mua';
 
 /** Dùng khi cú bấm không gắn với mẫu nào (header, footer, nút nổi...). */
 const KHONG_CO_MA = '—';

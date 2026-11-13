@@ -591,20 +591,6 @@
   background-color: rgb(var(--tint));
 }
 
-/* Ô lớn ở khảm đầu trang: ba ảnh chồng nhau, lần lượt hiện ~6 giây mỗi ảnh. */
-@keyframes tl-doi {
-  0%, 30% { opacity: 1; }
-  36%, 94% { opacity: 0; }
-  100% { opacity: 1; }
-}
-.tl-doi {
-  animation: tl-doi 18s ease-in-out infinite both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .tl-doi { animation: none; opacity: 0; }
-  .tl-doi:first-child { opacity: 1; }
-}
-
 /* ============================================================
    CHUYỂN ĐỘNG TƯƠNG TÁC (13/11/2026) — mục 1–6 đề xuất UI/UX.
    Chỉ dùng transform/opacity (máy chạy nhẹ), mỗi cái ≤ ~400ms.
