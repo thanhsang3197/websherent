@@ -13,7 +13,8 @@ import { formatVnd, saleLines, saleNoteLine } from '@/lib/format';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
-import { KhoiDatMau } from '@/components/KhoiDatMau';
+import { ChiTietThue } from '@/components/ChiTietThue';
+import { NutTrenAnh } from '@/components/NutTrenAnh';
 import { monTuSanPham } from '@/lib/tui-do-mon';
 import { ProductGallery } from '@/components/ProductGallery';
 import { TieuDeMotDong } from '@/components/TieuDeMotDong';
@@ -122,12 +123,13 @@ export default async function ProductPage({
   ]);
 
   return (
-    <article className="container-content pb-4 pt-4 sm:py-10">
+    <article className="container-content pb-4 sm:py-10">
       <JsonLd data={productJsonLd(product, productUrl)} id="ld-product" />
       <JsonLd data={breadcrumb} id="ld-breadcrumb-product" />
 
       {/* Breadcrumb hiển thị */}
-      <nav aria-label="Breadcrumb" className="text-sm text-muted">
+      {/* Điện thoại: ẩn — ảnh tràn viền ở đầu trang đã có nút ← quay lại. */}
+      <nav aria-label="Breadcrumb" className="hidden text-sm text-muted sm:block">
         <ol className="flex flex-wrap items-center gap-1">
           <li>
             <Link href="/" className="hover:text-accent">
@@ -148,89 +150,63 @@ export default async function ProductPage({
         </ol>
       </nav>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-12">
-        {/* Ảnh — gallery */}
+      <div className="grid gap-6 sm:mt-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
+        {/* Ảnh — gallery. Điện thoại: tràn viền (-mx-5 bù lề container),
+            theo bản demo 13/11/2026. */}
         {/* min-w-0: khung Instagram có bề rộng tối thiểu riêng, thiếu dòng này
             thì trên điện thoại nó nong cột lưới ra và trang bị cuộn ngang. */}
-        <div className="flex min-w-0 justify-center lg:justify-start">
+        <div className="-mx-5 flex min-w-0 justify-center sm:mx-0 lg:justify-start">
           <ProductGallery
             images={product.images}
             alt={product.name}
             video={video}
             maSp={product.id}
+            lopPhu={<NutTrenAnh ten={product.name} veDanhSach={`/?loai=${product.category}#san-pham`} />}
           />
         </div>
 
         {/* Thông tin */}
-        <div>
-          <div className="flex items-start justify-between gap-4">
-            {/* min-w-0 flex-1: khung giãn hết bề ngang để tiêu đề đo đúng chỗ trống. */}
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-dark">
-                {categoryLabel}
-              </p>
-              {/* Tên dài tự co chữ cho vừa một dòng; tên ngắn giữ cỡ gốc. */}
-              <TieuDeMotDong className="mt-2 font-serif text-3xl text-accent-dark sm:text-4xl">
-                {product.name}
-              </TieuDeMotDong>
-            </div>
+        <div className="min-w-0">
+          {/* Nhãn loại + Mới về / Hot */}
+          <div className="flex flex-wrap gap-1.5">
+            <span className="rounded-full bg-tint px-3 py-1 text-xs font-bold text-accent-dark">
+              {categoryLabel}
+            </span>
+            {product.isNew && (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-ink">Mới về</span>
+            )}
+            {product.hot && (
+              <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-ink">Đang hot</span>
+            )}
           </div>
-
-          {/* Thông số */}
-          <dl className="mt-4 sm:mt-6 divide-y divide-hairline border-y border-hairline">
-            {product.brand && (
-              <SpecRow label="Thương hiệu" value={product.brand} />
-            )}
-            {product.sizes.length > 0 && (
-              <SpecRow label="Size" value={product.sizes.join(' / ')} />
-            )}
-            {/*
-              Ghi rõ "3 ngày" thay vì "Phí thuê" trơn: ngay dưới nó là mức 1
-              ngày, để nhãn cũ thì hai dòng đọc như hai giá cho cùng một thứ.
-            */}
-            <SpecRow
-              label="Phí thuê 3 ngày"
-              value={formatVnd(product.rentPrice)}
-              valueClassName="text-sm font-medium text-accent-dark"
-            />
-            {/*
-              Thẻ trong lưới chỉ hiện MỘT mức (1 ngày, xem `listRentPrice`);
-              trang này hiện cả hai. `null` = shop chưa nhập -> ẩn hẳn dòng, không hiện
-              "0đ" hay "Liên hệ" (api-cong-khai.md §2).
-            */}
-            {product.rentPrice1Day != null && (
-              <SpecRow
-                label="Phí thuê 1 ngày"
-                value={formatVnd(product.rentPrice1Day)}
-                valueClassName="text-sm font-medium text-ink"
-              />
-            )}
-            <SpecRow
-              label="Phí cọc"
-              value={formatVnd(product.depositPrice)}
-              valueClassName="text-sm font-medium text-ink"
-            />
-            {/*
-              Giá tag = giá gốc trên nhãn, KHÔNG phải khoản khách trả. Vẫn để
-              CÙNG font và CÙNG cỡ với ba dòng giá trên: bốn con số nằm cùng
-              một bảng, chỉ một dòng lệch cỡ là trông như lỗi hiển thị.
-            */}
-            {product.tagPrice != null && (
-              <SpecRow
-                label="Giá tag"
-                value={formatVnd(product.tagPrice)}
-                valueClassName="text-sm font-medium text-ink"
-              />
-            )}
-          </dl>
-
-          <p className="mt-3 text-xs text-muted">
-            * Phí cọc được hoàn lại khi bạn trả đồ đúng hẹn và&nbsp;nguyên&nbsp;vẹn.
+          {/* Tên dài tự co chữ cho vừa một dòng; tên ngắn giữ cỡ gốc. */}
+          <TieuDeMotDong className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
+            {product.name}
+          </TieuDeMotDong>
+          <p className="mt-1 text-sm text-muted">
+            {[
+              product.brand,
+              product.sizes.length ? `Size ${product.sizes.join(' / ')}` : null,
+              `Mã ${product.id}`,
+            ]
+              .filter(Boolean)
+              .join(' · ')}
           </p>
+
+          {/* Chọn 1 / 3 ngày, cọc, giá tag, nút hành động (máy tính) + thanh
+              dính đáy (điện thoại), nhắc ưu đãi 3 váy. Số ngày khách chọn đi
+              theo vào túi đồ và tin nhắn gửi tiệm (chủ shop chốt 13/11/2026). */}
+          <ChiTietThue
+            mon={monTuSanPham(product)}
+            gia1Ngay={product.rentPrice1Day ?? null}
+            gia3Ngay={product.rentPrice}
+            coc={product.depositPrice}
+            giaTag={product.tagPrice ?? null}
+          />
 
           {/* Mẫu đang pass: VẪN cho thuê như thường, chỉ báo thêm là bán được. */}
           {product.sale && (
-            <div className="mt-6 rounded-lg border border-accent/30 bg-accent/5 px-4 py-3">
+            <div className="mt-4 max-w-md rounded-2xl border border-accent/30 bg-accent/5 px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-dark">
                 Mẫu này đang pass
               </p>
@@ -254,9 +230,6 @@ export default async function ProductPage({
             </div>
           )}
 
-          {/* Thêm vào túi + Nhắn giữ mẫu (khách tự chọn Zalo / Messenger /
-              Gọi) — thay nút "chỉ Messenger" cũ, chủ shop chốt 13/11/2026. */}
-          <KhoiDatMau mon={monTuSanPham(product)} />
 
           <GoiYPhuKien category={product.category} products={catalogue} />
 
@@ -306,22 +279,5 @@ export default async function ProductPage({
         </section>
       )}
     </article>
-  );
-}
-
-function SpecRow({
-  label,
-  value,
-  valueClassName = 'text-sm font-medium text-ink',
-}: {
-  label: string;
-  value: string;
-  valueClassName?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between py-2 sm:py-3">
-      <dt className="text-sm text-muted">{label}</dt>
-      <dd className={valueClassName}>{value}</dd>
-    </div>
   );
 }

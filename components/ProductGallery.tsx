@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { siteConfig } from '@/lib/site-config';
 import { GLASS_BLUR_DATA_URL } from '@/lib/format';
@@ -39,12 +39,15 @@ export function ProductGallery({
   alt,
   video = null,
   maSp,
+  lopPhu,
 }: {
   images: string[];
   alt: string;
   video?: ProductVideo | null;
   /** Mã mẫu — gửi kèm sự kiện "Xem video". */
   maSp?: string;
+  /** Nút đè lên góc trên ảnh (điện thoại) — vd ← quay lại / Chia sẻ. */
+  lopPhu?: ReactNode;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -100,19 +103,45 @@ export function ProductGallery({
     [active, goTo, images.length],
   );
 
+  const moVideo = () => {
+    setShowVideo(true);
+    if (!daGhiVideo.current && maSp && video) {
+      daGhiVideo.current = true;
+      trackVideoOpen(maSp, video.kind);
+    }
+  };
+
+  /*
+    Điện thoại (13/11/2026, theo bản demo): ảnh TRÀN VIỀN hết bề ngang, bo hai
+    góc dưới, không có cột ảnh nhỏ — thay bằng chấm chỉ vị trí + nút "Video"
+    đè lên ảnh, vuốt để đổi ảnh. Từ sm trở lên giữ nguyên khung vòm + cột ảnh nhỏ.
+  */
   return (
-    <div className="flex w-full max-w-sm flex-row-reverse gap-2 sm:max-w-[460px] sm:gap-3">
+    <div className="flex w-full flex-row-reverse gap-2 sm:max-w-[460px] sm:gap-3">
       <div className="relative min-w-0 flex-1">
         {video && showVideo && (
-          <VideoFrame video={video} title={`${alt} — video`} />
+          <>
+            <button
+              type="button"
+              onClick={() => pickImage(active)}
+              className="nhan-co mb-2 ml-4 inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-4 text-sm font-semibold text-ink ring-1 ring-hairline sm:hidden"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" />
+              </svg>
+              Xem ảnh
+            </button>
+            <VideoFrame video={video} title={`${alt} — video`} />
+          </>
         )}
         {/* Ẩn chứ không gỡ khung ảnh: giữ nguyên vị trí cuộn và ảnh đã tải. */}
         <div className={showVideo ? 'hidden' : 'relative'}>
           <div
             aria-hidden="true"
-            className="arch absolute -right-3 -top-3 h-full w-full border border-accent/40"
+            className="arch absolute -right-3 -top-3 hidden h-full w-full border border-accent/40 sm:block"
           />
-          <div className="arch relative aspect-[3/4] w-full overflow-hidden bg-tint">
+          <div className="relative aspect-[3/4] w-full overflow-hidden bg-tint max-sm:rounded-b-[28px] sm:arch">
+            {lopPhu}
             {images.length > 0 ? (
               <>
                 <div
@@ -139,7 +168,7 @@ export function ProductGallery({
                         priority={i === 0}
                         placeholder="blur"
                         blurDataURL={GLASS_BLUR_DATA_URL}
-                        sizes="(max-width: 1024px) 90vw, 384px"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 384px"
                         className="object-cover"
                       />
                     </div>
@@ -147,7 +176,7 @@ export function ProductGallery({
                 </div>
 
                 {hasMultiple && (
-                  <>
+                  <div className="hidden sm:block">
                     <ArrowButton
                       side="left"
                       label="Ảnh trước"
@@ -158,7 +187,41 @@ export function ProductGallery({
                       label="Ảnh kế"
                       onClick={() => step(1)}
                     />
-                  </>
+                  </div>
+                )}
+
+                {/* Điện thoại: chấm chỉ vị trí ảnh (bấm được) + nút Video. */}
+                {hasMultiple && (
+                  <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5 sm:hidden">
+                    {images.map((_, i) => (
+                      <button
+                        key={`cham-${i}`}
+                        type="button"
+                        onClick={() => goTo(i)}
+                        aria-label={`Xem ảnh ${i + 1}`}
+                        aria-current={i === active}
+                        className="flex h-6 items-center"
+                      >
+                        <span
+                          className={`block h-1.5 rounded-full bg-white shadow-[0_0_4px_rgba(0,0,0,0.35)] transition-all duration-300 ${
+                            i === active ? 'w-5' : 'w-1.5 opacity-60'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {video && (
+                  <button
+                    type="button"
+                    onClick={moVideo}
+                    className="nhan-co absolute bottom-3 right-3 flex h-9 items-center gap-1.5 rounded-full bg-white/90 px-3 text-xs font-bold text-ink shadow-[0_2px_10px_rgba(0,0,0,0.15)] sm:hidden"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-3.5 w-3.5">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Video
+                  </button>
                 )}
               </>
             ) : (
@@ -178,7 +241,7 @@ export function ProductGallery({
         // trước đây điện thoại xếp hàng ngang bên dưới). Cột ngoài `relative` +
         // lớp trong `absolute inset-0`: cột lấy
         // chiều cao theo ảnh lớn bên cạnh chứ không tự đẩy cao thêm khi nhiều ảnh.
-        <div className="relative w-12 shrink-0 sm:w-16">
+        <div className="relative hidden w-16 shrink-0 sm:block">
           <div className="no-scrollbar absolute inset-0 flex flex-col gap-1.5 overflow-y-auto overflow-x-hidden sm:gap-2">
             {images.map((src, i) => (
               <button
@@ -205,13 +268,7 @@ export function ProductGallery({
             {video && (
               <button
                 type="button"
-                onClick={() => {
-                  setShowVideo(true);
-                  if (!daGhiVideo.current && maSp) {
-                    daGhiVideo.current = true;
-                    trackVideoOpen(maSp, video.kind);
-                  }
-                }}
+                onClick={moVideo}
                 aria-label="Xem video"
                 aria-current={showVideo}
                 className={`relative flex aspect-[3/4] w-full shrink-0 items-center justify-center overflow-hidden rounded-md border-2 bg-accent-dark transition ${

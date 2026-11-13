@@ -18,6 +18,10 @@ export function ThanhDuoi() {
   const pathname = usePathname();
   const tui = useTuiDo();
 
+  // Trang chi tiết có thanh hành động riêng (♡ / Thêm vào túi / Nhắn giữ mẫu,
+  // components/ChiTietThue.tsx) chiếm chỗ này — chủ shop chọn 13/11/2026.
+  if (pathname.startsWith('/san-pham/')) return null;
+
   const muc = 'nhan-co flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold';
   const mau = (on: boolean) => (on ? 'text-accent' : 'text-muted');
 

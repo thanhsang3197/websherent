@@ -72,3 +72,14 @@ export function doiTrangThai(mon: MonTrongTui) {
 export function xoaHetTui() {
   ghi([]);
 }
+
+/**
+ * Thay món đã có trong túi bằng bản mới (cùng mã) — vd khách đổi từ "thuê 1
+ * ngày" sang "thuê 3 ngày" ở trang chi tiết sau khi đã thêm vào túi. Món chưa
+ * có trong túi thì bỏ qua.
+ */
+export function capNhatMon(mon: MonTrongTui) {
+  const list = doc();
+  if (!list.some((m) => m.id === mon.id)) return;
+  ghi(list.map((m) => (m.id === mon.id ? mon : m)));
+}
