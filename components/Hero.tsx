@@ -19,13 +19,10 @@ const NEN_DIP = ['bg-pink-100', 'bg-amber-100', 'bg-sky-100', 'bg-emerald-100', 
 export function Hero({
   slides = [],
   albums = [],
-  soFeedback = 0,
 }: {
   slides?: HeroSlide[];
   /** Album = "dịp" (tốt nghiệp, đi tiệc…). Rỗng -> ẩn hàng "Bạn đi dịp gì?". */
   albums?: Album[];
-  /** Số ảnh khách thật — 0 thì không ghi. */
-  soFeedback?: number;
 }) {
   return (
     <section className="relative overflow-hidden pb-4 pt-3 sm:pb-10 sm:pt-8 lg:pt-12">
@@ -63,13 +60,6 @@ export function Hero({
           </div>
 
           <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted sm:text-sm">
-            {soFeedback > 0 && (
-              <li>
-                <Link href="/feedback" className="hover:text-accent-dark">
-                  <b className="text-ink">{soFeedback}+</b> ảnh khách thật
-                </Link>
-              </li>
-            )}
             <li>Mở {siteConfig.phone2.hours} mỗi ngày</li>
             <li>
               {siteConfig.address.district}, {siteConfig.address.city}

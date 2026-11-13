@@ -15,13 +15,15 @@ import {
   type MonTrongTui,
 } from '@/lib/tui-do';
 import { moLienHe } from '@/components/LienHeSheet';
+import { ChonNgayThue } from '@/components/ChonNgayThue';
+import { dongNgayTinNhan, useNgayThue, type NgayThue } from '@/lib/ngay-thue';
 
 /** Đã chạy trên máy khách chưa — tránh nháy "túi rỗng" trước khi đọc localStorage. */
 const daGanKet = () => true;
 const chuaGanKet = () => false;
 const khongDangKy = () => () => {};
 
-function soanTinNhan(list: MonTrongTui[]) {
+function soanTinNhan(list: MonTrongTui[], ngay: NgayThue) {
   const t = tamTinh(list);
   const dong = list.map(
     (m, i) =>
@@ -30,7 +32,7 @@ function soanTinNhan(list: MonTrongTui[]) {
   return [
     `Chào ${siteConfig.name}, mình muốn thuê ${list.length} món:`,
     ...dong,
-    'Ngày mặc: ...',
+    dongNgayTinNhan(ngay),
     `Tạm tính phí thuê: ${formatVnd(t.phiThue - t.giam)}${t.duGiam ? ` (đã trừ ưu đãi ${PHAN_TRAM_GIAM}%)` : ''}`,
   ].join('\n');
 }
@@ -38,7 +40,10 @@ function soanTinNhan(list: MonTrongTui[]) {
 export function TuiDoView() {
   const list = useTuiDo();
   const daSan = useSyncExternalStore(khongDangKy, daGanKet, chuaGanKet);
+  const ngay = useNgayThue();
   const t = tamTinh(list);
+  // Gợi ý ngày trả theo món thuê lâu nhất trong túi.
+  const soNgayGoiY: 1 | 3 = list.some((m) => m.days === 3) ? 3 : 1;
 
   // Pháo nhỏ đúng lúc túi VỪA đủ mốc (chưa đủ -> đủ), không bắn khi mở trang
   // mà túi đã đủ sẵn.
@@ -60,7 +65,7 @@ export function TuiDoView() {
         <p className="text-lg font-bold text-ink">Túi đồ đang trống</p>
         <p className="mt-2 text-sm leading-relaxed text-muted">
           Bấm ♡ trên ảnh mẫu bạn thích để gom vào đây. Thuê từ {SO_MAU_GIAM} mẫu được giảm{' '}
-          {PHAN_TRAM_GIAM}% cả đơn — gửi cả danh sách cho tiệm chỉ với một tin nhắn.
+          {PHAN_TRAM_GIAM}% tổng đơn — gửi cả danh sách cho tiệm chỉ với một tin nhắn.
         </p>
         <Link href="/#san-pham" className="btn btn-primary mt-6">
           Xem mẫu váy
@@ -70,7 +75,7 @@ export function TuiDoView() {
   }
 
   const phanTram = Math.min(100, Math.round((t.soMauTinh / SO_MAU_GIAM) * 100));
-  const tinNhan = soanTinNhan(list);
+  const tinNhan = soanTinNhan(list, ngay);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
@@ -83,10 +88,7 @@ export function TuiDoView() {
           <p className="text-sm font-bold text-ink">
             {t.duGiam
               ? `Đã đủ ${SO_MAU_GIAM} mẫu — bạn được giảm ${PHAN_TRAM_GIAM}%!`
-              : `Thêm ${t.conThieu} mẫu nữa để được giảm ${PHAN_TRAM_GIAM}% cả đơn`}
-          </p>
-          <p className="mt-0.5 text-xs text-ink/70">
-            Tính váy đầm, áo dài, pháp phục, gấm — phụ kiện không tính vào số mẫu.
+              : `Thêm ${t.conThieu} mẫu nữa để được giảm ${PHAN_TRAM_GIAM}% tổng đơn`}
           </p>
           <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-ink/10">
             <div
@@ -176,6 +178,9 @@ export function TuiDoView() {
         <p className="mt-1.5 text-xs text-muted">
           Giá theo mức hiện trên thẻ mẫu. Tiệm sẽ xác nhận giá và lịch trống khi bạn nhắn.
         </p>
+
+        {/* Ngày nhận / trả — chỉ ghi vào tin nhắn, web không kiểm tra lịch trống. */}
+        <ChonNgayThue soNgay={soNgayGoiY} className="mt-4" />
 
         <p className="mt-4 text-xs font-bold text-ink">Tin nhắn gửi tiệm</p>
         <p className="mt-1 whitespace-pre-line rounded-2xl bg-bg p-3 text-sm leading-relaxed text-ink ring-1 ring-inset ring-hairline">

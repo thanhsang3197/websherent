@@ -15,6 +15,8 @@ import {
 } from '@/lib/tui-do';
 import { moLienHe } from '@/components/LienHeSheet';
 import { hieuUngThemVaoTui } from '@/lib/hieu-ung-tui';
+import { dongNgayTinNhan, useNgayThue } from '@/lib/ngay-thue';
+import { ChonNgayThue } from '@/components/ChonNgayThue';
 
 /**
  * Khối giá + hành động trên trang chi tiết, theo bản demo chủ shop duyệt
@@ -41,6 +43,7 @@ export function ChiTietThue({
   giaTag: number | null;
 }) {
   const tui = useTuiDo();
+  const ngay = useNgayThue();
   const trongTui = tui.find((m) => m.id === mon.id);
   const co1Ngay = gia1Ngay != null;
   const [chon, setChon] = useState<1 | 3>(co1Ngay ? 1 : 3);
@@ -64,7 +67,7 @@ export function ChiTietThue({
 
   const tinNhan =
     `Chào ${siteConfig.name}, mình muốn hỏi mẫu ${mon.name} (mã ${mon.id})` +
-    `${mon.size ? `, size ${mon.size}` : ''}, thuê ${soNgay} ngày.\nNgày mặc: ...`;
+    `${mon.size ? `, size ${mon.size}` : ''}, thuê ${soNgay} ngày.\n${dongNgayTinNhan(ngay)}`;
 
   const bamTui = (el: HTMLElement) => {
     const them = !trongTui;
@@ -99,7 +102,10 @@ export function ChiTietThue({
         </button>
       </div>
 
-      <dl className="mt-2.5 max-w-md divide-y divide-hairline rounded-2xl bg-surface px-4 text-sm ring-1 ring-inset ring-hairline">
+      {/* Ngày nhận / trả — chỉ ghi vào tin nhắn, không kiểm tra lịch trống. */}
+      <ChonNgayThue soNgay={soNgay} className="mt-3" />
+
+      <dl className="mt-3 max-w-md divide-y divide-hairline rounded-2xl bg-surface px-4 text-sm ring-1 ring-inset ring-hairline">
         <div className="flex items-center justify-between gap-3 py-3">
           <dt className="text-muted">Cọc (hoàn lại khi trả đồ đúng hẹn, nguyên vẹn)</dt>
           <dd className="shrink-0 font-bold text-ink">{formatVnd(coc)}</dd>

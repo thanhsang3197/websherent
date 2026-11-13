@@ -118,7 +118,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Phương án A (13/11/2026): ảnh lớn + 2 nút + "Bạn đi dịp gì?" (album). */}
-      <Hero slides={heroSlides} albums={albums} soFeedback={feedback.length} />
+      <Hero slides={heroSlides} albums={albums} />
 
       {/*
         Ưu đãi shop đăng bên app (api-cong-khai.md §2.6) — ngay dưới hero để khách
