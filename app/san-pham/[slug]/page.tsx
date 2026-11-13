@@ -7,9 +7,11 @@ import {
   getRelatedProducts,
   getFeedback,
   getRentalProducts,
+  getSaleProducts,
 } from '@/lib/products';
+import { KhungPass } from '@/components/KhungPass';
 import { CATEGORY_LABELS } from '@/types/product';
-import { formatVnd, saleLines, saleNoteLine } from '@/lib/format';
+import { formatVnd } from '@/lib/format';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
@@ -104,6 +106,10 @@ export default async function ProductPage({
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
+  // Danh sách đang pass (chỉ mã + giá) để khung pass bốc đúng mẫu flash sale.
+  const dsPass = product.sale
+    ? (await getSaleProducts()).map((p) => ({ id: p.id, sale: p.sale ? { price: p.sale.price, note: null } : null }))
+    : [];
   const [related, video, feedback, catalogue] = await Promise.all([
     getRelatedProducts(product, 8),
     resolveProductVideo(product.video),
@@ -204,32 +210,9 @@ export default async function ProductPage({
             giaTag={product.tagPrice ?? null}
           />
 
-          {/* Mẫu đang pass: VẪN cho thuê như thường, chỉ báo thêm là bán được. */}
-          {product.sale && (
-            <div className="mt-4 max-w-md rounded-2xl border border-accent/30 bg-accent/5 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-dark">
-                Mẫu này đang pass
-              </p>
-              {/* Cùng câu chữ, cùng cỡ chữ với thẻ ở trang /thanh-ly. */}
-              <div className="mt-1.5 space-y-0.5 text-sm font-medium text-accent-dark">
-                {saleLines(product.sale.price, product.rentPrice).map((line) => (
-                  <p key={line}>{line}</p>
-                ))}
-              </div>
-              {product.sale.note && (
-                <p className="mt-1 text-sm text-muted">
-                  {saleNoteLine(product.sale.note)}
-                </p>
-              )}
-              <Link
-                href="/thanh-ly"
-                className="mt-2 inline-block text-sm font-medium text-accent-dark underline underline-offset-4 hover:text-accent"
-              >
-                Xem tất cả mẫu thanh lý
-              </Link>
-            </div>
-          )}
-
+          {/* Mẫu đang pass: VẪN cho thuê như thường, chỉ báo thêm là bán được
+              (kèm giá flash sale nếu mẫu đang trong đợt). */}
+          {product.sale && <KhungPass product={product} dsPass={dsPass} />}
 
           <GoiYPhuKien category={product.category} products={catalogue} />
 
