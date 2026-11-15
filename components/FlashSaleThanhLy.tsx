@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Product } from '@/types/product';
 import { SaleCard, IconSet } from '@/components/SaleCard';
 import { NEN_O } from '@/lib/thanh-ly';
@@ -16,6 +16,27 @@ export function FlashSaleThanhLy({ products }: { products: Product[] }) {
   const { dot, ids } = useMauFlash(products);
   const conLai = useConLai(dot);
   const mau = useMemo(() => products.filter((p) => ids.has(p.id)), [products, ids]);
+
+  const dayRef = useRef<HTMLUListElement>(null);
+  const [nut, setNut] = useState({ trai: false, phai: false });
+  const capNhatNut = useCallback(() => {
+    const el = dayRef.current;
+    if (!el) return;
+    setNut({
+      trai: el.scrollLeft > 4,
+      phai: el.scrollLeft + el.clientWidth < el.scrollWidth - 4,
+    });
+  }, []);
+  useEffect(() => {
+    capNhatNut();
+    window.addEventListener('resize', capNhatNut);
+    return () => window.removeEventListener('resize', capNhatNut);
+  }, [capNhatNut, mau.length]);
+  // Mỗi lần bấm cuộn đúng một "trang" (số thẻ đang thấy).
+  const cuon = (chieu: 1 | -1) => {
+    const el = dayRef.current;
+    if (el) el.scrollBy({ left: chieu * el.clientWidth, behavior: 'smooth' });
+  };
 
   // Chưa gắn kết: giữ chỗ cùng chiều cao để trang không giật khi dải hiện ra.
   const dangTai = dot === null;
@@ -36,7 +57,12 @@ export function FlashSaleThanhLy({ products }: { products: Product[] }) {
           <DongHo conLai={conLai} />
         </div>
 
-        <ul className="no-scrollbar -mx-5 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-1 sm:gap-5 lg:mx-0 lg:px-0">
+        <div className="relative">
+        <ul
+          ref={dayRef}
+          onScroll={capNhatNut}
+          className="no-scrollbar -mx-5 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-5 pb-1 sm:gap-5 lg:mx-0 lg:px-0"
+        >
           {dangTai
             ? Array.from({ length: 4 }, (_, i) => (
                 <li key={i} className="w-[44%] shrink-0 sm:w-[30%] lg:w-[calc(25%-15px)]">
@@ -49,8 +75,30 @@ export function FlashSaleThanhLy({ products }: { products: Product[] }) {
                 </li>
               ))}
         </ul>
+          {/* Nút cuộn ngang: ẩn trên điện thoại (đã có vuốt), ẩn khi đã chạm đầu/cuối dải. */}
+          {nut.trai && <NutCuon huong="trai" onClick={() => cuon(-1)} />}
+          {nut.phai && <NutCuon huong="phai" onClick={() => cuon(1)} />}
+        </div>
       </div>
     </section>
+  );
+}
+
+function NutCuon({ huong, onClick }: { huong: 'trai' | 'phai'; onClick: () => void }) {
+  const trai = huong === 'trai';
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={trai ? 'Xem mẫu trước' : 'Xem thêm mẫu'}
+      className={`absolute top-[38%] z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-surface shadow-lg transition hover:scale-105 hover:bg-accent-dark sm:flex ${
+        trai ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+      }`}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d={trai ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'} />
+      </svg>
+    </button>
   );
 }
 
