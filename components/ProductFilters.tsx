@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import type { ProductCategory } from '@/types/product';
 
-export type CategoryFilter = 'all' | ProductCategory;
+/** 'moi-ve' = các mẫu shop chọn "Hàng mới về" bên app (không phải một loại đồ). */
+export type CategoryFilter = 'all' | 'moi-ve' | ProductCategory;
 export type SortOption = 'default' | 'price-asc' | 'price-desc' | 'name-asc';
 
 export interface Filters {
@@ -17,7 +18,7 @@ export interface Filters {
  * `hoaMai`: gắn bông mai (góc phải, có cánh rơi) và bao lì xì (góc trái) quanh
  * chữ, gợi khách nghĩ tới chụp ảnh Tết.
  */
-const CATEGORIES: { id: CategoryFilter; label: string; hoaMai?: boolean }[] = [
+export const CATEGORIES: { id: CategoryFilter; label: string; hoaMai?: boolean }[] = [
   { id: 'all', label: 'Tất cả' },
   { id: 'dam-vay', label: 'Đầm & Váy' },
   { id: 'ao-dai', label: 'Áo dài', hoaMai: true },
@@ -30,7 +31,7 @@ const CATEGORIES: { id: CategoryFilter; label: string; hoaMai?: boolean }[] = [
   Nhãn NGẮN có chủ ý: trên điện thoại mỗi ô chọn chỉ rộng ~147px (2 cột), nhãn
   dài kiểu "Giá thuê: Thấp → Cao" bị cắt cụt ngay khi đã chọn.
 */
-const SORT_OPTIONS: { id: SortOption; label: string }[] = [
+export const SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: 'default', label: 'Sắp xếp' },
   { id: 'price-asc', label: 'Giá thấp → cao' },
   { id: 'price-desc', label: 'Giá cao → thấp' },
@@ -53,6 +54,7 @@ export function ProductFilters({
   onChange,
   onReset,
   onSubmitSearch,
+  coMoiVe = false,
 }: {
   filters: Filters;
   brands: string[];
@@ -62,6 +64,8 @@ export function ProductFilters({
   onReset: () => void;
   /** Khách bấm Enter / nút "Tìm" trên bàn phím điện thoại. */
   onSubmitSearch?: () => void;
+  /** Có hàng mới về -> hiện thêm nút "Mới về". */
+  coMoiVe?: boolean;
 }) {
   const isFiltering =
     filters.q !== '' ||
@@ -92,8 +96,13 @@ export function ProductFilters({
 
   return (
     <div className="rounded-3xl glass-panel p-4 shadow-glass sm:p-6">
-      {/* Tìm kiếm */}
-      <div className="relative">
+      {/*
+        Tìm kiếm + nút "Mới về" chung một hàng (16/11/2026): "Mới về" không
+        phải loại đồ nên không chen vào lưới loại 3 × 2 — để riêng, nổi màu, và
+        không tốn thêm hàng nào.
+      */}
+      <div className="flex items-center gap-2">
+      <div className="relative min-w-0 flex-1">
         <label htmlFor="loc-tim" className="sr-only">
           Tìm theo tên hoặc thương hiệu
         </label>
@@ -119,7 +128,7 @@ export function ProductFilters({
             // Bỏ qua lúc đang gõ dấu tiếng Việt (bộ gõ còn đang ghép chữ).
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) onSubmitSearch?.();
           }}
-          placeholder="Tìm tên mẫu hoặc thương hiệu…"
+          placeholder={coMoiVe ? 'Tìm tên mẫu…' : 'Tìm tên mẫu hoặc thương hiệu…'}
           className="w-full rounded-full glass-input py-3 pl-11 pr-11 text-sm text-ink placeholder:text-muted focus-visible:outline-none [&::-webkit-search-cancel-button]:appearance-none"
         />
         {filters.q && (
@@ -132,6 +141,22 @@ export function ProductFilters({
             <CloseIcon />
           </button>
         )}
+      </div>
+      {coMoiVe && (
+        <button
+          type="button"
+          aria-pressed={filters.category === 'moi-ve'}
+          onClick={() => onChange({ category: filters.category === 'moi-ve' ? 'all' : 'moi-ve' })}
+          className={`flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-3 text-sm font-semibold transition-all ${
+            filters.category === 'moi-ve'
+              ? 'bg-gradient-to-r from-accent to-accent-dark text-surface shadow-md'
+              : 'bg-accent/10 text-accent-dark ring-1 ring-inset ring-accent/30 hover:bg-accent/20'
+          }`}
+        >
+          <span aria-hidden="true">✨</span>
+          Mới về
+        </button>
+      )}
       </div>
 
       {/*
@@ -279,7 +304,7 @@ export function ProductFilters({
  * tên nên trông như ô chữ thường). Đang lọc -> viền + chữ màu đất nung để
  * khách thấy ngay mình đang lọc theo gì.
  */
-function SelectField({
+export function SelectField({
   id,
   label,
   value,
@@ -414,7 +439,7 @@ function BaoLiXi() {
   );
 }
 
-function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+export function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"

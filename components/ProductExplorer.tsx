@@ -9,6 +9,7 @@ import { fitSize } from '@/lib/brands';
 import { nhomPhuKien } from '@/lib/mapping';
 import { trackEmptySearch, trackFilterUse } from '@/lib/analytics';
 import { ProductGrid } from '@/components/ProductGrid';
+import { ThanhLocBam } from '@/components/ThanhLocBam';
 import {
   ProductFilters,
   type Filters,
@@ -64,6 +65,7 @@ const TEN_GIA_TRI: Record<string, string> = {
   'price-asc': 'Giá thấp → cao',
   'price-desc': 'Giá cao → thấp',
   'name-asc': 'Tên A → Z',
+  'moi-ve': 'Mới về',
 };
 
 /** Bỏ dấu để tìm kiếm không phân biệt dấu ("ao dai" khớp "Áo dài"). */
@@ -146,7 +148,15 @@ function sortSizes(sizes: string[]): string[] {
  * Container lọc + lưới (client). Nhận toàn bộ products từ server (đã SSR để SEO),
  * lọc phía client. Đồng bộ trạng thái lọc vào URL query để chia sẻ được.
  */
-export function ProductExplorer({ products }: { products: Product[] }) {
+export function ProductExplorer({
+  products,
+  moiVeIds = [],
+}: {
+  products: Product[];
+  /** Mã các mẫu "Hàng mới về" (đúng thứ tự shop sắp bên app) — cho nút lọc "Mới về". */
+  moiVeIds?: string[];
+}) {
+  const thuTuMoiVe = useMemo(() => new Map(moiVeIds.map((id, i) => [id, i])), [moiVeIds]);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   // `?nhom=c` (từ khối gợi ý phụ kiện ở trang chi tiết): cuộn tới mẫu đầu tiên
   // của nhóm đó trong mục Phụ kiện.
@@ -182,6 +192,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     if (q) next.q = q;
     const cat = sp.get('loai');
     if (
+      cat === 'moi-ve' ||
       cat === 'ao-dai' ||
       cat === 'dam-vay' ||
       cat === 'phap-phuc' ||
@@ -228,7 +239,9 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       : [];
     const thanhLy = laTuThanhLy(query);
     const list = products.filter((p) => {
-      if (filters.category !== 'all' && p.category !== filters.category) return false;
+      if (filters.category === 'moi-ve') {
+        if (!thuTuMoiVe.has(p.id)) return false;
+      } else if (filters.category !== 'all' && p.category !== filters.category) return false;
       // "Tất cả" = trang phục (chủ shop 24/09/2026): phụ kiện chỉ hiện khi khách
       // bấm mục Phụ kiện, hoặc khi khách chủ động gõ tìm — không thì gõ "túi"
       // ra trống trơn và khách tưởng tiệm không có.
@@ -264,6 +277,9 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     // mẫu mã T…/D… (không theo dãy PK), mẫu choàng và mẫu kính xếp sau.
     // Mẫu cùng loại (cùng chữ đầu tên: VH, H, D, Kẹp…) đứng liền nhau, số tăng
     // dần (VH01, VH02…); loại nào có mẫu mới nhất thì cả loại đó lên trước.
+    if (filters.category === 'moi-ve') {
+      return [...list].sort((a, b) => (thuTuMoiVe.get(a.id) ?? 0) - (thuTuMoiVe.get(b.id) ?? 0));
+    }
     if (filters.category === 'phu-kien') {
       const soMa = (p: Product) => Number(p.id.match(/\d+/)?.[0] ?? 0);
       const maTD = (p: Product) =>
@@ -296,7 +312,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       );
     }
     return list;
-  }, [products, filters]);
+  }, [products, filters, thuTuMoiVe]);
 
   const viTriNhom = useMemo(
     () =>
@@ -368,7 +384,9 @@ export function ProductExplorer({ products }: { products: Product[] }) {
       daGhiTimKhongRa.current.add(khoa);
       trackEmptySearch(
         tuKhoa,
-        CATEGORY_LABELS[filters.category as ProductCategory] ?? 'Tất cả',
+        filters.category === 'moi-ve'
+          ? 'Mới về'
+          : (CATEGORY_LABELS[filters.category as ProductCategory] ?? 'Tất cả'),
       );
     }, 1200);
     return () => clearTimeout(id);
@@ -382,8 +400,14 @@ export function ProductExplorer({ products }: { products: Product[] }) {
     if (dangTimThanhLy) router.push('/thanh-ly');
   }, [dangTimThanhLy, router]);
 
+  // Thanh lọc gọn bám trên khi cuộn qua khung lọc (ThanhLocBam).
+  const vungRef = useRef<HTMLDivElement>(null);
+  const khungRef = useRef<HTMLDivElement>(null);
+  const luoiRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div>
+    <div ref={vungRef}>
+      <div ref={khungRef}>
       <ProductFilters
         filters={filters}
         brands={brands}
@@ -392,6 +416,19 @@ export function ProductExplorer({ products }: { products: Product[] }) {
         onChange={onChange}
         onReset={onReset}
         onSubmitSearch={onSubmitSearch}
+        coMoiVe={moiVeIds.length > 0}
+      />
+      </div>
+      <ThanhLocBam
+        filters={filters}
+        brands={brands}
+        sizes={sizes}
+        priceBuckets={PRICE_BUCKETS}
+        onChange={onChange}
+        onReset={onReset}
+        khungRef={khungRef}
+        vungRef={vungRef}
+        luoiRef={luoiRef}
       />
       {dangTimThanhLy && (
         <Link
@@ -405,7 +442,7 @@ export function ProductExplorer({ products }: { products: Product[] }) {
           <span className="shrink-0 font-semibold">Xem trang Thanh lý →</span>
         </Link>
       )}
-      <div className="mt-8">
+      <div ref={luoiRef} className="mt-8">
         <ProductGrid
           products={filtered}
           priorityCount={4}

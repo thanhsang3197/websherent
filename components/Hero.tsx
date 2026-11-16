@@ -1,49 +1,49 @@
 import Link from 'next/link';
 import { siteConfig } from '@/lib/site-config';
-import { HeroCarousel } from '@/components/HeroCarousel';
 import { NutLienHe } from '@/components/LienHeSheet';
-import type { HeroSlide } from '@/types/hero';
 import type { Album } from '@/types/album';
+import { TheoDoiTiem, type TheKenh } from '@/components/TheoDoiTiem';
 
 /** Nền pastel xoay vòng cho các ô "Bạn đi dịp gì?". */
 const NEN_DIP = ['bg-pink-100', 'bg-amber-100', 'bg-sky-100', 'bg-emerald-100', 'bg-violet-100', 'bg-orange-100'];
 
 /**
- * Hero — PHƯƠNG ÁN A (chủ shop chọn 13/11/2026): ảnh mẫu lớn trong khung vòm
- * + slogan + 2 nút ("Xem mẫu váy", "Nhắn tiệm") + dòng tin cậy, ngay dưới là
- * "Bạn đi dịp gì?" dẫn vào các album shop dựng bên app.
- *
- * Khung vòm thoải (bo trên ~28% chiều cao) chứ không phải `.arch` gắt của thẻ
- * sản phẩm: ảnh tự do shop treo (banner có chữ) bị cắt góc ít hơn.
+ * Hero KHÔNG ẢNH LỚN (16/11/2026): chỉ còn slogan + 2 nút trên nền hồng
+ * nhạt, ngay dưới là "Theo dõi tiệm" (thẻ kênh có ảnh mẫu) và "Bạn đi dịp gì?".
+ * Ảnh trưng bày đã bỏ: thẻ kênh và bộ sưu tập ngay bên dưới đã đủ hình, bỏ ảnh
+ * để bộ sưu tập lên cao. Muốn có lại ảnh: xem lịch sử git của file này
+ * (HeroCarousel vẫn còn).
  */
 export function Hero({
-  slides = [],
   albums = [],
+  kenh = [],
 }: {
-  slides?: HeroSlide[];
+  /** Thẻ "Theo dõi tiệm" (IG, TikTok, Facebook). Rỗng -> ẩn cả hàng. */
+  kenh?: TheKenh[];
   /** Album = "dịp" (tốt nghiệp, đi tiệc…). Rỗng -> ẩn hàng "Bạn đi dịp gì?". */
   albums?: Album[];
 }) {
   return (
-    <section className="relative overflow-hidden pb-4 pt-3 sm:pb-10 sm:pt-8 lg:pt-12">
-      <div className="container-content grid items-center gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-14">
-        {/* Ảnh — điện thoại đứng trước */}
-        <div className="lg:order-2">
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden bg-tint shadow-glass-lg [border-radius:50%_50%_24px_24px/28%_28%_24px_24px]">
-            <HeroCarousel slides={slides} />
-          </div>
-        </div>
+    <section className="relative overflow-hidden pb-4 sm:pb-10">
+      {/* Nền hồng nhạt loang + một vòm mờ góc phải — giữ chất thương hiệu mà không cần ảnh. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-accent/[0.09] to-transparent" />
+      {/* Đẩy ra sát mép + nhạt hơn để không cắt ngang chữ; máy tính có thẻ kênh bên phải nên ẩn. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-28 -top-24 -z-10 h-64 w-48 rounded-t-full border-[10px] border-accent/[0.06] sm:-right-10 sm:h-80 sm:w-60 lg:hidden"
+      />
 
-        {/* Nội dung */}
-        <div className="lg:order-1">
+      {/* Máy tính: slogan bên trái, 4 thẻ "Theo dõi tiệm" 2×2 bên phải. Điện thoại: xếp dọc. */}
+      <div className="container-content pt-6 sm:pt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:items-center lg:gap-12 lg:pt-14">
+        <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-dark [text-wrap:balance]">
             {/* Khoảng trắng không ngắt trước "·" để dấu chấm giữa luôn đứng cuối dòng, không rơi ra đầu dòng mới. */}
             Cho thuê váy&nbsp;· Đầm&nbsp;· Áo dài&nbsp;· Pháp phục
           </p>
-          <h1 className="mt-3 text-[clamp(1.75rem,8vw,2.4rem)] leading-[1.18] text-ink sm:text-5xl lg:text-[3.4rem]">
+          <h1 className="mt-3 text-[clamp(1.75rem,8vw,2.4rem)] leading-[1.18] text-ink sm:text-5xl lg:text-[3.1rem]">
             {siteConfig.sloganLines.join(' ')}
           </h1>
-          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted sm:text-base">
+          <p className="mt-3 hidden max-w-md text-base leading-relaxed text-muted sm:block">
             Đầm dự tiệc, váy thiết kế, áo dài &amp; pháp phục cho thuê theo ngày. Cọc hoàn lại khi trả đồ.
           </p>
 
@@ -59,24 +59,27 @@ export function Hero({
             </NutLienHe>
           </div>
 
-          <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted sm:text-sm">
+          <ul className="mt-4 hidden flex-wrap gap-x-4 gap-y-1 text-sm text-muted sm:flex">
             <li>Mở {siteConfig.phone2.hours} mỗi ngày</li>
             <li>
               {siteConfig.address.district}, {siteConfig.address.city}
             </li>
           </ul>
         </div>
+
+        <TheoDoiTiem the={kenh} canhHero />
       </div>
 
       {albums.length > 0 && (
-        <div className="container-content mt-8 sm:mt-12">
+        <div className="container-content mt-6 sm:mt-12">
           <h2 className="text-xl text-ink sm:text-2xl">Bạn đi dịp gì?</h2>
-          <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+          {/* Điện thoại: một hàng vuốt ngang (ô sau ló ra báo hiệu vuốt được) thay vì lưới 3 hàng. */}
+          <ul className="-mx-5 mt-3 flex snap-x scroll-px-5 gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-6 [&::-webkit-scrollbar]:hidden">
             {albums.slice(0, 6).map((a, i) => (
-              <li key={a.slug}>
+              <li key={a.slug} className="w-[40%] shrink-0 snap-start sm:w-auto">
                 <Link
                   href={`/album/${a.slug}`}
-                  className={`flex min-h-14 items-center justify-center rounded-2xl px-3 py-2 text-center text-[13px] font-semibold leading-tight text-ink transition-transform hover:-translate-y-0.5 sm:min-h-16 sm:text-sm ${NEN_DIP[i % NEN_DIP.length]}`}
+                  className={`flex h-full min-h-14 items-center justify-center rounded-2xl px-3 py-2 text-center text-[13px] font-semibold leading-tight text-ink transition-transform hover:-translate-y-0.5 sm:min-h-16 sm:text-sm ${NEN_DIP[i % NEN_DIP.length]}`}
                 >
                   {a.ten}
                 </Link>

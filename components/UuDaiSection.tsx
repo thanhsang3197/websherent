@@ -29,7 +29,7 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="container-content pt-6 sm:pt-8" aria-labelledby="uu-dai-tieu-de">
+    <section className="container-content pt-4 sm:pt-8" aria-labelledby="uu-dai-tieu-de">
       <div className="flex items-baseline justify-between gap-4">
         <h2 id="uu-dai-tieu-de" className="font-serif text-xl text-ink sm:text-2xl">
           Ưu đãi đang có
@@ -56,7 +56,7 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
                 suKien={{ loai: 'uu-dai', viTri: 'khoi', tieuDe: u.tieuDe }}
                 className="group flex h-full items-center gap-3 rounded-2xl border border-hairline bg-surface p-2.5 shadow-glass transition-shadow hover:shadow-glass-hover sm:gap-4 sm:p-3"
               >
-                <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-tint sm:size-20">
+                <div className="relative size-12 shrink-0 overflow-hidden rounded-xl bg-tint sm:size-20">
                   {u.anh ? (
                     <Image
                       src={u.anh}
@@ -78,12 +78,13 @@ export function UuDaiSection({ items }: { items: UuDai[] }) {
                 </div>
 
                 <div className="min-w-0 flex-1">
+                  {/* Nhãn loại: ẩn trên điện thoại cho thẻ thấp lại, ảnh/icon đã gợi loại. */}
                   <span
-                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${kieu.badge}`}
+                    className={`hidden rounded-full px-2 py-0.5 text-xs font-semibold sm:inline-block ${kieu.badge}`}
                   >
                     {u.loaiTen}
                   </span>
-                  <h3 className="mt-1 line-clamp-3 font-serif text-base leading-snug text-ink sm:text-lg">
+                  <h3 className="line-clamp-2 font-serif sm:mt-1 sm:line-clamp-3 text-base leading-snug text-ink sm:text-lg">
                     {u.tieuDe}
                   </h3>
                   <p className="mt-0.5 line-clamp-1 text-xs text-muted sm:text-sm">

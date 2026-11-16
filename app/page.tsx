@@ -1,91 +1,86 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '@/types/product';
-import type { HeroSlide } from '@/types/hero';
 import {
   getProducts,
   getRentalProducts,
-  getHeroSlides,
-  getNewArrivals,
   getAlbums,
   getFeedback,
   getUuDai,
 } from '@/lib/products';
 import {
   siteConfig,
-  heroConfig,
-  SO_MAU_MOI_VE,
 } from '@/lib/site-config';
 import { Hero } from '@/components/Hero';
+import type { TheKenh, AnhKenh } from '@/components/TheoDoiTiem';
 import { ProductExplorer } from '@/components/ProductExplorer';
 import { UuDaiSection } from '@/components/UuDaiSection';
-import { NewArrivalsSection } from '@/components/NewArrivalsSection';
-import { AlbumSection } from '@/components/AlbumSection';
 import { FeedbackSection } from '@/components/FeedbackSection';
 
+/** "@ten" lấy từ link hồ sơ (instagram.com/ten/, tiktok.com/@ten). */
+function handleTuLink(url: string): string {
+  const ten = url.replace(/\/+$/, '').split('/').pop() ?? '';
+  return ten.startsWith('@') ? ten : `@${ten}`;
+}
+
 /**
- * Chọn slide cho hero, theo thứ tự ưu tiên:
- *  1. Mã SP ghim cứng trong heroConfig.productIds -> dùng đúng các mẫu đó.
- *     Đây là lối thoát hiểm khi cần ghim gấp mà không mở app; để rỗng là bỏ qua.
- *  2. Danh sách shop sắp ở màn hình "Trưng bày" bên app -> ĐƯỜNG CHÍNH.
- *     Gồm CẢ ảnh tự do (banner, ảnh studio) chứ không chỉ các mẫu — xem
- *     `getHeroSlides`. Giữ nguyên thứ tự API trả về.
- *  3. Tự động lấy mẫu của heroConfig.fallbackBrand.
- *  4. Vẫn không có -> mẫu bất kỳ có ảnh, để hero không bao giờ trống.
- *
- * Ba bước cuối là lưới an toàn cho tình huống api-cong-khai.md §2.1 cảnh báo:
- * shop bỏ hết mẫu trưng bày thì danh sách rỗng, và nếu trang chủ không lường
- * trước thì khách mở web ra thấy một khoảng trắng ngay đầu trang.
- *
- * Lưu ý: mã SP ở bước 1 là mã của mẫu SAU KHI gộp size. Mẫu nhiều size được gộp
- * về mã của size nhỏ nhất (vd Amy Dress S+M -> chỉ còn mã T001), nên dùng mã đó.
+ * Thẻ "Theo dõi tiệm" trong hero: mỗi thẻ 3 ảnh mẫu đang cho thuê trên web
+ * (chủ shop chọn 16/11/2026 — không lấy bài IG thật), tự đổi theo catalogue.
+ * Không mẫu nào lặp giữa các thẻ.
  */
-function buildHeroSlides(
-  products: Product[],
-  tuApp: HeroSlide[],
-): HeroSlide[] {
-  const slides: HeroSlide[] = [];
-  const seen = new Set<string>();
-
-  const add = (p: Product) => {
-    if (!p.image || seen.has(p.image) || slides.length >= heroConfig.maxSlides) return;
-    seen.add(p.image);
-    slides.push({
-      kieu: 'san_pham',
-      url: p.image,
-      alt: `Mẫu ${p.name}${p.brand ? ` — ${p.brand}` : ''} · ${siteConfig.name}`,
-      caption: null,
-      href: null,
-    });
+function buildTheKenh(thue: Product[]): TheKenh[] {
+  const daDung = new Set<string>();
+  const mau = (loc: (p: Product) => boolean): AnhKenh[] => {
+    const ra: AnhKenh[] = [];
+    for (const p of thue) {
+      if (ra.length >= 3) break;
+      if (!p.image || daDung.has(p.image) || !loc(p)) continue;
+      daDung.add(p.image);
+      ra.push({ src: p.image });
+    }
+    return ra;
   };
+  const laAoDai = (p: Product) => p.category === 'ao-dai' || p.category === 'phap-phuc';
+  const laVay = (p: Product) => p.category === 'dam-vay';
+  const anhVay = mau(laVay);
+  const anhAoDai = mau(laAoDai);
+  const anhTiktok = mau((p) => p.category !== 'phu-kien');
+  const anhFb = mau((p) => p.category !== 'phu-kien');
 
-  // 1. Mã SP được ghim thủ công.
-  for (const code of heroConfig.productIds) {
-    const wanted = code.trim().toUpperCase();
-    const found = products.find((p) => p.id.toUpperCase() === wanted);
-    if (found) add(found);
-  }
-  if (slides.length > 0) return slides;
-
-  // 2. Danh sách shop sắp bên app (mẫu + ảnh tự do). KHÔNG sắp lại — API đã
-  //    trả đúng thứ tự shop kéo–thả.
-  for (const s of tuApp) {
-    if (seen.has(s.url) || slides.length >= heroConfig.maxSlides) break;
-    seen.add(s.url);
-    slides.push(s);
-  }
-  if (slides.length > 0) return slides;
-
-  // 3. Tự động theo brand.
-  for (const p of products) {
-    if (p.brand === heroConfig.fallbackBrand) add(p);
-  }
-  if (slides.length > 0) return slides;
-
-  // 4. Cùng lắm: mẫu bất kỳ có ảnh.
-  const any = products.find((p) => p.image);
-  if (any) add(any);
-  return slides;
+  return [
+    {
+      kenh: 'Instagram váy',
+      nenTang: 'instagram',
+      ten: 'IG Váy đầm',
+      handle: handleTuLink(siteConfig.instagramUrl),
+      href: siteConfig.instagramUrl,
+      anh: anhVay,
+    },
+    {
+      kenh: 'Instagram áo dài',
+      nenTang: 'instagram',
+      ten: 'IG Áo dài',
+      handle: handleTuLink(siteConfig.instagramUrl2),
+      href: siteConfig.instagramUrl2,
+      anh: anhAoDai,
+    },
+    {
+      kenh: 'TikTok',
+      nenTang: 'tiktok',
+      ten: 'TikTok',
+      handle: handleTuLink(siteConfig.tiktokUrl),
+      href: siteConfig.tiktokUrl,
+      anh: anhTiktok,
+    },
+    {
+      kenh: 'Facebook',
+      nenTang: 'facebook',
+      ten: 'Facebook · Messenger',
+      handle: siteConfig.name.toUpperCase(),
+      href: siteConfig.facebookUrl,
+      anh: anhFb,
+    },
+  ];
 }
 
 export default async function HomePage() {
@@ -93,11 +88,9 @@ export default async function HomePage() {
   // khách chờ thêm một vòng mạng vô ích.
   // `products` = đầy đủ (dùng cho khối Thanh lý), `thue` = danh mục cho thuê,
   // đã bỏ mẫu shop để "Chỉ hiện ở trang thanh lý".
-  const [products, thue, heroTuApp, moiVe, albums, feedback, uuDai] = await Promise.all([
+  const [products, thue, albums, feedback, uuDai] = await Promise.all([
     getProducts(),
     getRentalProducts(),
-    getHeroSlides(heroConfig.maxSlides),
-    getNewArrivals(SO_MAU_MOI_VE),
     getAlbums(),
     getFeedback(),
     getUuDai(),
@@ -113,25 +106,34 @@ export default async function HomePage() {
     .sort((a, b) => (a.sale?.price || Infinity) - (b.sale?.price || Infinity))
     .slice(0, 3);
 
-  const heroSlides = buildHeroSlides(thue, heroTuApp);
+
+  const theKenh = buildTheKenh(thue);
 
   return (
     <>
-      {/* Phương án A (13/11/2026): ảnh lớn + 2 nút + "Bạn đi dịp gì?" (album). */}
-      <Hero slides={heroSlides} albums={albums} />
+      {/* Slogan + 2 nút (bỏ ảnh lớn) + "Theo dõi tiệm" (thẻ kênh, 16/11/2026) + "Bạn đi dịp gì?" (album). */}
+      <Hero albums={albums} kenh={theKenh} />
 
       {/*
         Ưu đãi shop đăng bên app (api-cong-khai.md §2.6) — ngay dưới hero để khách
         thấy trước khi cuộn tới sản phẩm (chủ shop chốt 06/10/2026). Rỗng -> ẩn
         cả khối. Thanh mỏng trên cùng mọi trang nằm ở app/layout.tsx.
       */}
-      <UuDaiSection items={uuDai.filter((u) => u.hienKhoi)} />
+      {/* ẩn trên điện thoại — thanh ưu đãi mỏng trên cùng đã có. */}
+      <div className="hidden sm:block">
+        <UuDaiSection items={uuDai.filter((u) => u.hienKhoi)} />
+      </div>
 
-      {/* Hàng mới shop tự chọn bên app. Rỗng -> component tự ẩn cả khối. */}
-      <NewArrivalsSection products={moiVe} />
+      {/*
+        bỏ khối "Sản phẩm mới về" khỏi trang chủ, không có nút
+        lọc "Mới về" (chủ shop bỏ). Muốn bật lại nút: truyền `moiVeIds` cho
+        ProductExplorer (lấy từ getNewArrivals).
+      */}
 
-      {/* Album shop dựng bên app (api-cong-khai.md §2.4). Rỗng -> ẩn cả khối. */}
-      <AlbumSection albums={albums} />
+      {/*
+        Khối "Album tuyển chọn" đã bỏ khỏi trang chủ (16/11/2026): album đã có
+        ở hàng "Bạn đi dịp gì?" trong hero, bỏ để bộ sưu tập lên cao hơn.
+      */}
 
       {/*
         Mục "Quy trình thuê" (3 bước + nút liên hệ) đã bỏ hẳn 16/08/2026 theo

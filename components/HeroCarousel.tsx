@@ -23,7 +23,21 @@ const SIZES = '(max-width: 640px) 92vw, (max-width: 1024px) 420px, 460px';
  * api-cong-khai.md §2.3. Cả hai đều không bắt buộc: `caption` null thì KHÔNG vẽ
  * khối chữ rỗng, `href` null thì slide đơn thuần là ảnh, không bấm được.
  */
-export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
+export function HeroCarousel({
+  slides,
+  nen = false,
+}: {
+  slides: HeroSlide[];
+  /**
+   * Chế độ NỀN tràn viền: mọi ảnh phủ kín (cover, kể cả ảnh tự do), ảnh tải theo
+   * bề ngang màn hình, và không vẽ chữ/link của slide — chữ hero đè lên đã đủ,
+   * link phủ kín ảnh sẽ nuốt cú bấm của khách.
+   */
+  nen?: boolean;
+}) {
+  const sizes = nen ? '100vw' : SIZES;
+  // Nền ngang trên máy tính cắt mất đầu ảnh chụp dọc -> neo ảnh lệch lên trên.
+  const lop = (k: HeroSlide['kieu']) => (nen ? 'object-cover object-[center_22%]' : classAnh(k));
   const [current, setCurrent] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
   const lastRef = useRef(0);
@@ -68,8 +82,8 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             fill
             placeholder="blur"
             blurDataURL={GLASS_BLUR_DATA_URL}
-            sizes={SIZES}
-            className={classAnh(slides[prev].kieu)}
+            sizes={sizes}
+            className={lop(slides[prev].kieu)}
           />
         </div>
       )}
@@ -84,12 +98,12 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           priority={current === 0}
           placeholder="blur"
           blurDataURL={GLASS_BLUR_DATA_URL}
-          sizes={SIZES}
-          className={classAnh(slides[current].kieu)}
+          sizes={sizes}
+          className={lop(slides[current].kieu)}
         />
 
         {/* Chữ shop muốn hiện đè lên ảnh tự do. null -> không vẽ gì. */}
-        {slides[current].caption && (
+        {!nen && slides[current].caption && (
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-4 pb-4 pt-10">
             <p className="text-balance text-center font-serif text-lg leading-snug text-white drop-shadow">
               {slides[current].caption}
@@ -98,7 +112,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         )}
 
         {/* Cả slide thành một vùng bấm được khi shop có gắn liên kết. */}
-        {slides[current].href && (
+        {!nen && slides[current].href && (
           <SlideLink href={slides[current].href as string} label={slides[current].alt} />
         )}
       </div>
