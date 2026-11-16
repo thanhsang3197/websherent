@@ -72,7 +72,7 @@ export function Hero({
 
       {albums.length > 0 && (
         <div className="container-content mt-6 sm:mt-12">
-          <h2 className="text-xl text-ink sm:text-2xl">Bạn đi dịp gì?</h2>
+          <h2 className="text-xl text-ink sm:text-2xl">Album theo dịp</h2>
           {/* Điện thoại: một hàng vuốt ngang (ô sau ló ra báo hiệu vuốt được) thay vì lưới 3 hàng. */}
           <ul className="-mx-5 mt-3 flex snap-x scroll-px-5 gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-6 [&::-webkit-scrollbar]:hidden">
             {albums.slice(0, 6).map((a, i) => (

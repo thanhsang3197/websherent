@@ -42,7 +42,7 @@ export function TheoDoiTiem({
   if (the.length === 0) return null;
   return (
     <div className={canhHero ? 'mt-6 sm:mt-10 lg:mt-0' : 'container-content mt-6 sm:mt-10'}>
-      <h2 className="text-xl text-ink sm:text-2xl">Theo dõi tiệm</h2>
+      <h2 className="text-xl text-ink sm:text-2xl">Theo dõi tiệm tại đây</h2>
       {/* scroll-px-5: thẻ đầu dừng thẳng lề chữ (20px) thay vì dính mép màn hình khi bắt điểm vuốt. */}
       <ul className={`-mx-5 mt-3 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden ${canhHero ? '' : 'lg:grid-cols-4'}`}>
         {the.map((t, viTri) => (
