@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product, ProductCategory } from '@/types/product';
 import { nhomPhuKien } from '@/lib/mapping';
+import { NHOM_AO_DAI, TEN_NHOM } from '@/lib/uu-dai-ao-dai';
 
 /**
  * Nhóm phụ kiện gợi ý theo loại sản phẩm, đúng thứ tự hiển thị. Khoá nhóm là
@@ -9,12 +10,13 @@ import { nhomPhuKien } from '@/lib/mapping';
  * cách gom nhóm với mục Phụ kiện ở trang chủ.
  *
  * - Áo dài: chủ shop đặt 04/11/2026 (đồ cài tóc, quạt, guốc cho ảnh Tết);
- *   11/11/2026 thêm Nón ở vị trí thứ 2 và Dù (mẫu tên "Ô trắng") ở vị trí thứ 5.
+ *   11/11/2026 thêm Nón ở vị trí thứ 2 và Dù (mẫu tên "Ô trắng") ở vị trí thứ 5;
+ *   15/11/2026 thêm Dây ngọc (D41–D48).
  * - Đầm váy: chủ shop yêu cầu 06/11/2026 là KHÁC áo dài, nên dùng túi (T),
  *   dây chuyền (D), choàng và kính.
  * - Pháp phục: chủ shop yêu cầu 06/11/2026 là GIỐNG áo dài.
  */
-const NHOM_AO_DAI = ['vh', 'nón', 'h', 'k', 'ô trắng', 'c', 'q', 'guốc', 'kẹp', 'trâm'];
+// Danh sách nhóm áo dài dùng chung với bộ chọn quà ở túi đồ: lib/uu-dai-ao-dai.ts.
 
 const GOI_Y: Partial<Record<ProductCategory, { tieuDe: string; nhom: string[] }>> = {
   'ao-dai': { tieuDe: 'Phụ kiện áo dài chụp Tết', nhom: NHOM_AO_DAI },
@@ -89,7 +91,7 @@ export function GoiYPhuKien({
           <li key={p.id}>
             <Link
               href={`/?loai=phu-kien&nhom=${encodeURIComponent(nhomPhuKien(p))}#san-pham`}
-              aria-label={`Xem phụ kiện nhóm ${p.name.replace(/\s*\d.*$/, '')}`}
+              aria-label={`Xem phụ kiện nhóm ${TEN_NHOM[nhomPhuKien(p)] ?? p.name.replace(/\s*\d.*$/, '')}`}
               className="group relative block aspect-square overflow-hidden rounded-xl bg-tint shadow-sm ring-1 ring-white/70 transition-all hover:shadow-md hover:ring-accent/50"
             >
               <Image

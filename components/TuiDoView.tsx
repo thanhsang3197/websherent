@@ -10,6 +10,7 @@ import {
   PHAN_TRAM_GIAM,
   SO_MAU_GIAM,
   tamTinh,
+  useQuaAoDai,
   useTuiDo,
   xoaHetTui,
   type MonTrongTui,
@@ -17,13 +18,29 @@ import {
 import { moLienHe } from '@/components/LienHeSheet';
 import { ChonNgayThue } from '@/components/ChonNgayThue';
 import { dongNgayTinNhan, useNgayThue, type NgayThue } from '@/lib/ngay-thue';
+import { dangDienRa, quaHopLe, tinhUuDaiAoDai, type PhuKienQua } from '@/lib/uu-dai-ao-dai';
+import { UuDaiAoDaiTui } from '@/components/UuDaiAoDaiTui';
 
 /** Đã chạy trên máy khách chưa — tránh nháy "túi rỗng" trước khi đọc localStorage. */
 const daGanKet = () => true;
 const chuaGanKet = () => false;
 const khongDangKy = () => () => {};
 
-function soanTinNhan(list: MonTrongTui[], ngay: NgayThue) {
+/** Quà ưu đãi áo dài đang áp dụng cho túi (null = không có ưu đãi / chưa đủ mốc). */
+type QuaTui = { moTa: string; tren: number; soQua: number; mon: PhuKienQua[] } | null;
+
+function dongQua(qua: QuaTui): string[] {
+  if (!qua) return [];
+  const daChon = qua.mon.map((p) => `${p.name} (mã ${p.id})`).join(', ');
+  const conLai = qua.soQua - qua.mon.length;
+  return [
+    `Ưu đãi áo dài (thuê áo dài từ ${qua.tren / 1000}K): tặng ${qua.moTa}` +
+      (daChon ? ` — mình chọn ${daChon}` : '') +
+      (conLai > 0 ? (daChon ? `, còn ${conLai} món nhờ tiệm tư vấn` : ' — nhờ tiệm tư vấn giúp mình') : ''),
+  ];
+}
+
+function soanTinNhan(list: MonTrongTui[], ngay: NgayThue, qua: QuaTui) {
   const t = tamTinh(list);
   const dong = list.map(
     (m, i) =>
@@ -32,13 +49,15 @@ function soanTinNhan(list: MonTrongTui[], ngay: NgayThue) {
   return [
     `Chào ${siteConfig.name}, mình muốn thuê ${list.length} món:`,
     ...dong,
+    ...dongQua(qua),
     dongNgayTinNhan(ngay),
     `Tạm tính phí thuê: ${formatVnd(t.phiThue - t.giam)}${t.duGiam ? ` (đã trừ ưu đãi ${PHAN_TRAM_GIAM}%)` : ''}`,
   ].join('\n');
 }
 
-export function TuiDoView() {
+export function TuiDoView({ phuKien = [] }: { phuKien?: PhuKienQua[] }) {
   const list = useTuiDo();
+  const quaDaLuu = useQuaAoDai();
   const daSan = useSyncExternalStore(khongDangKy, daGanKet, chuaGanKet);
   const ngay = useNgayThue();
   const t = tamTinh(list);
@@ -75,10 +94,21 @@ export function TuiDoView() {
   }
 
   const phanTram = Math.min(100, Math.round((t.soMauTinh / SO_MAU_GIAM) * 100));
-  const tinNhan = soanTinNhan(list, ngay);
+
+  // Ưu đãi áo dài: chỉ hiện trong thời gian chương trình và khi túi có áo dài.
+  const uuDai = tinhUuDaiAoDai(list);
+  const coUuDaiAoDai = dangDienRa() && uuDai.soAoDai > 0;
+  const trongTui = new Set(list.map((m) => m.id));
+  const daChon = coUuDaiAoDai ? quaHopLe(quaDaLuu, uuDai.moc, phuKien, trongTui) : [];
+  const qua: QuaTui =
+    coUuDaiAoDai && uuDai.moc
+      ? { moTa: uuDai.moc.moTa, tren: uuDai.moc.tren, soQua: uuDai.moc.soQua, mon: daChon }
+      : null;
+  const tinNhan = soanTinNhan(list, ngay, qua);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
+    // minmax(0,1fr): cột không bị dải quà cuộn ngang kéo giãn quá màn hình điện thoại.
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <div>
         {/* Thanh tiến độ tới mốc ưu đãi */}
         <div
@@ -149,6 +179,10 @@ export function TuiDoView() {
             Xoá hết
           </button>
         </div>
+
+        {coUuDaiAoDai && (
+          <UuDaiAoDaiTui uuDai={uuDai} phuKien={phuKien} daChon={daChon} trongTui={trongTui} />
+        )}
       </div>
 
       <aside className="rounded-3xl bg-surface p-5 shadow-glass lg:sticky lg:top-32">
@@ -157,12 +191,24 @@ export function TuiDoView() {
             <dt className="text-muted">Phí thuê ({list.length} món)</dt>
             <dd>{formatVnd(t.phiThue)}</dd>
           </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-muted">Ưu đãi từ {SO_MAU_GIAM} váy (−{PHAN_TRAM_GIAM}%)</dt>
-            <dd className={t.duGiam ? 'font-bold text-emerald-700' : 'text-muted'}>
-              {t.duGiam ? `−${formatVnd(t.giam)}` : 'chưa đủ mẫu'}
-            </dd>
-          </div>
+          {/* Chưa đủ mẫu thì ẩn dòng này cho gọn — thanh tiến độ phía trên đã nhắc. */}
+          {t.duGiam && (
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted">Ưu đãi từ {SO_MAU_GIAM} váy (−{PHAN_TRAM_GIAM}%)</dt>
+              <dd className="font-bold text-emerald-700">−{formatVnd(t.giam)}</dd>
+            </div>
+          )}
+          {qua && (
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted">
+                Quà ưu đãi áo dài ({qua.soQua} phụ kiện)
+                {qua.mon.length > 0 && (
+                  <span className="block text-xs">{qua.mon.map((p) => p.name).join(', ')}</span>
+                )}
+              </dt>
+              <dd className="font-bold text-emerald-700">Miễn phí</dd>
+            </div>
+          )}
           {t.coc > 0 && (
             <div className="flex justify-between gap-3">
               <dt className="text-muted">Tiền cọc (hoàn lại)</dt>

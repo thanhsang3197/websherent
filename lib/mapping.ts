@@ -108,7 +108,24 @@ export function sortProductsForDisplay(products: Product[]): Product[] {
  * khối gợi ý ở trang chi tiết trỏ thẳng tới đúng nhóm (`?nhom=`).
  */
 export function nhomPhuKien(p: Pick<Product, 'name'>): string {
-  return p.name.trim().replace(/\s*\d.*$/, '').toLowerCase();
+  const ten = p.name.trim();
+  if (laDayNgoc(ten)) return NHOM_DAY_NGOC;
+  return ten.replace(/\s*\d.*$/, '').toLowerCase();
+}
+
+/**
+ * Dây ngọc = dây mã D41–D48 (chủ shop chốt 15/11/2026). Cùng dãy mã D với dây
+ * chuyền của đầm váy nhưng là phụ kiện ÁO DÀI, nên tách thành nhóm riêng.
+ */
+export const NHOM_DAY_NGOC = 'dây ngọc';
+const DAY_NGOC_TU = 41;
+const DAY_NGOC_DEN = 48;
+
+function laDayNgoc(ten: string): boolean {
+  const m = ten.match(/^D(\d+)$/i);
+  if (!m) return false;
+  const so = Number(m[1]);
+  return so >= DAY_NGOC_TU && so <= DAY_NGOC_DEN;
 }
 
 // ----- Gộp mẫu nhiều size thành 1 sản phẩm -----
