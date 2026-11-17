@@ -28,6 +28,8 @@ export interface MonTrongTui {
   price: number;
   days: 1 | 3;
   deposit: number;
+  /** Khách chọn cọc bằng CCCD thay tiền (chỉ áo dài thuê 1 ngày ≤ 80k). */
+  cocCccd?: boolean;
   /** Thiếu ở món lưu từ bản cũ -> đoán theo mã (PK… = phụ kiện). */
   category?: ProductCategory;
 }
@@ -66,7 +68,7 @@ export function tamTinh(list: MonTrongTui[]) {
   const soMauTinh = list.filter(tinhVaoUuDai).length;
   const duGiam = soMauTinh >= SO_MAU_GIAM;
   const giam = duGiam ? Math.round((phiThue * PHAN_TRAM_GIAM) / 100 / 1000) * 1000 : 0;
-  const coc = list.reduce((a, m) => a + (m.deposit > 0 ? m.deposit : 0), 0);
+  const coc = list.reduce((a, m) => a + (!m.cocCccd && m.deposit > 0 ? m.deposit : 0), 0);
   // Giảm 10% trên TỔNG hoá đơn (cả phụ kiện) — chỉ điều kiện đủ mốc là đếm riêng trang phục.
   return { phiThue, giam, duGiam, coc, soMauTinh, conThieu: Math.max(0, SO_MAU_GIAM - soMauTinh) };
 }

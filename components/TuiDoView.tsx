@@ -44,7 +44,7 @@ function soanTinNhan(list: MonTrongTui[], ngay: NgayThue, qua: QuaTui) {
   const t = tamTinh(list);
   const dong = list.map(
     (m, i) =>
-      `${i + 1}. ${m.name} (mã ${m.id})${m.size ? ` · size ${m.size}` : ''} – ${formatVnd(m.price)}/${m.days} ngày`,
+      `${i + 1}. ${m.name} (mã ${m.id})${m.size ? ` · size ${m.size}` : ''} – ${formatVnd(m.price)}/${m.days} ngày${m.cocCccd ? ' – cọc CCCD' : ''}`,
   );
   return [
     `Chào ${siteConfig.name}, mình muốn thuê ${list.length} món:`,
@@ -154,7 +154,11 @@ export function TuiDoView({ phuKien = [] }: { phuKien?: PhuKienQua[] }) {
                 <p className="mt-1 text-sm">
                   <span className="font-extrabold text-accent-dark">{formatVnd(m.price)}</span>
                   <span className="text-xs text-muted"> /{m.days} ngày</span>
-                  {m.deposit > 0 && <span className="text-xs text-muted"> · cọc {formatVnd(m.deposit)}</span>}
+                  {m.cocCccd ? (
+                    <span className="text-xs text-muted"> · cọc CCCD</span>
+                  ) : (
+                    m.deposit > 0 && <span className="text-xs text-muted"> · cọc {formatVnd(m.deposit)}</span>
+                  )}
                 </p>
               </div>
               <button

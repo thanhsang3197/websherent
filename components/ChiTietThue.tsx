@@ -33,6 +33,7 @@ export function ChiTietThue({
   gia1Ngay,
   gia3Ngay,
   coc,
+  cocCccd = false,
   giaTag,
 }: {
   /** Món gốc (tên, mã, ảnh…); giá + số ngày sẽ lấy theo ô khách chọn. */
@@ -40,6 +41,8 @@ export function ChiTietThue({
   gia1Ngay: number | null;
   gia3Ngay: number;
   coc: number;
+  /** Cho phép cọc bằng CCCD thay tiền (áo dài thuê 1 ngày ≤ 80k). */
+  cocCccd?: boolean;
   giaTag: number | null;
 }) {
   const tui = useTuiDo();
@@ -50,10 +53,14 @@ export function ChiTietThue({
   // Mẫu đã trong túi -> ô đang chọn bám theo số ngày lưu trong túi (khách quay
   // lại trang vẫn thấy đúng lựa chọn cũ). Mẫu không có giá 1 ngày thì luôn 3.
   const soNgay: 1 | 3 = !co1Ngay ? 3 : trongTui ? trongTui.days : chon;
-  const theoNgay = (d: 1 | 3): MonTrongTui => ({
+  // Hình thức cọc: cũng đi theo vào túi + tin nhắn, bám theo túi như số ngày.
+  const [chonCccd, setChonCccd] = useState(false);
+  const laCccd = cocCccd && (trongTui ? !!trongTui.cocCccd : chonCccd);
+  const theoNgay = (d: 1 | 3, cccd: boolean = laCccd): MonTrongTui => ({
     ...mon,
     days: d,
     price: d === 1 && gia1Ngay != null ? gia1Ngay : gia3Ngay,
+    cocCccd: cocCccd && cccd ? true : undefined,
   });
   const monChon = theoNgay(soNgay);
   const { conThieu, soMauTinh } = tamTinh(tui);
@@ -64,10 +71,15 @@ export function ChiTietThue({
     // Đã trong túi -> cập nhật luôn số ngày + giá trong túi.
     if (trongTui) capNhatMon(theoNgay(d));
   };
+  const doiCoc = (cccd: boolean) => {
+    setChonCccd(cccd);
+    if (trongTui) capNhatMon(theoNgay(soNgay, cccd));
+  };
 
   const tinNhan =
     `Chào ${siteConfig.name}, mình muốn hỏi mẫu ${mon.name} (mã ${mon.id})` +
-    `${mon.size ? `, size ${mon.size}` : ''}, thuê ${soNgay} ngày.\n${dongNgayTinNhan(ngay)}`;
+    `${mon.size ? `, size ${mon.size}` : ''}, thuê ${soNgay} ngày` +
+    `${cocCccd ? `, cọc ${laCccd ? 'bằng CCCD' : `tiền ${formatVnd(coc)}`}` : ''}.\n${dongNgayTinNhan(ngay)}`;
 
   const bamTui = (el: HTMLElement) => {
     const them = !trongTui;
@@ -78,6 +90,11 @@ export function ChiTietThue({
 
   const o = (on: boolean) =>
     `nhan-co relative flex h-[76px] flex-col items-start justify-center gap-0.5 rounded-2xl px-4 text-left transition-colors ${
+      on ? 'bg-tint text-accent-dark ring-2 ring-inset ring-accent' : 'bg-surface text-ink ring-1 ring-inset ring-hairline hover:ring-accent/50'
+    }`;
+
+  const oCoc = (on: boolean) =>
+    `nhan-co flex flex-col items-start rounded-xl px-3 py-2 text-left transition-colors ${
       on ? 'bg-tint text-accent-dark ring-2 ring-inset ring-accent' : 'bg-surface text-ink ring-1 ring-inset ring-hairline hover:ring-accent/50'
     }`;
 
@@ -106,10 +123,26 @@ export function ChiTietThue({
       <ChonNgayThue soNgay={soNgay} className="mt-3" />
 
       <dl className="mt-3 max-w-md divide-y divide-hairline rounded-2xl bg-surface px-4 text-sm ring-1 ring-inset ring-hairline">
-        <div className="flex items-center justify-between gap-3 py-3">
-          <dt className="text-muted">Cọc (hoàn lại khi trả đồ đúng hẹn, nguyên vẹn)</dt>
-          <dd className="shrink-0 font-bold text-ink">{formatVnd(coc)}</dd>
-        </div>
+        {cocCccd ? (
+          <div className="py-3">
+            <dt className="text-muted">Hình thức cọc</dt>
+            <dd className="mt-2 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Chọn hình thức cọc">
+              <button type="button" role="radio" aria-checked={!laCccd} onClick={() => doiCoc(false)} className={oCoc(!laCccd)}>
+                <span className="text-xs">Cọc tiền</span>
+                <span className="font-bold">{formatVnd(coc)}</span>
+              </button>
+              <button type="button" role="radio" aria-checked={laCccd} onClick={() => doiCoc(true)} className={oCoc(laCccd)}>
+                <span className="text-xs">Hoặc</span>
+                <span className="font-bold">Cọc CCCD</span>
+              </button>
+            </dd>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-3 py-3">
+            <dt className="text-muted">Cọc (hoàn lại khi trả đồ đúng hẹn, nguyên vẹn)</dt>
+            <dd className="shrink-0 font-bold text-ink">{formatVnd(coc)}</dd>
+          </div>
+        )}
         {giaTag != null && (
           <div className="flex items-center justify-between gap-3 py-3">
             <dt className="text-muted">Giá tag</dt>

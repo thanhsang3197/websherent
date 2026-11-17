@@ -207,6 +207,14 @@ export default async function ProductPage({
             gia1Ngay={product.rentPrice1Day ?? null}
             gia3Ngay={product.rentPrice}
             coc={product.depositPrice}
+            // Chủ shop chốt 17/11/2026: riêng áo dài có giá thuê 1 ngày ≤ 80k
+            // được chọn thêm hình thức cọc CCCD.
+            cocCccd={
+              product.category === 'ao-dai' &&
+              product.rentPrice1Day != null &&
+              product.rentPrice1Day > 0 &&
+              product.rentPrice1Day <= 80000
+            }
             giaTag={product.tagPrice ?? null}
           />
 
