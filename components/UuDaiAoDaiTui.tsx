@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { formatVnd, GLASS_BLUR_DATA_URL } from '@/lib/format';
-import { bamQuaAoDai } from '@/lib/tui-do';
+import { bamQuaAoDai, doiQuaAoDai, doiTrangThai } from '@/lib/tui-do';
 import {
   KET_THUC,
   MOC_AO_DAI,
@@ -54,6 +54,13 @@ export function UuDaiAoDaiTui({
 
   const idChon = daChon.map((p) => p.id);
   const idHopLe = duocChon.map((p) => p.id);
+  // Đã chọn đủ quà mà bấm thêm món khác -> hỏi khách: đổi quà hay thuê thêm
+  // (trả tiền + cọc như thường). Chủ shop chốt 17/11/2026.
+  const [hoi, setHoi] = useState<PhuKienQua | null>(null);
+  const bamMon = (p: PhuKienQua) => {
+    if (moc && !idChon.includes(p.id) && daChon.length >= moc.soQua) setHoi(p);
+    else if (moc) bamQuaAoDai(p.id, moc.soQua, idHopLe);
+  };
 
   return (
     <section
@@ -125,7 +132,7 @@ export function UuDaiAoDaiTui({
                 <li key={p.id} className="w-[84px] shrink-0">
                   <button
                     type="button"
-                    onClick={() => bamQuaAoDai(p.id, moc.soQua, idHopLe)}
+                    onClick={() => bamMon(p)}
                     aria-pressed={chon}
                     aria-label={`${chon ? 'Bỏ chọn' : 'Chọn'} ${p.name} làm quà`}
                     className="block w-full text-left"
@@ -168,7 +175,85 @@ export function UuDaiAoDaiTui({
           </div>
         )
       )}
+
+      {hoi && (
+        <HoiThemPhuKien
+          mon={hoi}
+          daChon={daChon}
+          onDoi={(cu) => {
+            doiQuaAoDai(cu, hoi.id, idHopLe);
+            setHoi(null);
+          }}
+          onThue={() => {
+            doiTrangThai(hoi.mon);
+            setHoi(null);
+          }}
+          onDong={() => setHoi(null)}
+        />
+      )}
     </section>
+  );
+}
+
+/** Hộp hỏi khi đã đủ quà: đổi 1 món quà lấy món này, hoặc thuê thêm (trả tiền). */
+function HoiThemPhuKien({
+  mon,
+  daChon,
+  onDoi,
+  onThue,
+  onDong,
+}: {
+  mon: PhuKienQua;
+  daChon: PhuKienQua[];
+  onDoi: (cu: string) => void;
+  onThue: () => void;
+  onDong: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-3 sm:items-center" onClick={onDong}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="hoi-them-pk"
+        className="w-full max-w-sm rounded-3xl bg-surface p-5 shadow-glass"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-3">
+          <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-tint">
+            <Image src={mon.image} alt="" fill sizes="56px" className="object-cover" />
+          </span>
+          <div className="min-w-0">
+            <p id="hoi-them-pk" className="font-bold text-ink">{mon.name}</p>
+            <p className="text-sm text-muted">Bạn đã chọn đủ {daChon.length} món quà miễn phí.</p>
+          </div>
+        </div>
+
+        <p className="mt-4 text-[13px] font-semibold text-ink/80">Đổi quà — lấy món này thay cho:</p>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {daChon.map((q) => (
+            <button
+              key={q.id}
+              type="button"
+              onClick={() => onDoi(q.id)}
+              className="nhan-co flex items-center gap-2 rounded-xl bg-tint/60 p-1.5 text-left text-sm font-semibold text-ink ring-1 ring-inset ring-hairline hover:ring-accent/50"
+            >
+              <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-surface">
+                <Image src={q.image} alt="" fill sizes="36px" className="object-cover" />
+              </span>
+              <span className="line-clamp-1">{q.name}</span>
+            </button>
+          ))}
+        </div>
+
+        <button type="button" onClick={onThue} className="btn btn-primary mt-4 w-full">
+          Thuê thêm · {formatVnd(mon.mon.price)}
+          {mon.mon.deposit > 0 && <span className="font-normal opacity-80"> + cọc {formatVnd(mon.mon.deposit)}</span>}
+        </button>
+        <button type="button" onClick={onDong} className="mt-2 h-10 w-full text-sm text-muted hover:text-ink">
+          Huỷ
+        </button>
+      </div>
+    </div>
   );
 }
 

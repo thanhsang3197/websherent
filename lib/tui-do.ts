@@ -132,6 +132,11 @@ export function bamQuaAoDai(id: string, toiDa: number, hopLe: string[]) {
   ghiQua([...dang, id].slice(-toiDa));
 }
 
+/** Đổi một món quà đã chọn (`cu`) lấy món khác (`moi`), giữ nguyên vị trí. */
+export function doiQuaAoDai(cu: string, moi: string, hopLe: string[]) {
+  ghiQua(docQua().filter((x) => hopLe.includes(x)).map((x) => (x === cu ? moi : x)));
+}
+
 /**
  * Thay món đã có trong túi bằng bản mới (cùng mã) — vd khách đổi từ "thuê 1
  * ngày" sang "thuê 3 ngày" ở trang chi tiết sau khi đã thêm vào túi. Món chưa

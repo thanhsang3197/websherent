@@ -1,7 +1,7 @@
 import type { Product } from '@/types/product';
 import { listRentPrice } from '@/lib/format';
 import { NHOM_DAY_NGOC, nhomPhuKien } from '@/lib/mapping';
-import type { MonTrongTui } from '@/lib/tui-do-mon';
+import { monTuSanPham, type MonTrongTui } from '@/lib/tui-do-mon';
 
 /**
  * Ưu đãi "THUÊ ÁO DÀI, NHẬN NHIỀU ƯU ĐÃI" (16/11 – 31/12/2026), tính theo tổng
@@ -80,6 +80,8 @@ export interface PhuKienQua {
   nhom: string;
   /** Thuộc mốc 150K (nhóm nhỏ, giá ≤ 20K). */
   nho: boolean;
+  /** Bản món để "thuê thêm" (trả tiền, có cọc) khi khách đã chọn đủ quà. */
+  mon: MonTrongTui;
 }
 
 /** Ngày hôm nay theo giờ Việt Nam, dạng YYYY-MM-DD. */
@@ -108,6 +110,7 @@ export function phuKienLamQua(products: Product[]): PhuKienQua[] {
         price,
         nhom,
         nho: NHOM_MOC_NHO.includes(nhom) && price > 0 && price <= GIA_MOC_NHO,
+        mon: monTuSanPham(p),
       };
     })
     .filter((p) => NHOM_AO_DAI.includes(p.nhom) && p.price > 0)
