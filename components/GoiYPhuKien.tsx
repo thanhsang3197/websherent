@@ -19,9 +19,13 @@ import { NHOM_AO_DAI, TEN_NHOM } from '@/lib/uu-dai-ao-dai';
  */
 // Danh sách nhóm áo dài dùng chung với bộ chọn quà ở túi đồ: lib/uu-dai-ao-dai.ts.
 
+// Chủ shop 20/11/2026: khối gợi ý bỏ nhóm Kẹp để vừa 2 hàng × 5 (bộ chọn quà
+// trong túi đồ vẫn giữ Kẹp).
+const NHOM_GOI_Y_AO_DAI = NHOM_AO_DAI.filter((n) => n !== 'kẹp');
+
 const GOI_Y: Partial<Record<ProductCategory, { tieuDe: string; nhom: string[] }>> = {
-  'ao-dai': { tieuDe: 'Phụ kiện áo dài chụp Tết', nhom: NHOM_AO_DAI },
-  'phap-phuc': { tieuDe: 'Phụ kiện đi cùng pháp phục', nhom: NHOM_AO_DAI },
+  'ao-dai': { tieuDe: 'Phụ kiện áo dài chụp Tết', nhom: NHOM_GOI_Y_AO_DAI },
+  'phap-phuc': { tieuDe: 'Phụ kiện đi cùng pháp phục', nhom: NHOM_GOI_Y_AO_DAI },
   'dam-vay': {
     tieuDe: 'Phụ kiện đi cùng đầm váy',
     nhom: [
