@@ -20,7 +20,8 @@ import { monTuSanPham, type MonTrongTui } from '@/lib/tui-do-mon';
 /** Nhóm phụ kiện áo dài (khoá = nhomPhuKien), đúng thứ tự hiện ở gợi ý/bộ chọn quà. */
 export const NHOM_AO_DAI = [
   'vh',
-  'nón',
+  // Chủ shop 20/11/2026: thay nhóm Nón bằng Túi xách hình nón lá.
+  'túi xách hình nón lá',
   'h',
   'k',
   'ô trắng',
@@ -40,7 +41,7 @@ export const TEN_NHOM: Record<string, string> = {
   trâm: 'Trâm',
   h: 'Hoa',
   [NHOM_DAY_NGOC]: 'Dây ngọc',
-  nón: 'Nón',
+  'túi xách hình nón lá': 'Túi xách hình nón lá',
   guốc: 'Guốc',
   'ô trắng': 'Dù',
   vh: 'Vòng hoa',

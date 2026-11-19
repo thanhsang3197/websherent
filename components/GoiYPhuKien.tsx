@@ -11,7 +11,8 @@ import { NHOM_AO_DAI, TEN_NHOM } from '@/lib/uu-dai-ao-dai';
  *
  * - Áo dài: chủ shop đặt 04/11/2026 (đồ cài tóc, quạt, guốc cho ảnh Tết);
  *   11/11/2026 thêm Nón ở vị trí thứ 2 và Dù (mẫu tên "Ô trắng") ở vị trí thứ 5;
- *   15/11/2026 thêm Dây ngọc (D41–D48).
+ *   15/11/2026 thêm Dây ngọc (D41–D48); 20/11/2026 thay Nón bằng Túi xách
+ *   hình nón lá.
  * - Đầm váy: chủ shop yêu cầu 06/11/2026 là KHÁC áo dài, nên dùng túi (T),
  *   dây chuyền (D), choàng và kính.
  * - Pháp phục: chủ shop yêu cầu 06/11/2026 là GIỐNG áo dài.

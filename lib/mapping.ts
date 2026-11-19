@@ -110,8 +110,26 @@ export function sortProductsForDisplay(products: Product[]): Product[] {
 export function nhomPhuKien(p: Pick<Product, 'name'>): string {
   const ten = p.name.trim();
   if (laDayNgoc(ten)) return NHOM_DAY_NGOC;
-  return ten.replace(/\s*\d.*$/, '').toLowerCase();
+  const nhom = ten.replace(/\s*\d.*$/, '').toLowerCase();
+  return TEN_MOI_VE_KHOA[nhom] ?? nhom;
 }
+
+/**
+ * Shop đổi tên phụ kiện trong app (phát hiện 20/11/2026) từ mã sang tên đầy đủ:
+ * "VH01" -> "Vòng Hoa 01", "H01" -> "Hoa 01", "Q01" -> "Quạt 01", D41–D48 ->
+ * "Dây ngọc dài/ngắn 0x"... Quy tên mới về đúng khoá nhóm cũ để gợi ý phụ kiện,
+ * bộ chọn quà, thứ tự mục Phụ kiện và link `?nhom=` vẫn chạy như trước.
+ */
+const TEN_MOI_VE_KHOA: Record<string, string> = {
+  'vòng hoa': 'vh',
+  hoa: 'h',
+  kiềng: 'k',
+  'cài tóc': 'c',
+  quạt: 'q',
+  túi: 't',
+  'dây ngọc dài': 'dây ngọc',
+  'dây ngọc ngắn': 'dây ngọc',
+};
 
 /**
  * Dây ngọc = dây mã D41–D48 (chủ shop chốt 15/11/2026). Cùng dãy mã D với dây
