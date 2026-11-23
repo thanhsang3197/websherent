@@ -36,14 +36,16 @@ export function Hero({
       {/* Máy tính: slogan bên trái, 4 thẻ "Theo dõi tiệm" 2×2 bên phải. Điện thoại: xếp dọc. */}
       <div className="container-content pt-6 sm:pt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:items-center lg:gap-12 lg:pt-14">
         <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-dark [text-wrap:balance]">
+          {/* SEO: H1 là dòng từ khoá (thuê gì + ở đâu); slogan là <p> nhưng giữ y style tiêu đề.
+              font-sans/tracking ghi rõ để ghi đè style mặc định của h1 trong globals.css. */}
+          <h1 className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-accent-dark [text-wrap:balance]">
             {/* Khoảng trắng không ngắt trước "·" để dấu chấm giữa luôn đứng cuối dòng, không rơi ra đầu dòng mới. */}
-            Cho thuê váy&nbsp;· Đầm&nbsp;· Áo dài&nbsp;· Pháp phục
-          </p>
-          <h1 className="mt-3 text-[clamp(1.75rem,8vw,2.4rem)] leading-[1.18] text-ink sm:text-5xl lg:text-[3.1rem]">
-            {siteConfig.sloganLines.join(' ')}
+            Cho thuê váy&nbsp;· Đầm&nbsp;· Áo dài&nbsp;· Pháp phục tại Hóc&nbsp;Môn
           </h1>
-          <p className="mt-3 hidden max-w-md text-base leading-relaxed text-muted sm:block">
+          <p className="mt-3 font-serif text-[clamp(1.75rem,8vw,2.4rem)] font-medium leading-[1.18] tracking-[-0.01em] text-ink sm:text-5xl lg:text-[3.1rem]">
+            {siteConfig.sloganLines.join(' ')}
+          </p>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
             Đầm dự tiệc, váy thiết kế, áo dài &amp; pháp phục cho thuê theo ngày. Cọc hoàn lại khi trả đồ.
           </p>
 
