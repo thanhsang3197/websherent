@@ -2,6 +2,8 @@ import { timingSafeEqual } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { TAG_SAN_PHAM } from '@/lib/internal-api';
+import { getProducts, getProductsMoiNhat } from '@/lib/products';
+import { baoIndexNow, duongDanDaDoi } from '@/lib/indexnow';
 
 /**
  * POST /api/lam-moi — app nội bộ gọi khi có sản phẩm thay đổi.
@@ -55,11 +57,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, loi: 'Sai khoá.' }, { status: 401 });
   }
 
+  // Bản CŨ đọc từ cache trước khi xoá cache — để so xem mẫu nào vừa đổi.
+  const truoc = await Promise.resolve(getProducts()).catch(() => null);
+
   revalidateTag(TAG_SAN_PHAM);
+
+  // IndexNow: báo Bing/Cốc Cốc những trang vừa đổi để chúng thu thập lại ngay.
+  // Việc phụ — lỗi gì cũng không chặn việc xoá cache ở trên (đã xong rồi).
+  let daBaoIndexNow = 0;
+  const sau = truoc ? await getProductsMoiNhat() : null;
+  if (truoc && sau) daBaoIndexNow = await baoIndexNow(duongDanDaDoi(truoc, sau));
 
   return NextResponse.json({
     ok: true,
     da_lam_moi: TAG_SAN_PHAM,
+    da_bao_indexnow: daBaoIndexNow,
     luc: new Date().toISOString(),
   });
 }

@@ -79,6 +79,23 @@ export function getProducts(): Promise<Product[]> | Product[] {
 }
 
 /**
+ * Như `getProducts()` nhưng đọc thẳng API, KHÔNG qua cache. Chỉ dành cho
+ * /api/lam-moi (so bản cũ với bản mới để báo IndexNow). Không nối app nội bộ
+ * hoặc API lỗi thì trả `null` — nơi gọi bỏ qua bước báo, không làm hỏng việc
+ * xoá cache.
+ */
+export async function getProductsMoiNhat(): Promise<Product[] | null> {
+  if (!isInternalApiConfigured()) return null;
+  try {
+    const tho = await fetchProductsFromInternalApi({ boQuaCache: true });
+    return tho.length > 0 ? prepare(tho) : null;
+  } catch (err) {
+    console.error('[products] Không đọc được bản mới nhất:', err);
+    return null;
+  }
+}
+
+/**
  * Danh mục CHO THUÊ: bỏ mẫu shop để "Chỉ hiện ở trang thanh lý" (app 25/10/2026).
  *
  * Lọc TRƯỚC khi gộp size, không lọc sau: một mẫu có size S chỉ-thanh-lý còn

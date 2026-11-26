@@ -234,7 +234,9 @@ function mapSanPham(item: SanPhamApi): Product {
  * Bản trước gọi đúng một lần và chỉ nhận được trang đầu — website sẽ hiện
  * thiếu hơn hai phần ba catalogue mà trông vẫn như đang chạy đúng.
  */
-export async function fetchProductsFromInternalApi(): Promise<Product[]> {
+export async function fetchProductsFromInternalApi(
+  { boQuaCache = false }: { boQuaCache?: boolean } = {},
+): Promise<Product[]> {
   const apiUrl = process.env.INTERNAL_API_URL;
   if (!apiUrl) throw new Error('Thiếu INTERNAL_API_URL');
 
@@ -254,7 +256,13 @@ export async function fetchProductsFromInternalApi(): Promise<Product[]> {
       // `revalidate` là lưới an toàn cho trường hợp app không báo được (deploy
       // hỏng, sai khoá, mạng chập chờn). Đường chính là `tags` — app nội bộ
       // gọi /api/lam-moi và cache bay ngay, không phải chờ hết hạn.
-      next: { revalidate, tags: [TAG_SAN_PHAM] },
+      //
+      // `boQuaCache`: /api/lam-moi cần bản MỚI NHẤT ngay trong lượt gọi để so
+      // với bản cũ (báo IndexNow trang nào đổi) — revalidateTag chỉ có hiệu lực
+      // từ request SAU, nên trong cùng request phải đọc thẳng không qua cache.
+      ...(boQuaCache
+        ? { cache: 'no-store' as const }
+        : { next: { revalidate, tags: [TAG_SAN_PHAM] } }),
     });
 
     if (!res.ok) {
