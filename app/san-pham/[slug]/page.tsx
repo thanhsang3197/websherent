@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import {
   getProductBySlug,
+  getProductByOldSlug,
   getAllProductSlugs,
   getRelatedProducts,
   getFeedback,
@@ -110,7 +111,13 @@ export default async function ProductPage({
   params: { slug: string };
 }) {
   const product = await getProductBySlug(params.slug);
-  if (!product) notFound();
+  if (!product) {
+    // Link cũ của mẫu đã đổi tên -> 301 sang link mới (Search Console ghi
+    // nhận ~50 link 404 kiểu này, 27/11/2026). Mã không còn thì mới 404.
+    const moi = await getProductByOldSlug(params.slug);
+    if (moi && moi.slug !== params.slug) permanentRedirect(`/san-pham/${moi.slug}`);
+    notFound();
+  }
 
   // Danh sách đang pass (chỉ mã + giá) để khung pass bốc đúng mẫu flash sale.
   const dsPass = product.sale

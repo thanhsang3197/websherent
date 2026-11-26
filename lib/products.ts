@@ -233,6 +233,22 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 /**
+ * Tìm sản phẩm theo LINK CŨ (slug trước khi shop đổi tên mẫu). Slug luôn kết
+ * thúc bằng mã SP (buildProductSlug), mã thì không đổi khi đổi tên — nên link
+ * "ad-van-hoi-ad094" vẫn tìm ra mẫu nay là "ad36-van-hoi-ad094". Trang sản
+ * phẩm dùng kết quả để chuyển hướng 301 thay vì trả 404: Google chuyển thứ hạng
+ * cũ sang link mới, khách bấm link cũ (Zalo, Facebook) vẫn tới đúng mẫu.
+ * null nếu mã đó không còn (mẫu đã bỏ) — khi đó 404 là đúng.
+ */
+export async function getProductByOldSlug(slug: string): Promise<Product | null> {
+  const ma = slug.slice(slug.lastIndexOf('-') + 1);
+  if (!ma) return null;
+  const khop = (p: Product) => slugify(p.id) === ma;
+  const products = await getProducts();
+  return products.find(khop) ?? (await getRentalProducts()).find(khop) ?? null;
+}
+
+/**
  * Gợi ý mẫu tương tự. CHỈ lấy mẫu CÓ ẢNH (để khách xem được hình) và CÙNG LOẠI
  * với mẫu đang xem — đang xem áo dài thì chỉ gợi ý áo dài (chủ shop yêu cầu
  * 02/10/2026). Loại đó không còn mẫu nào khác thì mới lấy sang loại khác.
