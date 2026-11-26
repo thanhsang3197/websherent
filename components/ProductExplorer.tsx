@@ -175,8 +175,17 @@ export function ProductExplorer({
     [products],
   );
 
+  // Size quần áo thôi: bỏ phụ kiện ra, vì cỡ phụ kiện ("16", "18" của kiềng)
+  // lọt vào ô lọc Size trông như lỗi (chủ shop 26/11/2026).
   const sizes = useMemo(
-    () => sortSizes(Array.from(new Set(products.flatMap((p) => p.sizes.map(fitSize))))),
+    () =>
+      sortSizes(
+        Array.from(
+          new Set(
+            products.filter((p) => p.category !== 'phu-kien').flatMap((p) => p.sizes.map(fitSize)),
+          ),
+        ),
+      ),
     [products],
   );
 
