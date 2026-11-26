@@ -22,6 +22,11 @@ export interface BaiViet {
   slug: string;
   /** Tiêu đề hiện trên trang + thẻ <title>. Nên chứa cụm khách hay gõ tìm. */
   tieuDe: string;
+  /**
+   * Thẻ <title> riêng khi `tieuDe` quá dài — Google cắt ở ~60 ký tự (đã tính
+   * cả đuôi " · Sherent"), nên giữ khoảng 50 ký tự. Bỏ trống thì dùng tieuDe.
+   */
+  tieuDeSeo?: string;
   /** Mô tả ngắn (meta description, thẻ trong danh sách). ~150 ký tự. */
   moTa: string;
   /** yyyy-mm-dd */
@@ -159,6 +164,7 @@ export const BAI_VIET: BaiViet[] = [
   {
     slug: 'thue-ao-dai-hoc-mon-gia-bao-nhieu',
     tieuDe: 'Thuê áo dài ở Hóc Môn giá bao nhiêu? Bảng giá, tiền cọc và kinh nghiệm chọn mẫu',
+    tieuDeSeo: 'Thuê áo dài Hóc Môn giá bao nhiêu? Giá và tiền cọc',
     moTa:
       'Giá thuê áo dài thiết kế tại Hóc Môn, tiền cọc, phụ kiện handmade đi kèm và mẹo chọn màu, chọn size cho chụp Tết, kỷ yếu, đám cưới.',
     ngayDang: '2026-11-26',
@@ -293,6 +299,7 @@ export const BAI_VIET: BaiViet[] = [
   {
     slug: 'mac-gi-di-dam-cuoi-thue-dam-du-tiec',
     tieuDe: 'Mặc gì đi đám cưới, tiệc tối? Gợi ý chọn đầm và giá thuê đầm dự tiệc',
+    tieuDeSeo: 'Mặc gì đi đám cưới? Gợi ý và giá thuê đầm dự tiệc',
     moTa:
       'Gợi ý chọn đầm đi đám cưới, tiệc tối, sự kiện theo dáng người và màu sắc, kèm giá thuê đầm dự tiệc thiết kế tại Hóc Môn, TP.HCM.',
     ngayDang: '2026-11-26',
@@ -384,6 +391,7 @@ export const BAI_VIET: BaiViet[] = [
   {
     slug: 'thue-do-online-chon-size-giu-mau-tu-xa',
     tieuDe: 'Thuê đầm, áo dài online: cách chọn size và giữ mẫu khi ở xa',
+    tieuDeSeo: 'Thuê đầm, áo dài online: chọn size, giữ mẫu từ xa',
     moTa:
       'Ở xa vẫn thuê được đầm, áo dài thiết kế: hướng dẫn chọn size theo số đo, giữ mẫu qua Zalo/Messenger, nhận đồ qua giao hàng toàn quốc.',
     ngayDang: '2026-11-26',

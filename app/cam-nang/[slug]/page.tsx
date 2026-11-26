@@ -21,7 +21,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   const bai = getBaiViet(params.slug);
   if (!bai) return { title: 'Không tìm thấy bài viết' };
   return {
-    title: bai.tieuDe,
+    title: bai.tieuDeSeo ?? bai.tieuDe,
     description: bai.moTa,
     alternates: { canonical: `/cam-nang/${bai.slug}` },
     openGraph: {

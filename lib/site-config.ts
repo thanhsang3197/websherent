@@ -41,6 +41,15 @@ export const siteConfig = {
     'Nhiều mẫu đa dạng size, phí thuê hợp lý, phù hợp đi tiệc, chụp ảnh, dự sự kiện, ' +
     'cưới hỏi và Tết. Xem mẫu online và giữ mẫu nhanh qua Zalo.',
 
+  /**
+   * Mô tả NGẮN cho thẻ meta description trang chủ / Open Graph — Google cắt ở
+   * ~155 ký tự nên `description` dài phía trên bị cụt. `description` vẫn dùng
+   * cho schema và llms.txt (AI đọc hết, không cắt).
+   */
+  metaDescription:
+    'Cho thuê đầm, váy dự tiệc, áo dài thiết kế và pháp phục tại Hóc Môn, TP.HCM. ' +
+    'Nhiều mẫu đủ size, xem mẫu online, giữ mẫu nhanh qua Zalo.',
+
   /** Liên hệ. */
   phone: {
     /** Hiển thị đẹp — nhóm 3-3-4 cho dễ nhớ đuôi "6969" (chủ shop 24/10/2026). */
@@ -86,10 +95,10 @@ export const siteConfig = {
   },
 
   /**
-   * Toạ độ để nhúng bản đồ / schema geo.
-   * // TODO(bản đồ): điền lat/lng thật của tiệm (lấy từ Google Maps). Để null thì bỏ qua geo.
+   * Toạ độ tiệm cho schema geo — lấy từ ghim Google Maps của SHERENT (chủ shop
+   * gửi 27/11/2026). Để null thì bỏ qua geo.
    */
-  geo: null as { lat: number; lng: number } | null,
+  geo: { lat: 10.8876642, lng: 106.5927868 } as { lat: number; lng: number } | null,
 
   /** Khu vực phục vụ (dùng cho nội dung + schema areaServed). */
   areaServed: ['Hóc Môn', 'TP.HCM'],
@@ -190,5 +199,12 @@ export const SO_MAU_MOI_VE = 8;
  */
 export const mapsDirectionsUrl =
   'https://www.google.com/maps/place/SHERENT/data=!4m2!3m1!1s0x0:0xc62065a754281c7c';
+
+/**
+ * Link Google Maps dạng `?cid=` cho schema `hasMap` — cùng địa điểm với link
+ * trên (cid là số thập phân của mã 0xc62065a754281c7c). Dạng này ổn định, là
+ * dạng Google dùng để khớp website với hồ sơ doanh nghiệp trên Maps.
+ */
+export const mapsCidUrl = 'https://www.google.com/maps?cid=14276522588110331004';
 
 export type SiteConfig = typeof siteConfig;

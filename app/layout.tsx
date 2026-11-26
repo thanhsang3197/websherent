@@ -3,7 +3,7 @@ import { Playfair_Display, Be_Vietnam_Pro } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
-import { localBusinessJsonLd } from '@/lib/schema';
+import { localBusinessJsonLd, websiteJsonLd } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { PromoBar } from '@/components/PromoBar';
 import { TheoDoiChepSo } from '@/components/TheoDoiChepSo';
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     default: `${siteConfig.name} — Cho thuê đầm, váy & áo dài tại ${siteConfig.address.district}, ${siteConfig.address.city}`,
     template: `%s · ${siteConfig.name}`,
   },
-  description: siteConfig.description,
+  description: siteConfig.metaDescription,
   applicationName: siteConfig.name,
   keywords: [
     'cho thuê đầm',
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: siteConfig.name,
     title: `${siteConfig.name} — Cho thuê đầm, váy & áo dài`,
-    description: siteConfig.description,
+    description: siteConfig.metaDescription,
     images: [
       {
         url: siteConfig.ogImage,
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `${siteConfig.name} — Cho thuê đầm, váy & áo dài`,
-    description: siteConfig.description,
+    description: siteConfig.metaDescription,
     images: [siteConfig.ogImage],
   },
   robots: {
@@ -125,6 +125,7 @@ export default async function RootLayout({
 
         {/* JSON-LD LocalBusiness — hiện trên mọi trang cho SEO & GEO. */}
         <JsonLd data={localBusinessJsonLd()} id="ld-localbusiness" />
+        <JsonLd data={websiteJsonLd()} id="ld-website" />
         <a
           href="#noi-dung"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-accent focus:px-4 focus:py-2 focus:text-surface"

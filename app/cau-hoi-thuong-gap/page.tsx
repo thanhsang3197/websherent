@@ -16,7 +16,7 @@ import { TrangThaiMoCua } from '@/components/gioi-thieu/TrangThaiMoCua';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Câu hỏi thường gặp',
+  title: 'Hỏi đáp thuê váy, áo dài: cọc, giữ mẫu, giao hàng',
   description: `Giải đáp các câu hỏi thường gặp khi thuê đồ tại ${siteConfig.name}: đặt cọc, thời gian thuê, cách giữ mẫu, giao hàng, thanh toán...`,
   alternates: { canonical: '/cau-hoi-thuong-gap' },
 };

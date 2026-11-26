@@ -18,7 +18,7 @@ import { TrangThaiMoCua } from '@/components/gioi-thieu/TrangThaiMoCua';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Giới thiệu',
+  title: 'Giới thiệu tiệm cho thuê váy, áo dài Hóc Môn',
   description: `Về ${siteConfig.name} — cửa hàng cho thuê váy đầm dự tiệc, áo dài, pháp phục và đồ bà ba tại ${siteConfig.address.district}, ${siteConfig.address.city}, hỗ trợ giao hàng toàn quốc.`,
   alternates: { canonical: '/gioi-thieu' },
 };

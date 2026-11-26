@@ -74,9 +74,9 @@ export function Footer() {
       <div className="container-content grid grid-cols-2 gap-x-6 gap-y-6 py-8 text-sm text-ink sm:py-12 md:grid-cols-3 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:gap-x-12">
         {/* Cột 1 — Tên tiệm, mô tả, mạng xã hội */}
         <div className="col-span-2 md:col-span-3 lg:col-span-1">
-          <h2 className="font-logo text-2xl font-semibold tracking-tight text-ink">
+          <p className="font-logo text-2xl font-semibold tracking-tight text-ink">
             <Brand />
-          </h2>
+          </p>
           <p className="mt-2 max-w-xs leading-relaxed">
             Cho thuê váy, đầm dự tiệc thiết kế, áo dài &amp; pháp phục tại{' '}
             {siteConfig.address.district}, {siteConfig.address.city}.
@@ -85,7 +85,7 @@ export function Footer() {
           {/* Mạng xã hội. Tiệm có HAI Instagram (váy thiết kế / áo dài) nên
               phải kèm nhãn chữ — để trơ 2 icon Instagram giống hệt nhau thì
               khách không biết đâu là đâu. */}
-          <h3 className="sr-only">Theo dõi tiệm</h3>
+          <p className="sr-only">Theo dõi tiệm</p>
           <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
             <li>
               <ACoSuKien
@@ -147,7 +147,7 @@ export function Footer() {
           gọi, bấm chip "Zalo" để nhắn — trước đây mỗi số in hai lần, rối mắt.
         */}
         <div className="col-span-2 sm:col-span-1 lg:col-span-1">
-          <h2 className={footerHeadingClass}>Liên hệ</h2>
+          <p className={footerHeadingClass}>Liên hệ</p>
           <ul className="mt-3 space-y-2.5">
             <li className="flex gap-2.5">
               <PinIcon />
@@ -191,7 +191,7 @@ export function Footer() {
 
         {/* Cột 3 — Giờ mở cửa & khu vực */}
         <div className="col-span-2 sm:col-span-1 lg:col-span-1">
-          <h2 className={footerHeadingClass}>Giờ mở cửa</h2>
+          <p className={footerHeadingClass}>Giờ mở cửa</p>
           <ul className="mt-3 space-y-2.5">
             <li className="flex gap-2.5">
               <ClockIcon />
@@ -206,7 +206,7 @@ export function Footer() {
 
         {/* Cột 4 — Liên kết */}
         <div className="col-span-2 md:col-span-1 lg:col-span-1">
-          <h2 className={footerHeadingClass}>Khám phá</h2>
+          <p className={footerHeadingClass}>Khám phá</p>
           <nav aria-label="Chân trang">
             <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 lg:grid-cols-1">
               {siteConfig.nav.map((item) => (

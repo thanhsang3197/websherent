@@ -5,7 +5,7 @@
 
 import type { Product } from '../types/product';
 import { CATEGORY_LABELS } from '../types/product';
-import { siteConfig, SITE_URL } from './site-config';
+import { siteConfig, SITE_URL, mapsCidUrl } from './site-config';
 
 type Json = Record<string, unknown>;
 
@@ -27,6 +27,8 @@ export function localBusinessJsonLd(): Json {
     description: siteConfig.description,
     url: SITE_URL,
     image: absoluteUrl(siteConfig.ogImage),
+    logo: absoluteUrl('/icon-512.png'),
+    hasMap: mapsCidUrl,
     telephone: siteConfig.phone.tel,
     priceRange: siteConfig.priceRange,
     currenciesAccepted: 'VND',
@@ -53,7 +55,9 @@ export function localBusinessJsonLd(): Json {
       siteConfig.zaloUrl,
       siteConfig.facebookUrl,
       siteConfig.instagramUrl,
+      siteConfig.instagramUrl2,
       siteConfig.tiktokUrl,
+      mapsCidUrl,
     ],
   };
 
@@ -66,6 +70,24 @@ export function localBusinessJsonLd(): Json {
   }
 
   return data;
+}
+
+/**
+ * WebSite — giúp Google hiện tên "Sherent" thay vì "vercel.app" trên kết quả
+ * tìm kiếm (site name). Không có SearchAction: Google đã bỏ ô tìm kiếm
+ * sitelinks từ 11/2024.
+ */
+export function websiteJsonLd(): Json {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    name: siteConfig.name,
+    alternateName: ['SHERENT', siteConfig.legalName],
+    url: `${SITE_URL}/`,
+    inLanguage: 'vi-VN',
+    publisher: { '@id': `${SITE_URL}/#business` },
+  };
 }
 
 /** Product + Offer (LeaseOut) cho trang chi tiết. */
@@ -138,8 +160,13 @@ export function articleJsonLd(post: {
     headline: post.title,
     description: post.excerpt,
     datePublished: post.publishedAt,
-    author: { '@type': 'Organization', name: siteConfig.name },
-    publisher: { '@type': 'Organization', name: siteConfig.name },
+    author: { '@type': 'Organization', name: siteConfig.name, url: `${SITE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      url: `${SITE_URL}/`,
+      logo: { '@type': 'ImageObject', url: absoluteUrl('/icon-512.png') },
+    },
     mainEntityOfPage: post.url,
   };
   if (post.coverImage) data.image = post.coverImage;
@@ -147,8 +174,10 @@ export function articleJsonLd(post: {
 }
 
 /**
- * FAQPage — giúp Google hiện trực tiếp câu trả lời trong kết quả tìm kiếm (rich
- * snippet), và giúp AI (ChatGPT/Gemini/Claude...) trích dẫn đúng thông tin tiệm.
+ * FAQPage — giúp AI (ChatGPT/Gemini/Claude...) đọc đúng từng cặp hỏi–đáp và
+ * trích dẫn đúng chính sách tiệm. Google ĐÃ NGỪNG hiện rich result FAQ từ
+ * 05/2026, nên đừng kỳ vọng câu trả lời bung ra trên trang kết quả Google; vẫn
+ * giữ vì nó mô tả đúng nội dung đang hiện trên trang.
  */
 export function faqJsonLd(items: { question: string; answer: string }[]): Json {
   return {
