@@ -17,7 +17,8 @@ export const faqItems: FaqItem[] = [
     question: 'Thuê đồ cần đặt cọc bao nhiêu?',
     answer:
       `Cọc tiền: mỗi mẫu một mức, ghi rõ trên trang chi tiết sản phẩm (mục "Phí cọc"). ` +
-      `Riêng áo dài và pháp phục có thể cọc bằng CCCD thay cho tiền. ` +
+      `Riêng pháp phục và áo dài có giá thuê 1 ngày từ 80.000₫ trở xuống có thể cọc bằng CCCD thay cho tiền ` +
+      `(trang chi tiết của những mẫu này ghi "không cần cọc tiền"). ` +
       `Tiền cọc hoặc CCCD được trả lại đầy đủ khi bạn trả đồ đúng hẹn và nguyên vẹn.`,
   },
   {

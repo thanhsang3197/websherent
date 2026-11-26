@@ -18,7 +18,8 @@ import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from '@/lib/schema';
 import { JsonLd } from '@/components/JsonLd';
 import { ChiTietThue } from '@/components/ChiTietThue';
 import { NutTrenAnh } from '@/components/NutTrenAnh';
-import { monTuSanPham } from '@/lib/tui-do-mon';
+import { monTuSanPham, choCocCccd } from '@/lib/tui-do-mon';
+import { KhachThatNho } from '@/components/KhachThatNho';
 import { ProductGallery } from '@/components/ProductGallery';
 import { TieuDeMotDong } from '@/components/TieuDeMotDong';
 import { ProductCarousel } from '@/components/ProductCarousel';
@@ -132,6 +133,12 @@ export default async function ProductPage({
   ]);
   // Khách đã mặc ĐÚNG mẫu này — `getFeedback` đã quy mã size về mẫu đại diện.
   const daMac = feedback.filter((f) => f.mau?.slug === product.slug);
+  // Mẫu chưa có feedback riêng: lấy vài ảnh khách tiệm ghim nổi bật (trang
+  // chủ), không có ghim thì lấy ảnh mới nhất.
+  const feedbackNoiBat = [...feedback]
+    .filter((f) => f.anh.length > 0)
+    .sort((a, b) => (a.noiBatThuTu ?? Infinity) - (b.noiBatThuTu ?? Infinity))
+    .slice(0, 3);
   const categoryLabel = CATEGORY_LABELS[product.category];
   const productUrl = `${SITE_URL}/san-pham/${product.slug}`;
 
@@ -220,16 +227,32 @@ export default async function ProductPage({
             gia1Ngay={product.rentPrice1Day ?? null}
             gia3Ngay={product.rentPrice}
             coc={product.depositPrice}
-            // Chủ shop chốt 17/11/2026: riêng áo dài có giá thuê 1 ngày ≤ 80k
-            // được chọn thêm hình thức cọc CCCD.
-            cocCccd={
-              product.category === 'ao-dai' &&
-              product.rentPrice1Day != null &&
-              product.rentPrice1Day > 0 &&
-              product.rentPrice1Day <= 80000
-            }
+            // Áo dài thuê 1 ngày ≤ 80k và mọi pháp phục được chọn cọc CCCD
+            // (quy tắc nằm ở choCocCccd, chủ shop chốt 27/11/2026).
+            cocCccd={choCocCccd(product)}
             giaTag={product.tagPrice ?? null}
           />
+
+          {/* Ảnh khách thật ngay dưới nút giữ mẫu — lúc khách đang phân vân là
+              lúc cần thấy người thật đã mặc nhất (thử 27/11/2026). Mẫu có
+              feedback riêng thì dẫn xuống khối "Khách đã mặc mẫu này"; chưa có
+              thì dẫn sang trang feedback chung, ghi rõ là khách của tiệm chứ
+              không nói là khách của mẫu này. */}
+          {daMac.length > 0 ? (
+            <KhachThatNho
+              anh={daMac.map((f) => f.anh[0])}
+              soKhach={daMac.length}
+              href="#khach-da-mac"
+              kieu="mau"
+            />
+          ) : feedbackNoiBat.length > 0 ? (
+            <KhachThatNho
+              anh={feedbackNoiBat.map((f) => f.anh[0])}
+              soKhach={feedback.length}
+              href="/feedback"
+              kieu="chung"
+            />
+          ) : null}
 
           {/* Mẫu đang pass: VẪN cho thuê như thường, chỉ báo thêm là bán được
               (kèm giá flash sale nếu mẫu đang trong đợt). */}
@@ -247,7 +270,7 @@ export default async function ProductPage({
       {/* Ảnh khách thật mặc mẫu này — tác dụng chốt đơn mạnh nhất: khách thấy
           chiếc đầm ngoài đời trên người thật, không chỉ ảnh mẫu. */}
       {daMac.length > 0 && (
-        <section className="mt-10 sm:mt-16">
+        <section id="khach-da-mac" className="mt-10 scroll-mt-28 sm:mt-16">
           <div className="flex items-end justify-between gap-4">
             <h2 className="font-serif text-2xl text-ink">Khách đã mặc mẫu này</h2>
             <Link

@@ -85,11 +85,12 @@ function GoiThoiGian() {
 
 /**
  * Đoạn dùng chung về tiền cọc — khớp lib/faq.ts.
- * Cọc bằng CCCD CHỈ áp dụng cho áo dài và pháp phục (chủ shop 26/11/2026);
+ * Cọc bằng CCCD (chủ shop chốt 27/11/2026, quy tắc ở choCocCccd trong
+ * lib/tui-do-mon.ts): áo dài thuê 1 ngày ≤ 80k và mọi pháp phục;
  * đầm, váy, gấm chỉ cọc tiền.
  *   - `kieu="ao-dai"`: bài chỉ nói về áo dài → có 2 hình thức.
  *   - `kieu="dam"`:    bài chỉ nói về đầm → chỉ cọc tiền.
- *   - `kieu="chung"`:  bài nói cả hai → ghi rõ CCCD chỉ cho áo dài, pháp phục.
+ *   - `kieu="chung"`:  bài nói cả hai → ghi rõ CCCD chỉ cho áo dài ≤ 80k, pháp phục.
  */
 function CachCoc({
   cocThap,
@@ -113,17 +114,18 @@ function CachCoc({
   if (kieu === 'ao-dai') {
     return (
       <p>
-        Cọc thì chị iu cọc tiền ({muc}tuỳ mẫu, ghi trên trang từng mẫu) hoặc để lại{' '}
-        <strong>CCCD</strong> thay cọc cũng được ạ. Trả đồ đúng hẹn, đồ nguyên vẹn là em gửi lại
-        đủ cọc hoặc CCCD cho mình.
+        Cọc thì chị iu cọc tiền ({muc}tuỳ mẫu, ghi trên trang từng mẫu). Mẫu nào thuê 1 ngày từ
+        80k trở xuống thì để lại <strong>CCCD</strong> thay cọc cũng được ạ, trên trang mẫu đó em
+        có ghi &ldquo;không cần cọc tiền&rdquo;. Trả đồ đúng hẹn, đồ nguyên vẹn là em gửi lại đủ cọc
+        hoặc CCCD cho mình.
       </p>
     );
   }
   return (
     <p>
       Cọc thì chị iu cọc tiền, {muc}tuỳ mẫu, ghi trên trang từng mẫu. Riêng{' '}
-      <strong>áo dài và pháp phục</strong> thì để lại CCCD thay cọc cũng được ạ, còn đầm, váy thì
-      cọc tiền. {traLai}
+      <strong>pháp phục và áo dài thuê 1 ngày từ 80k trở xuống</strong> thì để lại CCCD thay cọc
+      cũng được ạ, còn đầm, váy thì cọc tiền. {traLai}
     </p>
   );
 }
@@ -679,8 +681,8 @@ export const BAI_VIET: BaiViet[] = [
               {a.cocThap != null && (
                 <> Cọc tiền từ {k(a.cocThap)} tuỳ mẫu,</>
               )}{' '}
-              hoặc chị iu để lại CCCD thay cọc cũng được ạ. Giá với cọc từng mẫu em ghi trên trang
-              của mẫu đó.
+              mẫu nào thuê 1 ngày từ 80k trở xuống thì chị iu để lại CCCD thay cọc cũng được ạ. Giá
+              với cọc từng mẫu em ghi trên trang của mẫu đó.
             </p>
           ) : (
             <p>Dạ giá từng mẫu em ghi trên trang của mẫu đó ạ.</p>

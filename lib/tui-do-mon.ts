@@ -28,7 +28,7 @@ export interface MonTrongTui {
   price: number;
   days: 1 | 3;
   deposit: number;
-  /** Khách chọn cọc bằng CCCD thay tiền (chỉ áo dài thuê 1 ngày ≤ 80k). */
+  /** Khách chọn cọc bằng CCCD thay tiền (xem `choCocCccd`). */
   cocCccd?: boolean;
   /** Thiếu ở món lưu từ bản cũ -> đoán theo mã (PK… = phụ kiện). */
   category?: ProductCategory;
@@ -44,6 +44,22 @@ const LOAI_TINH_UU_DAI: ProductCategory[] = ['dam-vay', 'ao-dai', 'phap-phuc', '
 export function tinhVaoUuDai(m: MonTrongTui): boolean {
   if (m.category) return LOAI_TINH_UU_DAI.includes(m.category);
   return !m.id.toUpperCase().startsWith('PK');
+}
+
+/**
+ * Mẫu nào được cọc bằng CCCD thay tiền — CHỖ DUY NHẤT giữ quy tắc này.
+ * Chủ shop chốt 27/11/2026: áo dài có giá thuê 1 ngày ≤ 80k, và TOÀN BỘ pháp
+ * phục. Đầm, váy, gấm, phụ kiện cọc tiền. Đổi quy tắc thì sửa luôn câu chữ ở
+ * lib/faq.ts và lib/cam-nang.tsx (CachCoc, bài áo dài Tết).
+ */
+export function choCocCccd(p: Pick<Product, 'category' | 'rentPrice1Day'>): boolean {
+  if (p.category === 'phap-phuc') return true;
+  return (
+    p.category === 'ao-dai' &&
+    p.rentPrice1Day != null &&
+    p.rentPrice1Day > 0 &&
+    p.rentPrice1Day <= 80000
+  );
 }
 
 export function monTuSanPham(p: Product): MonTrongTui {

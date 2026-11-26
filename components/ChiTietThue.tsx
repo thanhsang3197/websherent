@@ -41,7 +41,7 @@ export function ChiTietThue({
   gia1Ngay: number | null;
   gia3Ngay: number;
   coc: number;
-  /** Cho phép cọc bằng CCCD thay tiền (áo dài thuê 1 ngày ≤ 80k). */
+  /** Cho phép cọc bằng CCCD thay tiền — quy tắc ở `choCocCccd` (lib/tui-do-mon). */
   cocCccd?: boolean;
   giaTag: number | null;
 }) {
@@ -125,15 +125,25 @@ export function ChiTietThue({
       <dl className="mt-3 max-w-md divide-y divide-hairline rounded-2xl bg-surface px-4 text-sm ring-1 ring-inset ring-hairline">
         {cocCccd ? (
           <div className="py-3">
-            <dt className="text-muted">Hình thức cọc</dt>
-            <dd className="mt-2 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Chọn hình thức cọc">
-              <button type="button" role="radio" aria-checked={!laCccd} onClick={() => doiCoc(false)} className={oCoc(!laCccd)}>
-                <span className="text-xs">Cọc tiền</span>
-                <span className="font-bold">{formatVnd(coc)}</span>
-              </button>
+            {/* Cọc tiền là chỗ khách hay chùn tay nhất -> nói thẳng ngay đầu
+                là mẫu này KHÔNG cần cọc tiền (thử 27/11/2026). */}
+            <dt className="flex items-start gap-2">
+              <IconCccd />
+              <span className="leading-snug">
+                <b className="text-ink">Mẫu này không cần cọc tiền</b>
+                <span className="block text-muted">
+                  Để lại CCCD, trả đồ là em gửi lại ạ.
+                </span>
+              </span>
+            </dt>
+            <dd className="mt-3 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Chọn hình thức cọc">
               <button type="button" role="radio" aria-checked={laCccd} onClick={() => doiCoc(true)} className={oCoc(laCccd)}>
-                <span className="text-xs">Hoặc</span>
+                <span className="text-xs">Không mất tiền cọc</span>
                 <span className="font-bold">Cọc CCCD</span>
+              </button>
+              <button type="button" role="radio" aria-checked={!laCccd} onClick={() => doiCoc(false)} className={oCoc(!laCccd)}>
+                <span className="text-xs">Hoặc cọc tiền</span>
+                <span className="font-bold">{formatVnd(coc)}</span>
               </button>
             </dd>
           </div>
@@ -232,6 +242,17 @@ function IconChat() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
       <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
+    </svg>
+  );
+}
+
+/** Thẻ căn cước — cạnh dòng "Mẫu này không cần cọc tiền". */
+function IconCccd() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true" className="mt-0.5 shrink-0 text-accent-dark">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="9" cy="11" r="2" />
+      <path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3" />
     </svg>
   );
 }
