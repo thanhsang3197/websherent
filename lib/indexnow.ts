@@ -2,7 +2,7 @@ import { SITE_URL } from '@/lib/site-config';
 import type { Product } from '@/types/product';
 
 /**
- * IndexNow — báo cho Bing, Cốc Cốc, Yandex, Seznam… biết trang nào vừa đổi để
+ * IndexNow — báo cho Bing, Yandex, Seznam, Naver… biết trang nào vừa đổi để
  * chúng thu thập lại NGAY, thay vì chờ vài ngày mới đọc lại sitemap.
  * Bing quan trọng vì ChatGPT tìm kiếm và Copilot lấy dữ liệu từ Bing.
  * (Google KHÔNG dùng IndexNow — Google vẫn đi theo sitemap + Search Console.)

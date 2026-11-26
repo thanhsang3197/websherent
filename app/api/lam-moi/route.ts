@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
   revalidateTag(TAG_SAN_PHAM);
 
-  // IndexNow: báo Bing/Cốc Cốc những trang vừa đổi để chúng thu thập lại ngay.
+  // IndexNow: báo Bing (và các công cụ dùng IndexNow) những trang vừa đổi để chúng thu thập lại ngay.
   // Việc phụ — lỗi gì cũng không chặn việc xoá cache ở trên (đã xong rồi).
   let daBaoIndexNow = 0;
   const sau = truoc ? await getProductsMoiNhat() : null;
