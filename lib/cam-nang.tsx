@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { formatVnd } from '@/lib/format';
 import { siteConfig } from '@/lib/site-config';
-import type { ThongKe, ThongKeLoai } from '@/lib/thong-ke-gia';
+import type { ThongKe } from '@/lib/thong-ke-gia';
 import type { ProductCategory } from '@/types/product';
 
 /**
@@ -21,7 +20,7 @@ import type { ProductCategory } from '@/types/product';
  *    xưng "em", gọi khách "chị iu", mở câu bằng "dạ", cuối câu "ạ"/"nha"; hỏi
  *    lại khách (đi dịp gì, chụp ở đâu, size, thích dài/ngắn, màu) rồi mới tư
  *    vấn; giá viết gọn "80k/1 ngày" (hàm k()). Không bịa chuyện khách. 3 bài
- *    ngày 26/11 còn giọng hướng dẫn cũ.
+ *    ngày 26/11 viết lại theo giọng này ngày 27/11.
  */
 export interface BaiViet {
   slug: string;
@@ -41,8 +40,6 @@ export interface BaiViet {
   loai: Exclude<ProductCategory, 'phu-kien'>;
   noiDung: (tk: ThongKe) => ReactNode;
 }
-
-const gia = formatVnd;
 
 /**
  * Giá viết gọn kiểu chủ shop nhắn Zalo: 80000 -> "80k", 1500000 -> "1,5 triệu".
@@ -70,13 +67,6 @@ function lietKe(ds: string[]): string {
   return `${ds.slice(0, -1).join(', ')} và ${ds[ds.length - 1]}`;
 }
 
-/** "từ 100.000₫ đến 300.000₫" hoặc "đồng giá 100.000₫" */
-function khoangGia(t: ThongKeLoai): string {
-  return t.thue3Thap === t.thue3Cao
-    ? `đồng giá ${gia(t.thue3Thap)}`
-    : `từ ${gia(t.thue3Thap)} đến ${gia(t.thue3Cao)}`;
-}
-
 const L = ({ href, children }: { href: string; children: ReactNode }) => (
   <Link href={href}>{children}</Link>
 );
@@ -84,19 +74,12 @@ const L = ({ href, children }: { href: string; children: ReactNode }) => (
 /** Đoạn dùng chung: 2 gói thời gian thuê — khớp lib/faq.ts. */
 function GoiThoiGian() {
   return (
-    <ul>
-      <li>
-        <strong>Thuê 1 ngày:</strong> nhận đồ từ 15:00, trả trước 20:00 hôm sau. Hợp khi bạn chỉ
-        mặc một buổi tiệc hoặc một buổi chụp.
-      </li>
-      <li>
-        <strong>Thuê 3 ngày:</strong> ngày nhận, ngày mặc, ngày trả. Thoải mái thử lại ở nhà, ủi
-        phẳng và không phải vội trả.
-      </li>
-      <li>
-        Cần thêm ngày thì báo trước cho tiệm, phí phát sinh <strong>10% mỗi ngày</strong>.
-      </li>
-    </ul>
+    <p>
+      Thuê 1 ngày thì chị iu nhận đồ từ 3 giờ chiều, trả trước 8 giờ tối hôm sau, hợp khi mình
+      chỉ mặc một buổi tiệc hay một buổi chụp. Thuê 3 ngày là ngày nhận, ngày mặc, ngày trả, mình
+      có thời gian thử lại ở nhà, ủi cho phẳng, không phải vội trả. Cần thêm ngày thì chị iu nhắn
+      em trước, mỗi ngày thêm 10% ạ.
+    </p>
   );
 }
 
@@ -115,73 +98,45 @@ function CachCoc({
   cocThap: number | null | undefined;
   kieu: 'ao-dai' | 'dam' | 'chung';
 }) {
-  const tienCoc = (
-    <>
-      {cocThap != null ? <>từ {gia(cocThap)}, </> : null}tuỳ mẫu, ghi rõ trên trang từng mẫu
-    </>
+  const muc = cocThap != null ? <>từ {k(cocThap)} </> : null;
+  const traLai = (
+    <>Trả đồ đúng hẹn, đồ nguyên vẹn là em gửi lại đủ cọc cho mình ạ.</>
   );
 
   if (kieu === 'dam') {
     return (
       <p>
-        Đầm, váy dự tiệc đặt cọc bằng tiền: {tienCoc}. Tiền cọc được{' '}
-        <strong>trả lại đầy đủ</strong> khi bạn trả đồ đúng hẹn và nguyên vẹn.
+        Đầm, váy thì cọc bằng tiền ạ, {muc}tuỳ mẫu, em ghi rõ trên trang từng mẫu. {traLai}
       </p>
     );
   }
-
+  if (kieu === 'ao-dai') {
+    return (
+      <p>
+        Cọc thì chị iu cọc tiền ({muc}tuỳ mẫu, ghi trên trang từng mẫu) hoặc để lại{' '}
+        <strong>CCCD</strong> thay cọc cũng được ạ. Trả đồ đúng hẹn, đồ nguyên vẹn là em gửi lại
+        đủ cọc hoặc CCCD cho mình.
+      </p>
+    );
+  }
   return (
-    <>
-      <p>
-        {kieu === 'ao-dai' ? (
-          <>
-            Áo dài có <strong>2 hình thức đặt cọc</strong>, bạn chọn cách nào tiện:
-          </>
-        ) : (
-          <>Về tiền cọc:</>
-        )}
-      </p>
-      <ul>
-        <li>
-          <strong>Cọc tiền:</strong> {tienCoc}.
-        </li>
-        <li>
-          <strong>Cọc bằng CCCD:</strong> để lại căn cước công dân thay cho tiền cọc
-          {kieu === 'ao-dai' ? (
-            <> (áp dụng cho áo dài và pháp phục)</>
-          ) : (
-            <>
-              , <strong>chỉ áp dụng cho áo dài và pháp phục</strong>; đầm, váy cọc bằng tiền
-            </>
-          )}
-          .
-        </li>
-      </ul>
-      <p>
-        Tiền cọc hoặc CCCD được <strong>trả lại đầy đủ</strong> khi bạn trả đồ đúng hẹn và nguyên
-        vẹn.
-      </p>
-    </>
+    <p>
+      Cọc thì chị iu cọc tiền, {muc}tuỳ mẫu, ghi trên trang từng mẫu. Riêng{' '}
+      <strong>áo dài và pháp phục</strong> thì để lại CCCD thay cọc cũng được ạ, còn đầm, váy thì
+      cọc tiền. {traLai}
+    </p>
   );
 }
 
 function CachGiuMau() {
   return (
-    <ol>
-      <li>
-        Xem mẫu trên <L href="/#san-pham">trang sản phẩm</L>, bấm vào mẫu ưng ý để xem ảnh, size,
-        phí thuê và tiền cọc.
-      </li>
-      <li>
-        Nhắn Zalo hoặc Messenger cho {siteConfig.name} kèm <strong>mã mẫu</strong> và ngày bạn cần
-        mặc.
-      </li>
-      <li>Tiệm báo còn trống ngày đó không, giữ mẫu và hẹn giờ nhận đồ.</li>
-      <li>
-        Nhận đồ tại tiệm ở {siteConfig.address.district} hoặc nhận qua giao hàng, thanh toán tiền
-        mặt hay chuyển khoản đều được.
-      </li>
-    </ol>
+    <p>
+      Chị iu xem mẫu ở <L href="/#san-pham">mục sản phẩm</L>, bấm vào mẫu ưng là thấy ảnh, size,
+      giá thuê với tiền cọc. Nhắn Zalo hoặc Messenger cho em <strong>mã mẫu</strong> với ngày mình
+      cần mặc, em xem còn trống ngày đó không rồi giữ mẫu, hẹn giờ nhận đồ cho mình ạ. Nhận ở tiệm{' '}
+      {siteConfig.address.district} hoặc em gửi giao hàng, thanh toán tiền mặt hay chuyển khoản
+      đều được.
+    </p>
   );
 }
 
@@ -193,6 +148,7 @@ export const BAI_VIET: BaiViet[] = [
     moTa:
       'Giá thuê áo dài thiết kế tại Hóc Môn, tiền cọc, phụ kiện handmade đi kèm và mẹo chọn màu, chọn size cho chụp Tết, kỷ yếu, đám cưới.',
     ngayDang: '2026-11-26',
+    ngaySua: '2026-11-27',
     loai: 'ao-dai',
     noiDung: (tk) => {
       const a = tk['ao-dai'];
@@ -201,86 +157,79 @@ export const BAI_VIET: BaiViet[] = [
       return (
         <>
           <p>
-            Mua một bộ áo dài thiết kế đẹp thường tốn vài triệu, trong khi mỗi năm bạn chỉ mặc vài
-            lần: Tết, đám cưới bạn bè, chụp kỷ yếu. Vì vậy ngày càng nhiều người chọn{' '}
-            <strong>thuê áo dài</strong>: mỗi dịp một mẫu mới, chi phí chỉ bằng một phần nhỏ. Bài
-            này tổng hợp giá thuê thực tế tại {siteConfig.name} ({siteConfig.address.district},{' '}
-            {siteConfig.address.city}) và vài kinh nghiệm để chọn được bộ vừa ý.
+            Dạ một bộ áo dài thiết kế mua mới cũng vài triệu, mà một năm mình mặc có mấy lần: Tết,
+            đám cưới bạn, chụp kỷ yếu. Nên nhiều chị iu chọn thuê, mỗi dịp một mẫu mới mà tốn ít
+            hơn nhiều. Em gửi chị iu giá thuê thực tế bên em với mấy kinh nghiệm chọn mẫu nha.
           </p>
 
-          <h2>Giá thuê áo dài bao nhiêu?</h2>
+          <h2>Thuê áo dài bao nhiêu ạ?</h2>
           {a ? (
-            <>
-              <p>
-                Hiện tiệm có <strong>{a.soMau} mẫu áo dài</strong>, phí thuê 3 ngày {khoangGia(a)},
-                phần lớn các mẫu ở mức <strong>{gia(a.thue3PhoBien)}</strong>.
-                {a.thue1Thap != null && (
-                  <>
-                    {' '}
-                    Nếu chỉ cần 1 ngày, giá chỉ từ <strong>{gia(a.thue1Thap)}</strong>.
-                  </>
-                )}
-              </p>
-              <CachCoc cocThap={a.cocThap} kieu="ao-dai" />
-            </>
+            <p>
+              Dạ bên em đang có <strong>{a.soMau} mẫu áo dài</strong>, thuê 3 ngày{' '}
+              <strong>
+                {a.thue3Thap === a.thue3Cao ? k(a.thue3Thap) : khoangK(a.thue3Thap, a.thue3Cao)}
+              </strong>
+              , đa số mẫu {k(a.thue3PhoBien)} ạ.
+              {a.thue1Thap != null && <> Thuê 1 ngày thì từ {k(a.thue1Thap)}.</>}
+            </p>
           ) : (
-            <p>Giá từng mẫu ghi rõ trên trang sản phẩm.</p>
+            <p>Dạ giá từng mẫu em ghi trên trang của mẫu đó ạ.</p>
           )}
+          <CachCoc cocThap={a?.cocThap} kieu="ao-dai" />
           {p && (
             <p>
-              Ngoài áo dài, tiệm còn {p.soMau} mẫu <strong>pháp phục</strong> (áo đi chùa) với phí
-              thuê {khoangGia(p)}.
+              Bên em còn có {p.soMau} mẫu <strong>pháp phục</strong> (áo đi chùa),{' '}
+              {p.thue3Thap === p.thue3Cao ? k(p.thue3Thap) : khoangK(p.thue3Thap, p.thue3Cao)}/3
+              ngày. Chị iu xem thêm bài{' '}
+              <L href="/cam-nang/thue-phap-phuc-di-chua-hoc-mon">pháp phục đi chùa</L> nha.
             </p>
           )}
 
-          <h2>Thuê bao lâu thì hợp?</h2>
+          <h2>Thuê 1 ngày hay 3 ngày ạ?</h2>
           <GoiThoiGian />
 
-          <h2>Chọn màu áo dài theo dịp</h2>
+          <h2>Mặc dịp nào thì chọn màu gì ạ?</h2>
+          <p>Dạ chị iu mặc đi đâu ạ? Mỗi dịp em hay gợi ý vầy:</p>
           <ul>
             <li>
-              <strong>Chụp Tết:</strong> đỏ, vàng, hồng đào nổi bật giữa hoa mai, hoa đào. Nếu
-              chụp nền hoa nhiều màu, áo trắng hoặc kem giúp ảnh nhẹ nhàng, không bị rối.
+              <strong>Chụp Tết:</strong> đỏ, vàng, hồng đào nổi giữa hoa mai, hoa đào. Chụp nền
+              hoa nhiều màu thì áo trắng hoặc kem cho ảnh nhẹ, không bị rối. Chụp Tết năm nay chị
+              iu xem thêm bài <L href="/cam-nang/thue-ao-dai-chup-tet-2027">áo dài chụp Tết 2027</L>.
             </li>
             <li>
-              <strong>Kỷ yếu:</strong> cả nhóm nên thống nhất một tông (cùng trắng, cùng pastel)
-              hoặc cùng một mẫu khác màu để ảnh tập thể đều mắt.
+              <strong>Kỷ yếu:</strong> cả nhóm chọn một tông (cùng trắng, cùng pastel) hoặc cùng
+              một mẫu mỗi người một màu, ảnh tập thể nhìn đều mắt ạ.
             </li>
             <li>
-              <strong>Đi đám cưới:</strong> tránh trắng tinh và đỏ rực để không trùng cô dâu; hồng
-              phấn, xanh nhạt, tím pastel là lựa chọn an toàn.
+              <strong>Đi đám cưới:</strong> né trắng tinh với đỏ rực cho khỏi trùng cô dâu. Hồng
+              phấn, xanh nhạt, tím pastel là an toàn nha chị iu.
             </li>
             <li>
-              <strong>Lễ chùa, đám giỗ:</strong> chọn màu trầm, kín đáo, hoặc chuyển sang pháp
-              phục.
+              <strong>Lễ chùa, đám giỗ:</strong> chọn màu trầm, kín đáo, hoặc mặc pháp phục luôn ạ.
             </li>
           </ul>
 
-          <h2>Chọn size cho vừa</h2>
+          <h2>Size áo dài sao ạ?</h2>
           <p>
-            {a && a.sizes.length > 0 ? (
-              <>
-                Áo dài tại tiệm có các size {lietKe(a.sizes)}.{' '}
-              </>
-            ) : null}
-            Áo dài ôm sát nên cần chú ý số đo <strong>vòng ngực và vòng eo</strong> hơn là cân
-            nặng. Nếu bạn đang giữa hai size, cứ nhắn số đo cho tiệm để được tư vấn trước khi giữ
-            mẫu. Ở gần thì tốt nhất là ghé thử trực tiếp.
+            {a && a.sizes.length > 0 && <>Dạ áo dài bên em có size {lietKe(a.sizes)} ạ. </>}
+            Áo dài ôm người nên em cần số đo <strong>vòng ngực với vòng eo</strong> hơn là cân
+            nặng. Chị iu đang lưng chừng hai size thì gửi em số đo, em xem form từng mẫu rồi báo
+            lại cho mình. Ở gần thì ghé tiệm mặc thử là chắc nhất ạ.
           </p>
 
-          <h2>Phụ kiện đi kèm: điểm nhấn cho bộ áo dài</h2>
+          <h2>Phụ kiện đi kèm thì sao ạ?</h2>
           <p>
-            Cùng một bộ áo dài, thêm chiếc quạt, cài tóc hay túi xách là bộ ảnh đã khác hẳn. Vì
-            vậy ngoài áo dài, {siteConfig.name} còn cho thuê
-            {pk ? (
+            Cùng một bộ áo dài mà cầm thêm cây quạt, cài thêm cái trâm là ảnh khác hẳn đó chị iu.
+            {pk && (
               <>
                 {' '}
-                <strong>{pk.soMau} món phụ kiện</strong>, giá chỉ {khoangGia(pk)} mỗi món
+                Bên em có <strong>{pk.soMau} món phụ kiện</strong>, mỗi món{' '}
+                {pk.thue3Thap === pk.thue3Cao
+                  ? k(pk.thue3Thap)
+                  : khoangK(pk.thue3Thap, pk.thue3Cao)}{' '}
+                thôi ạ:
               </>
-            ) : (
-              ' phụ kiện đi kèm với giá rất mềm'
             )}
-            :
           </p>
           <ul>
             <li>
@@ -293,30 +242,27 @@ export const BAI_VIET: BaiViet[] = [
               <strong>Trên người:</strong> kiềng, dây ngọc, khăn choàng.
             </li>
             <li>
-              <strong>Hoàn thiện:</strong> guốc, kính.
+              <strong>Cho đủ bộ:</strong> guốc, kính.
             </li>
           </ul>
           <p>
-            Đặc biệt, tiệm có nhiều <strong>phụ kiện handmade làm thủ công</strong>: mỗi món một
-            nét riêng, khó tìm thấy ở nơi khác, giúp bộ ảnh của bạn có điểm nhấn mà không bị đụng
-            hàng.
-          </p>
-          <p>
-            Trên trang từng mẫu áo dài đều có sẵn gợi ý phụ kiện hợp với mẫu đó. Bạn chỉ cần thêm
-            vào túi đồ và nhắn tiệm giữ cùng lúc với áo dài.
+            Nhiều món bên em là <strong>đồ handmade</strong>, làm tay nên mỗi món một kiểu, chụp
+            ảnh không sợ đụng hàng ạ. Trên trang từng mẫu áo dài em có gợi ý sẵn phụ kiện hợp mẫu
+            đó, chị iu thêm vào túi đồ rồi nhắn em giữ chung với áo luôn nha.
           </p>
 
-          <h2>Cách thuê áo dài tại {siteConfig.name}</h2>
+          <h2>Giữ mẫu thế nào ạ?</h2>
           <CachGiuMau />
 
-          <h2>Mẹo nhỏ để buổi chụp suôn sẻ</h2>
+          <h2>Mấy lưu ý nhỏ ạ</h2>
           <ul>
             <li>
-              Đặt mẫu sớm vào mùa cao điểm (trước Tết, mùa kỷ yếu tháng 3 đến tháng 5) vì mẫu đẹp
-              hết lịch rất nhanh.
+              Mùa nhiều khách (trước Tết, mùa kỷ yếu tháng 3 tới tháng 5) chị iu giữ mẫu sớm giúp em,
+              mẫu đẹp hết lịch nhanh lắm.
             </li>
-            <li>Nhận đồ trước một ngày để thử lại cùng giày và phụ kiện.</li>
+            <li>Nhận đồ trước một ngày để mặc thử lại với giày và phụ kiện.</li>
           </ul>
+          <p>Em cảm ơn chị iu nhiều ạ.</p>
         </>
       );
     },
@@ -328,6 +274,7 @@ export const BAI_VIET: BaiViet[] = [
     moTa:
       'Gợi ý chọn đầm đi đám cưới, tiệc tối, sự kiện theo dáng người và màu sắc, kèm giá thuê đầm dự tiệc thiết kế tại Hóc Môn, TP.HCM.',
     ngayDang: '2026-11-26',
+    ngaySua: '2026-11-27',
     loai: 'dam-vay',
     noiDung: (tk) => {
       const d = tk['dam-vay'];
@@ -335,80 +282,86 @@ export const BAI_VIET: BaiViet[] = [
       return (
         <>
           <p>
-            Thiệp cưới tới, tiệc công ty sắp diễn ra mà tủ đồ toàn là những bộ đã mặc rồi? Thay vì
-            mua một chiếc đầm chỉ mặc một lần, bạn có thể <strong>thuê đầm dự tiệc</strong> thiết
-            kế với giá chỉ bằng một phần nhỏ. Dưới đây là cách chọn đầm hợp dịp, hợp dáng và giá
-            thuê thực tế tại {siteConfig.name}.
+            Dạ thiệp cưới tới, tiệc công ty sắp tới mà tủ đồ toàn bộ đã mặc rồi thì chị iu thuê
+            đầm là nhẹ nhất ạ. Mặc có một tối mà mua nguyên cái đầm thì tiếc lắm. Em tư vấn chị iu
+            chọn đầm theo dịp, theo dáng, kèm giá thuê bên em nha.
           </p>
 
-          <h2>Chọn đầm theo dịp</h2>
+          <h2>Đi dịp nào thì mặc gì ạ?</h2>
+          <p>Dạ chị iu đi tiệc ban ngày hay buổi tối, ở nhà hàng hay ngoài trời ạ?</p>
           <ul>
             <li>
-              <strong>Đám cưới ban ngày, tiệc ngoài trời:</strong> đầm midi, chất liệu nhẹ, màu
-              pastel hoặc hoạ tiết hoa nhỏ.
+              <strong>Đám cưới ban ngày, tiệc ngoài trời:</strong> đầm midi, vải nhẹ, màu pastel
+              hoặc hoa nhí.
             </li>
             <li>
               <strong>Tiệc cưới nhà hàng buổi tối:</strong> đầm dài hoặc đầm có điểm nhấn (đính
               kết, satin, lệch vai), màu đậm như xanh navy, đỏ rượu, đen.
             </li>
             <li>
-              <strong>Tiệc công ty, sự kiện:</strong> đầm dáng suông hoặc ôm nhẹ, độ dài qua gối,
-              tránh xẻ quá cao hay hở nhiều.
+              <strong>Tiệc công ty, sự kiện:</strong> đầm suông hoặc ôm nhẹ, dài qua gối, né xẻ
+              cao hay hở nhiều nha. Tiệc cuối năm thì chị iu xem thêm bài{' '}
+              <L href="/cam-nang/mac-gi-di-tiec-tat-nien-year-end-party">mặc gì đi tất niên</L>.
             </li>
             <li>
-              <strong>Đi đám cưới nói chung:</strong> tránh trắng tinh để không trùng cô dâu.
+              <strong>Đi đám cưới nói chung:</strong> né trắng tinh cho khỏi trùng cô dâu ạ.
             </li>
           </ul>
 
-          <h2>Chọn đầm theo dáng người</h2>
+          <h2>Dáng mình vầy thì chọn đầm sao ạ?</h2>
           <ul>
             <li>
-              <strong>Người nhỏ nhắn:</strong> đầm ngắn hoặc midi, eo cao để chân trông dài hơn;
-              tránh đầm quá dài, nhiều tầng bèo.
+              <strong>Chị iu nhỏ nhắn:</strong> đầm ngắn hoặc midi, eo cao cho chân dài ra. Đầm quá
+              dài, nhiều tầng bèo dễ bị nuốt người ạ.
             </li>
             <li>
-              <strong>Bắp tay to:</strong> chọn đầm có tay phồng, tay lỡ hoặc cổ vuông.
+              <strong>Bắp tay to:</strong> chọn tay phồng, tay lỡ hoặc cổ vuông.
             </li>
             <li>
-              <strong>Vòng 2 chưa gọn:</strong> đầm chiết eo cao, dáng chữ A hoặc vải rủ nhẹ che
-              khéo phần bụng.
+              <strong>Bụng chưa gọn:</strong> đầm chiết eo cao, dáng chữ A hoặc vải rũ nhẹ là che
+              khéo lắm.
             </li>
             <li>
-              <strong>Dáng cao:</strong> đầm dài, xẻ tà, cổ yếm đều rất hợp.
+              <strong>Chị iu cao:</strong> đầm dài, xẻ tà, cổ yếm mặc lên rất đẹp.
             </li>
           </ul>
 
-          <h2>Giá thuê đầm dự tiệc bao nhiêu?</h2>
+          <h2>Đầm thuê bao nhiêu ạ?</h2>
           {d ? (
             <p>
-              Tiệm hiện có <strong>{d.soMau} mẫu đầm, váy dự tiệc</strong>, phí thuê 3 ngày{' '}
-              {khoangGia(d)}, phổ biến khoảng <strong>{gia(d.thue3PhoBien)}</strong>.
-              {d.thue1Thap != null && <> Thuê 1 ngày chỉ từ {gia(d.thue1Thap)}.</>}
+              Dạ bên em đang có <strong>{d.soMau} mẫu đầm, váy dự tiệc</strong>, thuê 3 ngày{' '}
+              <strong>
+                {d.thue3Thap === d.thue3Cao ? k(d.thue3Thap) : khoangK(d.thue3Thap, d.thue3Cao)}
+              </strong>
+              , đa số mẫu khoảng {k(d.thue3PhoBien)} ạ.
+              {d.thue1Thap != null && <> Thuê 1 ngày thì từ {k(d.thue1Thap)}.</>}
             </p>
           ) : (
-            <p>Giá từng mẫu ghi rõ trên trang sản phẩm.</p>
+            <p>Dạ giá từng mẫu em ghi trên trang của mẫu đó ạ.</p>
           )}
           <CachCoc cocThap={d?.cocThap} kieu="dam" />
           {g && (
             <p>
-              Muốn nổi bật hơn nữa thì có dòng <strong>đầm gấm</strong> ({g.soMau} mẫu), phí thuê{' '}
-              {khoangGia(g)}.
+              Chị iu muốn nổi hẳn thì bên em có thêm <strong>đầm gấm</strong> ({g.soMau} mẫu),{' '}
+              {g.thue3Thap === g.thue3Cao ? k(g.thue3Thap) : khoangK(g.thue3Thap, g.thue3Cao)}/3
+              ngày nha.
             </p>
           )}
 
-          <h2>Thuê 1 ngày hay 3 ngày?</h2>
+          <h2>Thuê 1 ngày hay 3 ngày ạ?</h2>
           <GoiThoiGian />
+          <p>Đi đám cưới buổi tối thì thuê 1 ngày là đủ rồi ạ.</p>
 
-          <h2>Size và độ vừa</h2>
+          <h2>Size sao ạ?</h2>
           <p>
-            {d && d.sizes.length > 0 && <>Đầm tại tiệm có các size {lietKe(d.sizes)}. </>}
-            Mỗi mẫu ghi rõ size đang có trên trang chi tiết. Đầm ôm thì xem kỹ vòng ngực, eo,
-            mông; đầm suông thì chủ yếu xem vai và chiều dài. Chưa chắc thì nhắn số đo cho tiệm
-            tư vấn trước khi giữ mẫu.
+            {d && d.sizes.length > 0 && <>Dạ đầm bên em có size {lietKe(d.sizes)} ạ. </>}
+            Đầm ôm thì em cần số đo ngực, eo, mông. Đầm suông thì chủ yếu xem vai với chiều dài.
+            Chị iu chưa chắc thì gửi em số đo, em tư vấn trước rồi mới giữ mẫu nha.
           </p>
 
-          <h2>Cách giữ mẫu</h2>
+          <h2>Giữ mẫu thế nào ạ?</h2>
           <CachGiuMau />
+          <p>Em cảm ơn chị iu nhiều ạ.</p>
         </>
       );
     },
@@ -420,6 +373,7 @@ export const BAI_VIET: BaiViet[] = [
     moTa:
       'Ở xa vẫn thuê được đầm, áo dài thiết kế: hướng dẫn chọn size theo số đo, giữ mẫu qua Zalo/Messenger, nhận đồ qua giao hàng toàn quốc.',
     ngayDang: '2026-11-26',
+    ngaySua: '2026-11-27',
     loai: 'dam-vay',
     noiDung: (tk) => {
       const d = tk['dam-vay'];
@@ -430,75 +384,79 @@ export const BAI_VIET: BaiViet[] = [
       return (
         <>
           <p>
-            Không ở gần {siteConfig.address.district} vẫn có thể thuê đồ tại {siteConfig.name}:
-            tiệm <strong>cho thuê online và giao hàng toàn quốc</strong>. Điều khiến nhiều người
-            ngại là sợ mặc không vừa. Bài này hướng dẫn cách chọn size và các bước giữ mẫu để
-            nhận được bộ đồ vừa ý mà không cần ghé tiệm.
+            Dạ chị iu ở xa {siteConfig.address.district} vẫn thuê được nha, bên em cho thuê online
+            và gửi đồ đi các tỉnh. Nhiều chị iu ngại nhất là sợ mặc không vừa, nên em chỉ mình cách
+            đo với chọn size trước ạ.
           </p>
 
-          <h2>Bước 1: Đo đúng 4 số đo</h2>
+          <h2>Đo số đo sao cho đúng ạ?</h2>
+          <p>Dạ chị iu đo giúp em 4 số này nha:</p>
           <ul>
             <li>
-              <strong>Vòng ngực:</strong> đo vòng qua điểm cao nhất của ngực, thước song song mặt
-              đất.
+              <strong>Vòng ngực:</strong> đo qua chỗ cao nhất của ngực, thước giữ ngang.
             </li>
             <li>
-              <strong>Vòng eo:</strong> chỗ nhỏ nhất của eo, thường trên rốn khoảng 2–3 cm.
+              <strong>Vòng eo:</strong> chỗ nhỏ nhất của eo, thường trên rốn chừng 2–3 cm.
             </li>
             <li>
-              <strong>Vòng mông:</strong> chỗ nở nhất của mông.
+              <strong>Vòng mông:</strong> chỗ nở nhất.
             </li>
             <li>
-              <strong>Chiều cao:</strong> để tiệm tư vấn độ dài đầm, tà áo dài.
+              <strong>Chiều cao:</strong> để em tính độ dài đầm, tà áo dài cho mình.
             </li>
           </ul>
-          <p>Đo sát người, mặc đồ mỏng, không kéo thước quá chặt.</p>
+          <p>Đo sát người, mặc đồ mỏng, đừng kéo thước chặt quá nha chị iu.</p>
 
-          <h2>Bước 2: Chọn size</h2>
+          <h2>Chọn size sao ạ?</h2>
           <p>
-            {sizes.length > 0 && <>Đồ tại tiệm có các size {lietKe(sizes)}. </>}
-            Mỗi mẫu ghi rõ size đang có ngay trên trang chi tiết. Một vài lưu ý:
+            {sizes.length > 0 && <>Dạ đồ bên em có size {lietKe(sizes)} ạ. </>}
+            Mẫu nào còn size gì em ghi ngay trên trang của mẫu đó.
           </p>
           <ul>
             <li>
-              <strong>Freesize</strong> thường là dáng suông hoặc có dây rút, hợp nhiều dáng người
-              nhưng vẫn nên hỏi lại số đo tối đa.
+              <strong>Freesize</strong> thường là dáng suông hoặc có dây rút, nhiều dáng mặc được,
+              nhưng chị iu vẫn hỏi em số đo tối đa cho chắc nha.
             </li>
-            <li>Áo dài và đầm ôm: ưu tiên vừa vòng ngực và eo.</li>
+            <li>Áo dài với đầm ôm thì vừa ngực, vừa eo là quan trọng nhất.</li>
             <li>
-              Giữa hai size thì gửi số đo cho tiệm. Tiệm biết rõ form từng mẫu nên tư vấn sát hơn
-              bảng size chung.
+              Lưng chừng hai size thì gửi em số đo. Em biết form từng mẫu nên tư vấn sát hơn bảng
+              size chung ạ.
             </li>
           </ul>
 
-          <h2>Bước 3: Giữ mẫu</h2>
+          <h2>Giữ mẫu thế nào ạ?</h2>
           <CachGiuMau />
-
-          <h2>Bước 4: Chọn thời gian thuê</h2>
-          <GoiThoiGian />
           <p>
-            Khi thuê online, hãy tính thêm thời gian giao nhận và báo tiệm ngày bạn cần mặc để
-            được sắp xếp gửi đồ kịp.
+            Ở xa thì chị iu báo em ngày cần mặc sớm một chút, để em tính thời gian gửi đồ cho kịp
+            ạ.
           </p>
 
-          <h2>Chi phí</h2>
+          <h2>Thuê mấy ngày ạ?</h2>
+          <GoiThoiGian />
+
+          <h2>Hết bao nhiêu tiền ạ?</h2>
           <ul>
             {d && (
               <li>
-                Đầm, váy dự tiệc: {khoangGia(d)} / 3 ngày ({d.soMau} mẫu).
+                Đầm, váy dự tiệc:{' '}
+                {d.thue3Thap === d.thue3Cao ? k(d.thue3Thap) : khoangK(d.thue3Thap, d.thue3Cao)}/3
+                ngày ({d.soMau} mẫu).
               </li>
             )}
             {a && (
               <li>
-                Áo dài: {khoangGia(a)} / 3 ngày ({a.soMau} mẫu).
+                Áo dài:{' '}
+                {a.thue3Thap === a.thue3Cao ? k(a.thue3Thap) : khoangK(a.thue3Thap, a.thue3Cao)}/3
+                ngày ({a.soMau} mẫu).
               </li>
             )}
           </ul>
           <CachCoc cocThap={cocThap} kieu="chung" />
           <p>
-            Phí giao hàng tuỳ địa chỉ, tiệm báo cụ thể khi bạn nhắn giữ mẫu. Có thắc mắc khác, xem
-            thêm trang <L href="/cau-hoi-thuong-gap">Hỏi đáp</L>.
+            Phí ship thì tuỳ địa chỉ, chị iu nhắn giữ mẫu là em báo luôn ạ. Còn thắc mắc gì chị iu
+            xem thêm trang <L href="/cau-hoi-thuong-gap">Hỏi đáp</L> nha.
           </p>
+          <p>Em cảm ơn chị iu nhiều ạ.</p>
         </>
       );
     },

@@ -161,23 +161,27 @@ export default async function GioiThieuPage() {
                 </h2>
               </div>
               <div data-reveal className="mt-8 space-y-[1.55em] text-[17px] leading-[1.6] text-ink">
+                {/*
+                  Giọng chủ shop nhắn Zalo: "em – chị iu", "dạ… ạ" (chủ shop chọn
+                  27/11/2026, bản cũ đọc ra giọng AI). Giữ giọng này khi sửa.
+                */}
                 <p>
-                  Ai cũng có vài ngày cần thật đẹp: đám cưới của bạn thân, buổi chụp ảnh tốt nghiệp,
-                  sáng mùng Một Tết. Nhưng không phải lần nào cũng cần mua một bộ mới để mặc đúng một
-                  lần. <Brand /> mở ra cho những ngày như thế.
+                  Dạ em chào chị iu. Đám cưới bạn thân, buổi chụp tốt nghiệp, sáng mùng Một Tết, mấy
+                  ngày đó ai cũng muốn thật đẹp. Mà mua một bộ mới về mặc đúng một lần thì tiếc lắm,
+                  nên em mở <Brand /> cho chị iu thuê ạ.
                 </p>
                 <p>
-                  Tiệm có đầm dự tiệc cho đám cưới, đám hỏi, sinh nhật; váy chụp ảnh tốt nghiệp; áo dài
-                  truyền thống và cách tân; cùng pháp phục và đồ bà ba cho những dịp nhẹ nhàng hơn.
+                  Bên em có đầm dự tiệc đi đám cưới, đám hỏi, sinh nhật, váy chụp tốt nghiệp, áo dài
+                  truyền thống với cách tân, rồi pháp phục, đồ bà ba cho mấy dịp nhẹ nhàng hơn nha.
                 </p>
                 <p>
-                  Bộ nào trước khi tới tay bạn cũng được{' '}
+                  Bộ nào trước khi tới tay chị iu em cũng{' '}
                   <mark className="bg-tint px-1 text-ink">giặt ủi thơm tho</mark> và kiểm tra kỹ. Chưa
-                  chắc size thì cứ hỏi, tiệm tư vấn trước khi bạn giữ mẫu.
+                  chắc size thì chị iu cứ hỏi, em tư vấn trước rồi mới giữ mẫu cho mình ạ.
                 </p>
                 <p>
-                  Ở gần thì ghé Hóc Môn thử đồ vào buổi chiều tối. Ở xa thì chọn mẫu trên web, nhắn
-                  Messenger, tiệm gửi đồ đi khắp các tỉnh.
+                  Ở gần thì chị iu ghé Hóc Môn thử đồ buổi chiều tối. Ở xa thì chọn mẫu trên web, nhắn
+                  Messenger cho em, em gửi đồ đi các tỉnh được ạ. Em cảm ơn chị iu nhiều ạ.
                 </p>
               </div>
               <p data-reveal className="mt-10">
