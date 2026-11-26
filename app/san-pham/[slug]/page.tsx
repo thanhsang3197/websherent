@@ -81,6 +81,12 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: `/san-pham/${product.slug}` },
+    // Phụ kiện (hoa, túi, kẹp… vài chục nghìn) là trang mỏng: không cho Google
+    // đưa lên kết quả tìm kiếm, để sitelink dưới tên "Sherent" là trang chính
+    // (Giới thiệu, Thanh lý, Hạng thành viên…) chứ không phải "Hoa 04".
+    // `follow` vẫn giữ để Google đi tiếp qua link trong trang. Khách xem/thuê
+    // bình thường. (26/11/2026)
+    ...(product.category === 'phu-kien' && { robots: { index: false, follow: true } }),
     openGraph: {
       title,
       description,
