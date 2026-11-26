@@ -30,6 +30,7 @@ export type ViTri =
   | 'nut-noi'
   | 'gioi-thieu'
   | 'hoi-dap'
+  | 'cam-nang'
   | 'feedback'
   | 'uu-dai'
   | 'hang-thanh-vien'

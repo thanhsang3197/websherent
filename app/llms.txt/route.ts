@@ -1,6 +1,7 @@
 import { getRentalProducts, countByCategory } from '@/lib/products';
 import { siteConfig, SITE_URL } from '@/lib/site-config';
 import { faqItems } from '@/lib/faq';
+import { BAI_VIET } from '@/lib/cam-nang';
 
 /**
  * /llms.txt — mô tả tiệm bằng văn bản tự nhiên, viết riêng cho các AI (ChatGPT,
@@ -43,6 +44,9 @@ export async function GET() {
     `- [Trang chủ](${SITE_URL}/): xem toàn bộ bộ sưu tập, lọc theo loại/size/thương hiệu/giá.`,
     `- [Giới thiệu](${SITE_URL}/gioi-thieu): thông tin chi tiết về cửa hàng.`,
     `- [Câu hỏi thường gặp](${SITE_URL}/cau-hoi-thuong-gap): chính sách đặt cọc, giữ mẫu, giao hàng, thanh toán.`,
+    '',
+    '## Cẩm nang',
+    ...BAI_VIET.map((b) => `- [${b.tieuDe}](${SITE_URL}/cam-nang/${b.slug}): ${b.moTa}`),
     '',
     '## Câu hỏi thường gặp',
     ...faqItems.flatMap((item) => [`Q: ${item.question}`, `A: ${item.answer}`, '']),

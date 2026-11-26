@@ -16,8 +16,9 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Thuê đồ cần đặt cọc bao nhiêu?',
     answer:
-      `Mỗi mẫu có mức cọc riêng, ghi rõ ngay trên trang chi tiết sản phẩm (mục "Phí cọc"). ` +
-      `Cọc được hoàn lại đầy đủ khi bạn trả đồ đúng hẹn và nguyên vẹn.`,
+      `Cọc tiền: mỗi mẫu một mức, ghi rõ trên trang chi tiết sản phẩm (mục "Phí cọc"). ` +
+      `Riêng áo dài và pháp phục có thể cọc bằng CCCD thay cho tiền. ` +
+      `Tiền cọc hoặc CCCD được trả lại đầy đủ khi bạn trả đồ đúng hẹn và nguyên vẹn.`,
   },
   {
     question: 'Thời gian thuê là bao lâu?',

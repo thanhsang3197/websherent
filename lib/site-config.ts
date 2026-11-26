@@ -132,6 +132,7 @@ export const siteConfig = {
     { label: 'Hạng thành viên', href: '/hang-thanh-vien' },
     { label: 'Giới thiệu', href: '/gioi-thieu' },
     { label: 'Hỏi đáp', href: '/cau-hoi-thuong-gap' },
+    { label: 'Cẩm nang', href: '/cam-nang' },
   ],
 } as const;
 
